@@ -1,5 +1,5 @@
 {
-    "name": "dansan/joboy",
+    "name": "dansan/jobboy",
     "description": "It's a little jobman... a little job manager",
     "type": "library",
     "license": "proprietary",
@@ -18,7 +18,8 @@
         "symfony/property-access": "*",
         "symfony/proxy-manager-bridge": "*",
         "symfony/stopwatch": "^4.2",
-        "symfony/yaml": "*"
+        "symfony/yaml": "*",
+        "beberlei/assert": "^3.0"
     },
     "require-dev": {
         "dansan/fixture-handler": "*",
@@ -37,7 +38,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Jobboy\\": "src/Jobboy/"
+            "JobBoy\\": "src/JobBoy/"
         }
     },
     "autoload-dev": {
