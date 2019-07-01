@@ -1,0 +1,24 @@
+version: '3'
+
+volumes:
+  composer_volume: {}
+  history_volume: {}
+  redis_volume: {}
+
+services:
+
+  php:
+    build: docker/php
+    tty: true # -t option in docker
+    stdin_open: true # -i option in docker
+    hostname: ${HOSTNAME}
+    volumes:
+      - ./:/var/www/project
+      - composer_volume:/home/user/.composer
+      - history_volume:/home/user/history
+
+  redis:
+    image: 'redis:5.0.4-alpine3.9'
+    volumes:
+      - redis_volume:/data
+
