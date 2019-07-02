@@ -1,35 +1,35 @@
 <?php
 
-namespace JobBoy\Job\Domain;
+namespace JobBoy\Process\Domain;
 
 use Assert\Assertion;
-use JobBoy\Job\Domain\Util\AssertionUtil;
+use JobBoy\Process\Domain\Util\AssertionUtil;
 
 /**
  * @immutable
  */
-class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
+class ProcessParameters implements \IteratorAggregate, \Countable, \ArrayAccess
 {
     /** @var array */
-    protected $parameters;
+    protected $data;
 
     /**
-     * @param array $parameters An array of parameters
+     * @param array $data An array of parameters
      */
-    public function __construct(array $parameters = [])
+    public function __construct(array $data = [])
     {
-        $this->setParameters($parameters);
+        $this->setData($data);
     }
 
-    protected function setParameters(array $parameters): void
+    protected function setData(array $data): void
     {
-        foreach ($parameters as $key => $value) {
+        foreach ($data as $key => $value) {
             Assertion::string($key);
             Assertion::notRegex($key, '/[\[\]]+/','Value "%s" contains not allowed characters: "[", "]"');
             AssertionUtil::scalarOrArrayOfScalars($value);
         }
 
-        $this->parameters = $parameters;
+        $this->data = $data;
     }
 
     public static function fromScalar(array $parameters): self
@@ -44,7 +44,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
 
     public function equals(self $jobParameters): bool
     {
-        $aParameters = $this->parameters;
+        $aParameters = $this->data;
         $bParameters = $jobParameters->all();
         ksort($aParameters);
         ksort($bParameters);
@@ -64,7 +64,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function all(): array
     {
-        return $this->parameters;
+        return $this->data;
     }
 
     /**
@@ -74,13 +74,13 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function keys(): array
     {
-        return array_keys($this->parameters);
+        return array_keys($this->data);
     }
 
     /**
      * Merge with othern parameters
      *
-     * @param array|JobParameters $parameters An array of parameters or a JobParameters
+     * @param array|ProcessParameters $parameters An array of parameters or a JobParameters
      * @return self
      */
     public function merge($parameters = []): self
@@ -99,7 +99,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     protected function doMerge(array $parameters = []): self
     {
-        return new static(array_replace($this->parameters, $parameters));
+        return new static(array_replace($this->data, $parameters));
     }
 
     /**
@@ -109,7 +109,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->parameters);
+        return new \ArrayIterator($this->data);
     }
 
     /**
@@ -119,7 +119,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function count(): int
     {
-        return count($this->parameters);
+        return count($this->data);
     }
 
 
@@ -132,7 +132,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function has($key): bool
     {
-        return array_key_exists($key, $this->parameters);
+        return array_key_exists($key, $this->data);
     }
 
     /**
@@ -145,7 +145,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function get($key, $default = null)
     {
-        return array_key_exists($key, $this->parameters) ? $this->parameters[$key] : $default;
+        return array_key_exists($key, $this->data) ? $this->data[$key] : $default;
     }
 
     /**
@@ -158,7 +158,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function set($key, $value): self
     {
-        $parameters = $this->parameters;
+        $parameters = $this->data;
         $parameters[$key] = $value;
         return new static($parameters);
     }
@@ -171,7 +171,7 @@ class JobParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      */
     public function remove($key): self
     {
-        $parameters = $this->parameters;
+        $parameters = $this->data;
         unset($parameters[$key]);
 
         return new static($parameters);

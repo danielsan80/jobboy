@@ -1,12 +1,11 @@
 <?php
 
-namespace Tests\JobBoy\Job\Domain;
+namespace Tests\JobBoy\Process\Domain;
 
+use JobBoy\Process\Domain\ProcessParameters;
 use PHPUnit\Framework\TestCase;
 
-use JobBoy\Job\Domain\JobParameters;
-
-class JobParametersTest extends TestCase
+class ProcessParametersTest extends TestCase
 {
 
     /**
@@ -15,12 +14,12 @@ class JobParametersTest extends TestCase
     public function create_and_extract()
     {
         $parameters = ['a_key' => 'a_value'];
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
 
         $this->assertSame($parameters, $jobParameters->all());
         $this->assertSame($parameters, $jobParameters->toScalar());
 
-        $jobParameters = JobParameters::fromScalar($parameters);
+        $jobParameters = ProcessParameters::fromScalar($parameters);
 
         $this->assertSame($parameters, $jobParameters->all());
 
@@ -32,7 +31,7 @@ class JobParametersTest extends TestCase
     public function get()
     {
         $parameters = ['a_key' => 'a_value'];
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
         $this->assertSame('a_value', $jobParameters->get('a_key','a_default_value'));
         $this->assertSame('a_default_value', $jobParameters->get('a_not_existing_key', 'a_default_value'));
 
@@ -47,7 +46,7 @@ class JobParametersTest extends TestCase
     public function has()
     {
         $parameters = ['a_key' => 'a_value'];
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
 
         $this->assertTrue($jobParameters->has('a_key'));
         $this->assertFalse($jobParameters->has('a_not_existing_key'));
@@ -63,7 +62,7 @@ class JobParametersTest extends TestCase
     public function set()
     {
         $parameters = ['a_key' => 'a_value'];
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
 
         $newJobParameters = $jobParameters->set('a_key', 'a_new_value');
 
@@ -84,7 +83,7 @@ class JobParametersTest extends TestCase
     public function remove()
     {
         $parameters = ['a_key' => 'a_value'];
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
 
         $newJobParameters = $jobParameters->remove('a_key');
 
@@ -105,7 +104,7 @@ class JobParametersTest extends TestCase
     public function countable()
     {
         $parameters = ['a_key' => 'a_value'];
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
 
         $this->assertSame(1, $jobParameters->count());
         $this->assertCount(1, $jobParameters);
@@ -124,8 +123,8 @@ class JobParametersTest extends TestCase
         $aParameters = ['a' => 'A', 'b' => 'B'];
         $bParameters = ['b' => 'B', 'a' => 'A'];
 
-        $aJobParameters = new JobParameters($aParameters);
-        $bJobParameters = new JobParameters($bParameters);
+        $aJobParameters = new ProcessParameters($aParameters);
+        $bJobParameters = new ProcessParameters($bParameters);
 
         $this->assertTrue($aJobParameters->equals($bJobParameters));
         $this->assertTrue($bJobParameters->equals($aJobParameters));
@@ -137,7 +136,7 @@ class JobParametersTest extends TestCase
      */
     public function empty()
     {
-        $jobParameters = JobParameters::empty();
+        $jobParameters = ProcessParameters::empty();
 
         $this->assertSame([], $jobParameters->all());
     }
@@ -149,7 +148,7 @@ class JobParametersTest extends TestCase
     {
         $parameters = ['a' => 'A', 'b' => 'B'];
 
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
 
         $this->assertSame(['a', 'b'], $jobParameters->keys());
     }
@@ -180,7 +179,7 @@ class JobParametersTest extends TestCase
                 'c1' => 'Gamma1',
             ],
             'd' => 'Delta'];
-        $jobParameters = new JobParameters($aParameters);
+        $jobParameters = new ProcessParameters($aParameters);
 
         $newJobParameters = $jobParameters->merge($bParameters);
 
@@ -199,7 +198,7 @@ class JobParametersTest extends TestCase
             'c' => [
                 'c1' => 'Gamma1',
             ]];
-        $jobParameters = new JobParameters($parameters);
+        $jobParameters = new ProcessParameters($parameters);
 
         $iterator = $jobParameters->getIterator();
 
@@ -237,7 +236,7 @@ class JobParametersTest extends TestCase
         $parameters = ['[strange_key]' => 'a_value'];
 
         try {
-            new JobParameters($parameters);
+            new ProcessParameters($parameters);
             $this->fail();
         } catch (\InvalidArgumentException $e) {
             $this->assertEquals('Value "[strange_key]" contains not allowed characters: "[", "]"', $e->getMessage());

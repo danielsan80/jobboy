@@ -1,10 +1,10 @@
 <?php
 
-namespace JobBoy\Job\Domain\Entity\Id;
+namespace JobBoy\Process\Domain\Entity\Id;
 
 use Assert\Assertion;
 
-class JobExecutionId
+class ProcessId
 {
     private $value;
 

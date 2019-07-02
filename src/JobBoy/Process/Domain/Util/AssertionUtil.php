@@ -1,6 +1,6 @@
 <?php
 
-namespace JobBoy\Job\Domain\Util;
+namespace JobBoy\Process\Domain\Util;
 
 use Assert\Assertion;
 

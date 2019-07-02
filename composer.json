@@ -19,7 +19,8 @@
         "symfony/proxy-manager-bridge": "*",
         "symfony/stopwatch": "^4.2",
         "symfony/yaml": "*",
-        "beberlei/assert": "^3.0"
+        "beberlei/assert": "^3.0",
+        "nesbot/carbon": "^2.0"
     },
     "require-dev": {
         "dansan/fixture-handler": "*",
@@ -38,7 +39,8 @@
     },
     "autoload": {
         "psr-4": {
-            "JobBoy\\": "src/JobBoy/"
+            "JobBoy\\": "src/JobBoy/",
+            "Dan\\": "src/Dan/"
         }
     },
     "autoload-dev": {
