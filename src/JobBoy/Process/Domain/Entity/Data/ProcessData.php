@@ -5,6 +5,7 @@ namespace JobBoy\Process\Domain\Entity\Data;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\ProcessStatus;
+use JobBoy\Process\Domain\ProcessStore;
 
 class ProcessData
 {
@@ -39,8 +40,8 @@ class ProcessData
     /** @var \DateTimeImmutable */
     protected $handledAt;
 
-    /** @var array */
-    protected $data;
+    /** @var ProcessStore */
+    protected $store;
 
     public function __construct(array $data = [])
     {
@@ -110,9 +111,9 @@ class ProcessData
         return $this;
     }
 
-    public function setData(?array $data): self
+    public function setStore(?ProcessStore $store): self
     {
-        $this->data = $data;
+        $this->store = $store;
         return $this;
     }
 
@@ -166,9 +167,9 @@ class ProcessData
         return $this->handledAt;
     }
 
-    public function data(): ?array
+    public function store(): ?ProcessStore
     {
-        return $this->data;
+        return $this->store;
     }
 
 }

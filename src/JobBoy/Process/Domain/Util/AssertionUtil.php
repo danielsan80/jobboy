@@ -9,17 +9,14 @@ class AssertionUtil
 
     public static function scalarOrArrayOfScalars($value)
     {
-        $stack = [$value];
-        while ($stack) {
-            $el = array_shift($stack);
-            if (is_array($el)) {
-                foreach ($el as $subEl) {
-                    $stack[] = $subEl;
-                }
-                continue;
+        $value = [$value];
+        array_walk_recursive($value, function ($item) {
+            if (is_array($item)) {
+                return;
             }
-            Assertion::scalar($el);
-        }
+
+            Assertion::scalar($item);
+        });
     }
 
 }

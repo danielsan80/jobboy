@@ -7,47 +7,13 @@ use Dan\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Data\CreateProcessData;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\NormalizableInterface;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\ProcessStore;
 
-class Process
+class NormalizableProcess extends Process implements NormalizableInterface
 {
-
-    const DEFAULT_WAIT_FOR = '1 minute';
-
-    /** @var ProcessId */
-    protected $id;
-
-    /** @var string */
-    protected $code;
-
-    /** @var ProcessParameters */
-    protected $parameters;
-
-    /** @var ProcessStatus */
-    protected $status;
-
-    /** @var \DateTimeImmutable */
-    protected $createdAt;
-
-    /** @var \DateTimeImmutable */
-    protected $updatedAt;
-
-    /** @var \DateTimeImmutable */
-    protected $startedAt;
-
-    /** @var \DateTimeImmutable */
-    protected $endedAt;
-
-    /** @var \DateTimeImmutable */
-    protected $waitingUntil;
-
-    /** @var \DateTimeImmutable */
-    protected $handledAt;
-
-    /** @var ProcessStore */
-    protected $store;
 
     static public function create(CreateProcessData $data): self
     {
@@ -63,6 +29,7 @@ class Process
 
     protected function __construct( ProcessData $data)
     {
+
         $this->check($data);
 
         $this->setId($data->id());
@@ -83,27 +50,6 @@ class Process
         $this->setStore($data->store());
 
     }
-
-    protected function setId(ProcessId $id): void
-    {
-        $this->id = $id;
-    }
-
-    protected function setCode(string $code): void
-    {
-        Assertion::notEmpty($code);
-        $this->code = $code;
-    }
-
-    protected function setParameters(?ProcessParameters $parameters): void
-    {
-        if (!$parameters) {
-            $parameters = new ProcessParameters([]);
-        }
-
-        $this->parameters = $parameters;
-    }
-
 
     protected function check(ProcessData $data): void
     {
