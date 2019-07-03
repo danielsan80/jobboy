@@ -4,14 +4,15 @@ namespace Tests\JobBoy\Process\Domain\Entity;
 
 use Dan\Clock\Domain\Clock;
 use Dan\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
-use JobBoy\Process\Domain\Entity\Data\CreateProcessData;
+use JobBoy\Process\Domain\Entity\Data\NormalizableProcessData;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\Entity\NormalizableProcess;
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\ProcessParameters;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
-class ProcessTest extends TestCase
+class NormalizableProcessTest extends TestCase
 {
 
     /**
@@ -27,8 +28,8 @@ class ProcessTest extends TestCase
 
         $id = Uuid::uuid4();
 
-        $process = Process::create(
-            (new CreateProcessData())
+        $process = NormalizableProcess::create(
+            (new NormalizableProcessData())
                 ->setId(new ProcessId($id))
                 ->setCode('a_code')
                 ->setParameters(new ProcessParameters(['a_key' => 'a_value']))
@@ -44,7 +45,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->startedAt());
         $this->assertNull($process->endedAt());
         $this->assertNull($process->waitingUntil());
-        $this->assertSameDateTime($now, $process->handledAt());
+        $this->assertNull($process->handledAt());
 
 
         $normalizedProcess = $process->normalize();
@@ -59,11 +60,11 @@ class ProcessTest extends TestCase
             'started_at' => null,
             'ended_at' => null,
             'waiting_until' => null,
-            'handled_at' => '2019-01-01T00:00:00+0100',
-            'data' => []
+            'handled_at' => null,
+            'store' => []
         ], $normalizedProcess);
 
-        $denormalizedProcess = Process::denormalize($normalizedProcess);
+        $denormalizedProcess = NormalizableProcess::denormalize($normalizedProcess);
 
         $this->assertSame([
             'id' => (string)$id,
@@ -75,8 +76,8 @@ class ProcessTest extends TestCase
             'started_at' => null,
             'ended_at' => null,
             'waiting_until' => null,
-            'handled_at' => '2019-01-01T00:00:00+0100',
-            'data' => []
+            'handled_at' => null,
+            'store' => []
         ], $denormalizedProcess->normalize());
 
         Clock::resetTimeFactory();

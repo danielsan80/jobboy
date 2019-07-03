@@ -2,7 +2,7 @@
 
 namespace JobBoy\Process\Domain\Entity\Factory;
 
-use JobBoy\Process\Domain\Entity\Data\CreateProcessData;
+use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Process;
 
 class ProcessFactory
@@ -21,7 +21,7 @@ class ProcessFactory
         return $this->entityClass;
     }
 
-    public function create(CreateProcessData $data): Process
+    public function create(ProcessData $data): Process
     {
         return new $this->entityClass($data);
     }

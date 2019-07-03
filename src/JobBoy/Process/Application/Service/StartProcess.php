@@ -2,7 +2,7 @@
 
 namespace JobBoy\Process\Application\Service;
 
-use JobBoy\Process\Domain\Entity\Data\CreateProcessData;
+use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
@@ -27,7 +27,7 @@ class StartProcess
     public function execute(string $code, array $parameters = []): void
     {
         $process = $this->processFactory->create(
-            (new CreateProcessData())
+            (new ProcessData())
                 ->setCode($code)
                 ->setParameters(new ProcessParameters($parameters))
         );

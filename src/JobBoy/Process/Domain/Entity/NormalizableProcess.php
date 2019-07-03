@@ -4,8 +4,8 @@ namespace JobBoy\Process\Domain\Entity;
 
 use Assert\Assertion;
 use Dan\Clock\Domain\Clock;
-use JobBoy\Process\Domain\Entity\Data\CreateProcessData;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
+use JobBoy\Process\Domain\Entity\Data\NormalizableProcessData;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\NormalizableInterface;
 use JobBoy\Process\Domain\ProcessParameters;
@@ -15,27 +15,11 @@ use JobBoy\Process\Domain\ProcessStore;
 class NormalizableProcess extends Process implements NormalizableInterface
 {
 
-    static public function create(CreateProcessData $data): self
+    protected function __construct(NormalizableProcessData $data)
     {
-
-        $data = new ProcessData([
-            'id' => $data->id(),
-            'code' => $data->code(),
-            'parameters' => $data->parameters()
-        ]);
-        return new static($data);
-
-    }
-
-    protected function __construct( ProcessData $data)
-    {
+        parent::__construct($data);
 
         $this->check($data);
-
-        $this->setId($data->id());
-        $this->setCode($data->code());
-        $this->setParameters($data->parameters());
-
 
         $this->setStatus($data->status());
 
@@ -45,13 +29,13 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->setStartedAt($data->startedAt());
         $this->setEndedAt($data->endedAt());
         $this->setWaitingUntil($data->waitingUntil());
-        $this->setHandledAt($data->handledAt(), $now);
+        $this->setHandledAt($data->handledAt());
 
         $this->setStore($data->store());
 
     }
 
-    protected function check(ProcessData $data): void
+    protected function check(NormalizableProcessData $data): void
     {
         if (
             $data->status()===null
@@ -136,12 +120,8 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->waitingUntil = $waitingUntil;
     }
 
-    protected function setHandledAt(?\DateTimeImmutable $handledAt, ?\DateTimeImmutable $default = null): void
+    protected function setHandledAt(?\DateTimeImmutable $handledAt): void
     {
-        if (!$handledAt) {
-            $handledAt = $default;
-        }
-
         $this->handledAt = $handledAt;
     }
 
@@ -151,191 +131,6 @@ class NormalizableProcess extends Process implements NormalizableInterface
             $store = new ProcessStore();
         }
         $this->store = $store;
-    }
-
-    public function id(): ProcessId
-    {
-        return $this->id;
-    }
-
-    public function code(): string
-    {
-        return $this->code;
-    }
-
-    public function status(): ProcessStatus
-    {
-        return $this->status;
-    }
-
-    public function parameters(): ProcessParameters
-    {
-        return $this->parameters;
-    }
-
-    protected function changeStatus(ProcessStatus $processStatus): void
-    {
-        $this->status = $this->status->change($processStatus);
-        $this->touch();
-    }
-
-    public function changeStatusToRunning(): void
-    {
-        if ($this->status->isStarting()) {
-            $this->startedAt = Clock::createDateTimeImmutable();
-        }
-        $this->waitingUntil = null;
-        $this->changeStatus(ProcessStatus::running());
-    }
-
-    public function changeStatusToWaiting(?string $waitFor = null): void
-    {
-        if (!$waitFor) {
-            $waitFor = self::DEFAULT_WAIT_FOR;
-        }
-
-        $this->waitingUntil = Clock::createDateTimeImmutable('+ ' . $waitFor);
-
-        $this->changeStatus(ProcessStatus::waiting());
-    }
-
-    public function changeStatusToCompleted(): void
-    {
-        $this->waitingUntil = null;
-        $this->endedAt = Clock::createDateTimeImmutable();
-        $this->changeStatus(ProcessStatus::completed());
-    }
-
-    public function changeStatusToFailed(): void
-    {
-        $this->waitingUntil = null;
-        $this->endedAt = Clock::createDateTimeImmutable();
-        $this->changeStatus(ProcessStatus::failed());
-    }
-
-    public function changeStatusToEnding(): void
-    {
-        $this->waitingUntil = null;
-        $this->changeStatus(ProcessStatus::ending());
-    }
-
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function createdAt(): \DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function updatedAt(): \DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function touch(): void
-    {
-        $this->updatedAt = Clock::createDateTimeImmutable();
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function startedAt(): ?\DateTimeImmutable
-    {
-        return $this->startedAt;
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function endedAt(): ?\DateTimeImmutable
-    {
-        return $this->endedAt;
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function waitingUntil(): ?\DateTimeImmutable
-    {
-        return $this->waitingUntil;
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function handledAt(): ?\DateTimeImmutable
-    {
-        return $this->handledAt;
-    }
-
-    public function isHandled(): bool
-    {
-        return (bool)$this->handledAt;
-    }
-
-    public function handle(): void
-    {
-        $this->handledAt = Clock::createDateTimeImmutable();
-        $this->touch();
-    }
-
-    public function release(): void
-    {
-        $this->handledAt = null;
-        $this->touch();
-    }
-
-    public function set($key, $value): void
-    {
-        $this->store = $this->store->set($key, $value);
-        $this->touch();
-    }
-
-    public function unset($key): void
-    {
-        $this->store = $this->store->unset($key);
-        $this->touch();
-    }
-
-    public function has($key): bool
-    {
-        return $this->store->has($key);
-    }
-
-    public function get($key, $default)
-    {
-        $this->store->get($key, $default);
-    }
-
-    public function inc($key, $step = 1): void
-    {
-        $value = $this->store->get($key, 0) + $step;
-        $this->store = $this->store->set($key, $value);
-        $this->touch();
-    }
-
-    public function dec($key, $step = 1): void
-    {
-        $value = $this->store->get($key, 0) - $step;
-        $this->store = $this->store->set($key, $value);
-        $this->touch();
-    }
-
-    public function prepend($data): void
-    {
-        $this->store = $this->store->prepend($data);
-        $this->touch();
-    }
-
-    public function append($data): void
-    {
-        $this->store = $this->store->append($data);
-        $this->touch();
     }
 
     public function normalize(): array
@@ -355,9 +150,9 @@ class NormalizableProcess extends Process implements NormalizableInterface
         ];
     }
 
-    public static function denormalize(array $data): self
+    public static function denormalize(array $data)
     {
-        $processData = new ProcessData();
+        $processData = new NormalizableProcessData();
         $processData
             ->setId(new ProcessId($data['id']))
             ->setCode($data['code'])
