@@ -4,7 +4,6 @@ namespace JobBoy\Process\Domain\Entity\Data;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\ProcessParameters;
-use JobBoy\Process\Domain\ProcessStatus;
 
 class ProcessData
 {

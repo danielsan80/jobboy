@@ -9,9 +9,9 @@ class ProcessStatus
 {
     const STARTING = 'starting';
     const RUNNING = 'running';
-    const WAITING = 'waiting';
-    const ENDING = 'ending';
+    const FAILING = 'failing';
     const FAILED = 'failed';
+    const ENDING = 'ending';
     const COMPLETED = 'completed';
 
     /** @var string */
@@ -31,9 +31,9 @@ class ProcessStatus
         return [
             self::STARTING,
             self::RUNNING,
-            self::WAITING,
-            self::ENDING,
+            self::FAILING,
             self::FAILED,
+            self::ENDING,
             self::COMPLETED,
         ];
     }
@@ -48,19 +48,21 @@ class ProcessStatus
         return new static(self::RUNNING);
     }
 
-    public static function waiting(): self
-    {
-        return new static(self::WAITING);
-    }
 
-    public static function ending(): self
+
+    public static function failing(): self
     {
-        return new static(self::ENDING);
+        return new static(self::FAILING);
     }
 
     public static function failed(): self
     {
         return new static(self::FAILED);
+    }
+
+    public static function ending(): self
+    {
+        return new static(self::ENDING);
     }
 
     public static function completed(): self
@@ -78,19 +80,19 @@ class ProcessStatus
         return $this->value === self::RUNNING;
     }
 
-    public function isWaiting(): bool
+    public function isFailing(): bool
     {
-        return $this->value === self::WAITING;
-    }
-
-    public function isEnding(): bool
-    {
-        return $this->value === self::ENDING;
+        return $this->value === self::FAILING;
     }
 
     public function isFailed(): bool
     {
         return $this->value === self::FAILED;
+    }
+
+    public function isEnding(): bool
+    {
+        return $this->value === self::ENDING;
     }
 
     public function isCompleted(): bool
@@ -112,7 +114,7 @@ class ProcessStatus
         return [
             self::STARTING,
             self::RUNNING,
-            self::WAITING,
+            self::FAILING,
             self::ENDING,
         ];
     }
@@ -130,7 +132,7 @@ class ProcessStatus
     {
         return [
             self::RUNNING,
-            self::WAITING,
+            self::FAILING,
             self::ENDING,
         ];
     }
@@ -176,7 +178,13 @@ class ProcessStatus
 
         if (
             in_array($this->value(), [self::ENDING,])
-            && !in_array($processStatus->value(), [self::FAILED, self::COMPLETED])  ) {
+            && !in_array($processStatus->value(), [self::FAILING, self::FAILED, self::COMPLETED])  ) {
+            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $processStatus->value()));
+        }
+
+        if (
+            in_array($this->value(), [self::FAILING,])
+            && !in_array($processStatus->value(), [self::FAILED])  ) {
             throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $processStatus->value()));
         }
 

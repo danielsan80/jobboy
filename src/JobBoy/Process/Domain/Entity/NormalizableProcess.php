@@ -4,7 +4,6 @@ namespace JobBoy\Process\Domain\Entity;
 
 use Assert\Assertion;
 use Dan\Clock\Domain\Clock;
-use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Data\NormalizableProcessData;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\NormalizableInterface;
@@ -28,7 +27,6 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->setUpdatedAt($data->updatedAt(), $now);
         $this->setStartedAt($data->startedAt());
         $this->setEndedAt($data->endedAt());
-        $this->setWaitingUntil($data->waitingUntil());
         $this->setHandledAt($data->handledAt());
 
         $this->setStore($data->store());
@@ -44,7 +42,6 @@ class NormalizableProcess extends Process implements NormalizableInterface
             Assertion::null($data->updatedAt());
             Assertion::null($data->startedAt());
             Assertion::null($data->endedAt());
-            Assertion::null($data->waitingUntil());
             Assertion::null($data->handledAt());
             Assertion::null($data->store());
             return;
@@ -60,14 +57,6 @@ class NormalizableProcess extends Process implements NormalizableInterface
 
         if (!$data->status()->isStarting()) {
             Assertion::notNull($data->startedAt());
-        }
-
-        if ($data->status()->isWaiting()) {
-            Assertion::notNull($data->waitingUntil());
-        }
-
-        if (!$data->status()->isWaiting()) {
-            Assertion::null($data->waitingUntil());
         }
 
         if ($data->status()->isActive()) {
@@ -115,11 +104,6 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->endedAt = $endedAt;
     }
 
-    protected function setWaitingUntil(?\DateTimeImmutable $waitingUntil): void
-    {
-        $this->waitingUntil = $waitingUntil;
-    }
-
     protected function setHandledAt(?\DateTimeImmutable $handledAt): void
     {
         $this->handledAt = $handledAt;
@@ -144,7 +128,6 @@ class NormalizableProcess extends Process implements NormalizableInterface
             'updated_at' => self::normalizeDateTime($this->updatedAt),
             'started_at' => self::normalizeDateTime($this->startedAt),
             'ended_at' => self::normalizeDateTime($this->endedAt),
-            'waiting_until' => self::normalizeDateTime($this->waitingUntil),
             'handled_at' => self::normalizeDateTime($this->handledAt),
             'store' => $this->store->data(),
         ];
@@ -162,7 +145,6 @@ class NormalizableProcess extends Process implements NormalizableInterface
             ->setUpdatedAt(self::denormalizeDateTime($data['updated_at']))
             ->setStartedAt(self::denormalizeDateTime($data['started_at']))
             ->setEndedAt(self::denormalizeDateTime($data['ended_at']))
-            ->setWaitingUntil(self::denormalizeDateTime($data['waiting_until']))
             ->setHandledAt(self::denormalizeDateTime($data['handled_at']))
             ->setStore(new ProcessStore($data['store']))
         ;

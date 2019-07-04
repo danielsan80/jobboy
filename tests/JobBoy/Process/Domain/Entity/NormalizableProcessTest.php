@@ -7,7 +7,6 @@ use Dan\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
 use JobBoy\Process\Domain\Entity\Data\NormalizableProcessData;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\NormalizableProcess;
-use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\ProcessParameters;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -44,7 +43,6 @@ class NormalizableProcessTest extends TestCase
         $this->assertSameDateTime($now, $process->updatedAt());
         $this->assertNull($process->startedAt());
         $this->assertNull($process->endedAt());
-        $this->assertNull($process->waitingUntil());
         $this->assertNull($process->handledAt());
 
 
@@ -59,7 +57,6 @@ class NormalizableProcessTest extends TestCase
             'updated_at' => '2019-01-01T00:00:00+0100',
             'started_at' => null,
             'ended_at' => null,
-            'waiting_until' => null,
             'handled_at' => null,
             'store' => []
         ], $normalizedProcess);
@@ -75,7 +72,6 @@ class NormalizableProcessTest extends TestCase
             'updated_at' => '2019-01-01T00:00:00+0100',
             'started_at' => null,
             'ended_at' => null,
-            'waiting_until' => null,
             'handled_at' => null,
             'store' => []
         ], $denormalizedProcess->normalize());

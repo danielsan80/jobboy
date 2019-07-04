@@ -3,19 +3,35 @@
 namespace JobBoy\Process\Domain\ProcessWorker;
 
 use JobBoy\Process\Domain\Entity\Process;
+use JobBoy\Process\Domain\Lock\LockFactoryInterface;
+use JobBoy\Process\Domain\Lock\LockInterface;
+use JobBoy\Process\Domain\ProcessHandler\MainProcessHandler;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class ProcessWorker
 {
+    const PROCESS_MANAGEMENT = 'process-management';
+
     /** @var ProcessRepositoryInterface */
     protected $processRepository;
+    /** @var LockFactoryInterface */
+    protected $lockFactory;
+    /** @var MainProcessHandler */
+    protected $mainProcessHandler;
+
+    /** @var LockInterface */
+    protected $lock;
 
     public function __construct(
-        ProcessRepositoryInterface $processRepository
+        ProcessRepositoryInterface $processRepository,
+        LockFactoryInterface $lockFactory,
+        MainProcessHandler $mainProcessHandler
     )
     {
         $this->processRepository = $processRepository;
+        $this->lockFactory = $lockFactory;
+        $this->mainProcessHandler = $mainProcessHandler;
     }
 
 
@@ -44,12 +60,24 @@ class ProcessWorker
         $this->release();
     }
 
-    protected function lock()
+    protected function lock(): void
     {
+        if ($this->lock) {
+            throw new \LogicException('I\'m working yet');
+        }
+        $this->lock = $this->lockFactory->create(self::PROCESS_MANAGEMENT);
+        if (!$this->lock->acquire()) {
+            throw new \LogicException('I\'m working yet');
+        };
     }
 
-    protected function release()
+    protected function release(): void
     {
+        if (!$this->lock) {
+            throw new \LogicException('I\'m not working yet');
+        }
+        $this->lock->release();
+        $this->lock = null;
     }
 
 
@@ -81,6 +109,16 @@ class ProcessWorker
         }
 
         return null;
+    }
+
+    protected function iterate(?Process $process): void
+    {
+        $id = $process->id();
+        try {
+            $this->mainProcessHandler->handle($id);
+        } catch (\Exception $e) {
+            $process = $this->processRepository->byId($id);
+        }
     }
 
 }

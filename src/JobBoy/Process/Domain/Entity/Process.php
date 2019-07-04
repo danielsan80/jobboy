@@ -40,9 +40,6 @@ class Process
     protected $endedAt;
 
     /** @var \DateTimeImmutable */
-    protected $waitingUntil;
-
-    /** @var \DateTimeImmutable */
     protected $handledAt;
 
     /** @var ProcessStore */
@@ -120,39 +117,29 @@ class Process
         if ($this->status->isStarting()) {
             $this->startedAt = Clock::createDateTimeImmutable();
         }
-        $this->waitingUntil = null;
         $this->changeStatus(ProcessStatus::running());
     }
 
-    public function changeStatusToWaiting(?string $waitFor = null): void
+    public function changeStatusToFailing(): void
     {
-        if (!$waitFor) {
-            $waitFor = self::DEFAULT_WAIT_FOR;
-        }
-
-        $this->waitingUntil = Clock::createDateTimeImmutable('+ ' . $waitFor);
-
-        $this->changeStatus(ProcessStatus::waiting());
-    }
-
-    public function changeStatusToCompleted(): void
-    {
-        $this->waitingUntil = null;
-        $this->endedAt = Clock::createDateTimeImmutable();
-        $this->changeStatus(ProcessStatus::completed());
+        $this->changeStatus(ProcessStatus::failing());
     }
 
     public function changeStatusToFailed(): void
     {
-        $this->waitingUntil = null;
         $this->endedAt = Clock::createDateTimeImmutable();
         $this->changeStatus(ProcessStatus::failed());
     }
 
     public function changeStatusToEnding(): void
     {
-        $this->waitingUntil = null;
         $this->changeStatus(ProcessStatus::ending());
+    }
+
+    public function changeStatusToCompleted(): void
+    {
+        $this->endedAt = Clock::createDateTimeImmutable();
+        $this->changeStatus(ProcessStatus::completed());
     }
 
 
@@ -191,14 +178,6 @@ class Process
     public function endedAt(): ?\DateTimeImmutable
     {
         return $this->endedAt;
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     */
-    public function waitingUntil(): ?\DateTimeImmutable
-    {
-        return $this->waitingUntil;
     }
 
     /**

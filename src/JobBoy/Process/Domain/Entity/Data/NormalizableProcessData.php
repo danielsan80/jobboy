@@ -2,14 +2,11 @@
 
 namespace JobBoy\Process\Domain\Entity\Data;
 
-use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\ProcessStore;
 
 class NormalizableProcessData extends ProcessData
 {
-
 
     /** @var ProcessStatus */
     protected $status;
@@ -27,21 +24,10 @@ class NormalizableProcessData extends ProcessData
     protected $endedAt;
 
     /** @var \DateTimeImmutable */
-    protected $waitingUntil;
-
-    /** @var \DateTimeImmutable */
     protected $handledAt;
 
     /** @var ProcessStore */
     protected $store;
-
-    public function __construct(array $data = [])
-    {
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            $this->$setter($value);
-        }
-    }
 
 
     public function setStatus(?ProcessStatus $status): self
@@ -71,12 +57,6 @@ class NormalizableProcessData extends ProcessData
     public function setEndedAt(?\DateTimeImmutable $endedAt): self
     {
         $this->endedAt = $endedAt;
-        return $this;
-    }
-
-    public function setWaitingUntil(?\DateTimeImmutable $waitingUntil): self
-    {
-        $this->waitingUntil = $waitingUntil;
         return $this;
     }
 
@@ -115,11 +95,6 @@ class NormalizableProcessData extends ProcessData
     public function endedAt(): ?\DateTimeImmutable
     {
         return $this->endedAt;
-    }
-
-    public function waitingUntil(): ?\DateTimeImmutable
-    {
-        return $this->waitingUntil;
     }
 
     public function handledAt(): ?\DateTimeImmutable
