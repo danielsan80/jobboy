@@ -7,6 +7,8 @@ use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\ProcessHandler\MainProcessHandler;
 use JobBoy\Process\Domain\ProcessStatus;
+use JobBoy\Process\Domain\ProcessWorker\Exception\NotWorkingYetException;
+use JobBoy\Process\Domain\ProcessWorker\Exception\WorkingYetException;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class ProcessWorker
@@ -63,18 +65,18 @@ class ProcessWorker
     protected function lock(): void
     {
         if ($this->lock) {
-            throw new \LogicException('I\'m working yet');
+            throw new WorkingYetException();
         }
         $this->lock = $this->lockFactory->create(self::PROCESS_MANAGEMENT);
         if (!$this->lock->acquire()) {
-            throw new \LogicException('I\'m working yet');
+            throw new WorkingYetException();
         };
     }
 
     protected function release(): void
     {
         if (!$this->lock) {
-            throw new \LogicException('I\'m not working yet');
+            throw new NotWorkingYetException();
         }
         $this->lock->release();
         $this->lock = null;
@@ -118,6 +120,9 @@ class ProcessWorker
             $this->mainProcessHandler->handle($id);
         } catch (\Exception $e) {
             $process = $this->processRepository->byId($id);
+            $process->set('exception', $e->getMessage());
+            $process->changeStatusToFailing();
+            $process->release();
         }
     }
 
