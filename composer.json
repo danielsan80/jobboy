@@ -18,10 +18,7 @@
         "ramsey/uuid": "^3.8",
         "symfony/finder": "*",
         "symfony/lock": "^4.3",
-        "symfony/property-access": "*",
-        "symfony/proxy-manager-bridge": "*",
-        "symfony/stopwatch": "^4.2",
-        "symfony/yaml": "*"
+        "symfony/proxy-manager-bridge": "*"
     },
     "require-dev": {
         "dansan/fixture-handler": "*",
