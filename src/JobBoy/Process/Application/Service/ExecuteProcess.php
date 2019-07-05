@@ -11,6 +11,7 @@ use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class ExecuteProcess
 {
+    const IDLE_TIME = 5;
 
     /** @var ProcessFactory */
     protected $processFactory;
@@ -46,7 +47,7 @@ class ExecuteProcess
             try {
                 $this->processIterator->work();
             } catch (IteratingYetException $e) {
-                sleep(5);
+                sleep(self::IDLE_TIME);
             }
             $process = $this->processRepository->byId($id);
         }
