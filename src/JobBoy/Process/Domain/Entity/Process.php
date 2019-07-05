@@ -106,6 +106,11 @@ class Process
         return $this->parameters;
     }
 
+    public function store(): ProcessStore
+    {
+        return $this->store;
+    }
+
     protected function changeStatus(ProcessStatus $processStatus): void
     {
         $this->status = $this->status->change($processStatus);

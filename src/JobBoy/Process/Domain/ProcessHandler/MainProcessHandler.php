@@ -29,6 +29,8 @@ class MainProcessHandler
 
         $process->handle();
         $handler->handle($id);
+
+        $process = $this->processRepository->byId($id);
         $process->release();
     }
 

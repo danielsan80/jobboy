@@ -11,7 +11,7 @@ class ProcessFactory
     /** @var string */
     protected $entityClass;
 
-    public function __construct(string $entityClass)
+    public function __construct(string $entityClass = Process::class)
     {
         $this->entityClass = $entityClass;
     }

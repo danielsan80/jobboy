@@ -62,6 +62,11 @@ class ProcessStore
         return new self($data);
     }
 
+    public function equals(ProcessStore $store): bool
+    {
+        return $this->data == $store->data();
+    }
+
     public function data(): array
     {
         return $this->data;

@@ -1,17 +1,17 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessWorker;
+namespace JobBoy\Process\Domain\ProcessIterator;
 
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\ProcessHandler\MainProcessHandler;
+use JobBoy\Process\Domain\ProcessIterator\Exception\IteratingYetException;
+use JobBoy\Process\Domain\ProcessIterator\Exception\NotIteratingYetException;
 use JobBoy\Process\Domain\ProcessStatus;
-use JobBoy\Process\Domain\ProcessWorker\Exception\NotWorkingYetException;
-use JobBoy\Process\Domain\ProcessWorker\Exception\WorkingYetException;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
-class ProcessWorker
+class ProcessIterator
 {
     const PROCESS_MANAGEMENT = 'process-management';
 
@@ -65,18 +65,18 @@ class ProcessWorker
     protected function lock(): void
     {
         if ($this->lock) {
-            throw new WorkingYetException();
+            throw new IteratingYetException();
         }
         $this->lock = $this->lockFactory->create(self::PROCESS_MANAGEMENT);
         if (!$this->lock->acquire()) {
-            throw new WorkingYetException();
+            throw new IteratingYetException();
         };
     }
 
     protected function release(): void
     {
         if (!$this->lock) {
-            throw new NotWorkingYetException();
+            throw new NotIteratingYetException();
         }
         $this->lock->release();
         $this->lock = null;
@@ -118,7 +118,7 @@ class ProcessWorker
         $id = $process->id();
         try {
             $this->mainProcessHandler->handle($id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $process = $this->processRepository->byId($id);
             $process->set('exception', $e->getMessage());
             $process->changeStatusToFailing();
