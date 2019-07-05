@@ -4,8 +4,8 @@ namespace JobBoy\Process\Application\Service;
 
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
-use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessHandler\MainProcessHandler;
+use JobBoy\Process\Domain\ProcessIterator\Exception\IteratingYetException;
+use JobBoy\Process\Domain\ProcessIterator\ProcessIterator;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
@@ -16,17 +16,17 @@ class ExecuteProcess
     protected $processFactory;
     /** @var ProcessRepositoryInterface */
     protected $processRepository;
-    /** @var MainProcessHandler */
-    protected $mainProcessHandler;
+    /** @var ProcessIterator */
+    protected $processIterator;
 
     public function __construct(
         ProcessFactory $processFactory,
         ProcessRepositoryInterface $processRepository,
-        MainProcessHandler $mainProcessHandler
+        ProcessIterator $processIterator
     )
     {
         $this->processRepository = $processRepository;
-        $this->mainProcessHandler = $mainProcessHandler;
+        $this->processIterator = $processIterator;
         $this->processFactory = $processFactory;
     }
 
@@ -40,11 +40,14 @@ class ExecuteProcess
 
         $this->processRepository->add($process);
 
-
+        $id = $process->id();
 
         while ($process->status()->isActive()) {
-            // $this->processWorker()->work();
-//            $this->mainProcessHandler->handle($id);
+            try {
+                $this->processIterator->work();
+            } catch (IteratingYetException $e) {
+                sleep(5);
+            }
             $process = $this->processRepository->byId($id);
         }
     }
