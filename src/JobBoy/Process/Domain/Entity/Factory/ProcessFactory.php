@@ -23,12 +23,12 @@ class ProcessFactory
 
     public function create(ProcessData $data): Process
     {
-        return new $this->entityClass($data);
+        return call_user_func($this->entityClass . '::create', $data);
     }
 
     public function denormalize(array $array): Process
     {
-        return call_user_func($this->entityClass . '::normalize', [$array]);
+        return call_user_func($this->entityClass . '::normalize', $array);
     }
 
 }

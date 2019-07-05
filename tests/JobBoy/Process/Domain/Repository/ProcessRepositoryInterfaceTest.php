@@ -6,6 +6,7 @@ use Dan\Clock\Domain\Clock;
 use Dan\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
 use Dan\FixtureHandler\FixtureHandler;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
+use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\ProcessParameters;
@@ -17,6 +18,8 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
 {
 
     abstract protected function createRepository(): ProcessRepositoryInterface;
+
+    abstract protected function createFactory(): ProcessFactory;
 
     protected function createFixtureHandler():FixtureHandler
     {
@@ -36,9 +39,10 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
     public function can_add_and_remove_a_process()
     {
         $repository = $this->createRepository();
+        $factory = $this->createFactory();
 
         $id = '00000000-0000-0000-0000-000000000001';
-        $process = Process::create(new ProcessData([
+        $process = $factory->create(new ProcessData([
             'id' => new ProcessId($id),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -71,12 +75,13 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
     public function all_is_sorted_by_updated_at()
     {
         $repository = $this->createRepository();
+        $factory = $this->createFactory();
 
         $fh = $this->createFixtureHandler();
 
         $this->aFewMinutesAgo($fh);
 
-        $process1 = Process::create(new ProcessData([
+        $process1 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000001'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -86,7 +91,7 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
 
         $this->aFewMinutesLater($fh);
 
-        $process2 = Process::create(new ProcessData([
+        $process2 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000002'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -128,12 +133,14 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
     public function all_slicing()
     {
         $repository = $this->createRepository();
+        $factory = $this->createFactory();
+
 
         $fh = $this->createFixtureHandler();
 
         $this->aFewMinutesAgo($fh);
 
-        $process1 = Process::create(new ProcessData([
+        $process1 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000001'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -143,7 +150,7 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
 
         $this->aFewMinutesLater($fh);
 
-        $process2 = Process::create(new ProcessData([
+        $process2 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000002'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -183,12 +190,14 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
     public function handled_method()
     {
         $repository = $this->createRepository();
+        $factory = $this->createFactory();
+
 
         $fh = $this->createFixtureHandler();
 
         $this->aFewMinutesAgo($fh);
 
-        $process1 = Process::create(new ProcessData([
+        $process1 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000001'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -198,7 +207,7 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
 
         $this->aFewMinutesLater($fh);
 
-        $process2 = Process::create(new ProcessData([
+        $process2 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000002'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -245,12 +254,14 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
     public function byStatus_method()
     {
         $repository = $this->createRepository();
+        $factory = $this->createFactory();
+
 
         $fh = $this->createFixtureHandler();
 
         $this->aFewMinutesAgo($fh);
 
-        $process1 = Process::create(new ProcessData([
+        $process1 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000001'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -260,7 +271,7 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
 
         $this->aFewMinutesLater($fh);
 
-        $process2 = Process::create(new ProcessData([
+        $process2 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000002'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -333,12 +344,14 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
     public function stale_method()
     {
         $repository = $this->createRepository();
+        $factory = $this->createFactory();
+
 
         $fh = $this->createFixtureHandler();
 
         $this->aFewMinutesAgo($fh);
 
-        $process1 = Process::create(new ProcessData([
+        $process1 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000001'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
@@ -348,7 +361,7 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
 
         $fh->getRef('time')->unfreeze();
 
-        $process2 = Process::create(new ProcessData([
+        $process2 = $factory->create(new ProcessData([
             'id' => new ProcessId('00000000-0000-0000-0000-000000000002'),
             'code' => 'a_job',
             'parameters' => new ProcessParameters(['a_key' => 'a_value'])
