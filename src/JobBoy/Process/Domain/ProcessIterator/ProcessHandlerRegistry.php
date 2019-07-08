@@ -1,6 +1,6 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessHandler;
+namespace JobBoy\Process\Domain\ProcessIterator;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 

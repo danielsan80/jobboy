@@ -1,6 +1,6 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator\Exception;
+namespace JobBoy\Process\Domain\IterationMaker\Exception;
 
 class NotIteratingYetException extends \RuntimeException
 {

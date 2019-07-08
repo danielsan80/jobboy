@@ -54,6 +54,21 @@ class Process
     }
 
 
+    public function id(): string
+    {
+        return $this->id;
+    }
+
+    public function code(): string
+    {
+        return $this->code;
+    }
+
+    public function parameters(): array
+    {
+        return $this->parameters;
+    }
+
     public function status(): string
     {
         return $this->status;
@@ -114,5 +129,7 @@ class Process
     {
         return $this->store;
     }
+
+
 
 }

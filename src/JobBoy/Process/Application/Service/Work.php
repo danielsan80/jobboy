@@ -3,19 +3,19 @@
 namespace JobBoy\Process\Application\Service;
 
 use Dan\Clock\Domain\Timer;
-use JobBoy\Process\Domain\ProcessIterator\Exception\IteratingYetException;
-use JobBoy\Process\Domain\ProcessIterator\ProcessIterator;
+use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
+use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 
 class Work
 {
-    /** @var ProcessIterator */
-    protected $processIterator;
+    /** @var IterationMaker */
+    protected $iterationMaker;
 
     public function __construct(
-        ProcessIterator $processIterator
+        IterationMaker $iterationMaker
     )
     {
-        $this->processIterator = $processIterator;
+        $this->iterationMaker = $iterationMaker;
     }
 
     public function execute(int $timeout, int $idleTime): void
@@ -24,7 +24,10 @@ class Work
 
         while (!$timer->isTimedout()) {
             try {
-                $this->processIterator->work();
+                $response = $this->iterationMaker->work();
+                if (!$response->hasWorked()) {
+                    sleep($idleTime);
+                }
             } catch (IteratingYetException $e) {
                 sleep($idleTime);
             }

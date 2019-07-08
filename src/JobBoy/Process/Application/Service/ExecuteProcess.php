@@ -2,12 +2,15 @@
 
 namespace JobBoy\Process\Application\Service;
 
+use Assert\Assertion;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
-use JobBoy\Process\Domain\ProcessIterator\Exception\IteratingYetException;
-use JobBoy\Process\Domain\ProcessIterator\ProcessIterator;
+use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
+use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
+use Ramsey\Uuid\Uuid;
 
 class ExecuteProcess
 {
@@ -17,24 +20,25 @@ class ExecuteProcess
     protected $processFactory;
     /** @var ProcessRepositoryInterface */
     protected $processRepository;
-    /** @var ProcessIterator */
-    protected $processIterator;
+    /** @var IterationMaker */
+    protected $iterationMaker;
 
     public function __construct(
         ProcessFactory $processFactory,
         ProcessRepositoryInterface $processRepository,
-        ProcessIterator $processIterator
+        IterationMaker $iterationMaker
     )
     {
         $this->processRepository = $processRepository;
-        $this->processIterator = $processIterator;
         $this->processFactory = $processFactory;
+        $this->iterationMaker = $iterationMaker;
     }
 
     public function execute(string $code, array $parameters = []): void
     {
         $process = $this->processFactory->create(
             (new ProcessData())
+                ->setId(new ProcessId(Uuid::uuid4()))
                 ->setCode($code)
                 ->setParameters(new ProcessParameters($parameters))
         );
@@ -45,7 +49,10 @@ class ExecuteProcess
 
         while ($process->status()->isActive()) {
             try {
-                $this->processIterator->work();
+                $response = $this->iterationMaker->work();
+                if (!$response->hasWorked()) {
+                    sleep(self::IDLE_TIME);
+                }
             } catch (IteratingYetException $e) {
                 sleep(self::IDLE_TIME);
             }

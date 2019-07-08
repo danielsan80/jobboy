@@ -2,25 +2,23 @@
 
 namespace JobBoy\Process\Application\Service;
 
-use Dan\Clock\Domain\Timer;
-use JobBoy\Process\Domain\ProcessIterator\Exception\IteratingYetException;
-use JobBoy\Process\Domain\ProcessIterator\ProcessIterator;
+use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 
 class IterateOneProcess
 {
-    /** @var ProcessIterator */
-    protected $processIterator;
+    /** @var IterationMaker */
+    protected $iterationMaker;
 
     public function __construct(
-        ProcessIterator $processIterator
+        IterationMaker $iterationMaker
     )
     {
-        $this->processIterator = $processIterator;
+        $this->iterationMaker = $iterationMaker;
     }
 
     public function execute(): void
     {
-        $this->processIterator->work();
+        $this->iterationMaker->work();
     }
 
 }
