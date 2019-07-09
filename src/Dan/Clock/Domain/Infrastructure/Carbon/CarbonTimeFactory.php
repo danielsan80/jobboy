@@ -3,9 +3,10 @@
 namespace Dan\Clock\Domain\Infrastructure\Carbon;
 
 use Carbon\Carbon;
+use Dan\Clock\Domain\FreezableInterface;
 use Dan\Clock\Domain\TimeFactoryInterface;
 
-class CarbonTimeFactory implements TimeFactoryInterface
+class CarbonTimeFactory implements TimeFactoryInterface, FreezableInterface
 {
 
     public function freeze($now): void
@@ -35,4 +36,5 @@ class CarbonTimeFactory implements TimeFactoryInterface
         $datetime->setTimestamp($carbon->getTimestamp());
         return $datetime;
     }
+
 }
