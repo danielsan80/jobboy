@@ -14,7 +14,6 @@ use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 class ProcessRepository implements ProcessRepositoryInterface
 {
     const DEFAULT_NAMESPACE = 'jobboy-processes';
-    const DEFAULT_STALE_DAYS = 90;
 
     /** @var \Redis */
     protected $redis;

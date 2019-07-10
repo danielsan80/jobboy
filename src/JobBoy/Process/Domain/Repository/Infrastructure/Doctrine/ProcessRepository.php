@@ -18,14 +18,11 @@ use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\ProcessStore;
-use JobBoy\Process\Domain\Repository\Infrastructure\Util\ProcessRepositoryUtil;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class ProcessRepository implements ProcessRepositoryInterface
 {
     const DEFAULT_TABLE = '__process';
-    const DEFAULT_STALE_DAYS = 90;
-
 
     /** @var ProcessFactory */
     protected $processFactory;
@@ -81,8 +78,7 @@ class ProcessRepository implements ProcessRepositoryInterface
         $qb = $this->connection->createQueryBuilder()
             ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','asc')
-        ;
+            ->orderBy('updated_at', 'asc');
 
         $processes = $this->_hydrateProcesses($qb, $start, $length);
 
@@ -94,9 +90,8 @@ class ProcessRepository implements ProcessRepositoryInterface
         $qb = $this->connection->createQueryBuilder()
             ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','asc')
-            ->andWhere('handled_at IS NOT NULL')
-        ;
+            ->orderBy('updated_at', 'asc')
+            ->andWhere('handled_at IS NOT NULL');
 
         $processes = $this->_hydrateProcesses($qb, $start, $length);
 
@@ -108,10 +103,9 @@ class ProcessRepository implements ProcessRepositoryInterface
         $qb = $this->connection->createQueryBuilder()
             ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','asc')
+            ->orderBy('updated_at', 'asc')
             ->andWhere('status = :status')
-            ->setParameter('status', $status->toScalar())
-        ;
+            ->setParameter('status', $status->toScalar());
 
         $processes = $this->_hydrateProcesses($qb, $start, $length);
 
@@ -129,10 +123,9 @@ class ProcessRepository implements ProcessRepositoryInterface
         $qb = $this->connection->createQueryBuilder()
             ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','asc')
+            ->orderBy('updated_at', 'asc')
             ->andWhere('updated_at < :until')
-            ->setParameter('until', $until->format(\DateTime::ISO8601))
-        ;
+            ->setParameter('until', $until->format(\DateTime::ISO8601));
 
         $processes = $this->_hydrateProcesses($qb, $start, $length);
 
@@ -202,8 +195,7 @@ class ProcessRepository implements ProcessRepositoryInterface
                 'ended_at' => $this->_datetimeToString($process->endedAt()),
                 'handled_at' => $this->_datetimeToString($process->handledAt()),
                 'store' => json_encode($process->store()->toScalar()),
-            ])
-        ;
+            ]);
 
         $qb->execute();
 
@@ -214,7 +206,7 @@ class ProcessRepository implements ProcessRepositoryInterface
     {
 
         $this->connection->executeUpdate('
-            UPDATE '.$this->tableName.' SET
+            UPDATE ' . $this->tableName . ' SET
               status = ?,
               updated_at = ?,
               started_at = ?,
@@ -238,7 +230,7 @@ class ProcessRepository implements ProcessRepositoryInterface
 
         $statement = $this->connection->executeQuery('
             SELECT *
-            FROM '.$this->tableName.'
+            FROM ' . $this->tableName . '
             WHERE id = ?',
             [
                 $id
@@ -282,7 +274,7 @@ class ProcessRepository implements ProcessRepositoryInterface
     protected function _delete(TouchCallbackProcess $process): void
     {
         $this->connection->executeUpdate('
-            DELETE FROM '.$this->tableName.' 
+            DELETE FROM ' . $this->tableName . ' 
             WHERE id = ?',
             [
                 $process->id()->toScalar(),
@@ -293,10 +285,10 @@ class ProcessRepository implements ProcessRepositoryInterface
     protected function _hydrateProcesses(QueryBuilder $qb, ?int $start = null, ?int $length = null): array
     {
 
-        if ($start!== null) {
+        if ($start !== null) {
             $qb->setFirstResult($start);
         }
-        if ($length!== null) {
+        if ($length !== null) {
             $qb->setMaxResults($length);
         }
 
@@ -328,7 +320,7 @@ class ProcessRepository implements ProcessRepositoryInterface
             return null;
         }
 
-        return \DateTimeImmutable::createFromFormat(\DateTime::ISO8601,$string);
+        return \DateTimeImmutable::createFromFormat(\DateTime::ISO8601, $string);
     }
 
 }

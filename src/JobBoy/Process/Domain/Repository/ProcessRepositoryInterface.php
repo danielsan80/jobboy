@@ -8,6 +8,8 @@ use JobBoy\Process\Domain\ProcessStatus;
 
 interface ProcessRepositoryInterface
 {
+    const DEFAULT_STALE_DAYS = 90;
+
     public function add(Process $process): void;
     public function remove(Process $process): void;
 
