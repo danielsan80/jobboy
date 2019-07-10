@@ -3,9 +3,10 @@
 namespace JobBoy\Process\Domain\Repository\Infrastructure\Redis;
 
 use Assert\Assertion;
+use Dan\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
-use JobBoy\Process\Domain\Entity\Infrastructure\Redis\Process as RedisProcess;
+use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\Process as TouchCallbackProcess;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\Repository\Infrastructure\Util\ProcessRepositoryUtil;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
@@ -13,6 +14,7 @@ use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 class ProcessRepository implements ProcessRepositoryInterface
 {
     const DEFAULT_NAMESPACE = 'jobboy-processes';
+    const DEFAULT_STALE_DAYS = 90;
 
     /** @var \Redis */
     protected $redis;
@@ -36,29 +38,29 @@ class ProcessRepository implements ProcessRepositoryInterface
     }
 
     protected function onTouch(Process $process) {
-        $this->set($process);
+        $this->_set($process);
     }
 
     public function add(Process $process): void
     {
-        Assertion::isInstanceOf($process, RedisProcess::class);
-        $this->set($process);
+        Assertion::isInstanceOf($process, TouchCallbackProcess::class);
+        $this->_set($process);
     }
 
     public function remove(Process $process): void
     {
-        $this->unset($process);
+        $this->_unset($process);
     }
 
 
     public function byId(ProcessId $id): ?Process
     {
-        return $this->get((string)$id);
+        return $this->_get((string)$id);
     }
 
     public function all(?int $start = null, ?int $length = null): array
     {
-        $processes = $this->getAll();
+        $processes = $this->_all();
 
         $processes = array_values($processes);
 
@@ -70,7 +72,7 @@ class ProcessRepository implements ProcessRepositoryInterface
 
     public function handled(?int $start = null, ?int $length = null): array
     {
-        $processes = $this->getAll();
+        $processes = $this->_all();
 
         $processes = array_filter($processes, function (Process $process) {
             return $process->isHandled();
@@ -83,7 +85,7 @@ class ProcessRepository implements ProcessRepositoryInterface
 
     public function byStatus(ProcessStatus $status, ?int $start = null, ?int $length = null): array
     {
-        $processes = $this->getAll();
+        $processes = $this->_all();
         $processes = array_filter($processes, function (Process $process) use ($status) {
             return $process->status()->equals($status);
         });
@@ -97,7 +99,11 @@ class ProcessRepository implements ProcessRepositoryInterface
 
     public function stale(?\DateTimeImmutable $until = null, ?int $start = null, ?int $length = null): array
     {
-        $processes = $this->getAll();
+        if (!$until) {
+            $until = Clock::createDateTimeImmutable(sprintf('- %d days', self::DEFAULT_STALE_DAYS));
+        }
+
+        $processes = $this->_all();
         $processes = array_filter($processes, function (Process $process) use ($until) {
             return $process->updatedAt() < $until;
         });
@@ -107,14 +113,14 @@ class ProcessRepository implements ProcessRepositoryInterface
         return $processes;
     }
 
-    protected function set(RedisProcess $process): void
+    protected function _set(TouchCallbackProcess $process): void
     {
         $process->removeTouchCallback($this->touchCallback);
         $this->redis->hset($this->namespace, (string)$process->id(), $process);
         $process->addTouchCallback($this->touchCallback);
     }
 
-    protected function get(string $id): ?RedisProcess
+    protected function _get(string $id): ?TouchCallbackProcess
     {
         $process = $this->redis->hget($this->namespace, $id);
 
@@ -127,13 +133,13 @@ class ProcessRepository implements ProcessRepositoryInterface
         return $process;
     }
 
-    protected function unset(RedisProcess $process): void
+    protected function _unset(TouchCallbackProcess $process): void
     {
         $this->redis->hDel($this->namespace, (string)$process->id());
         $process->removeTouchCallback($this->touchCallback);
     }
 
-    protected function getAll(): array
+    protected function _all(): array
     {
         $processes = $this->redis->hGetAll($this->namespace);
         array_walk($processes, function($process) {

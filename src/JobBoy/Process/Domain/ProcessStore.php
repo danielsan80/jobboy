@@ -72,4 +72,9 @@ class ProcessStore
         return $this->data;
     }
 
+    public function toScalar(): array
+    {
+        return $this->data();
+    }
+
 }

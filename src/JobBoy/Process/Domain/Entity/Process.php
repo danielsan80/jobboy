@@ -111,10 +111,12 @@ class Process
         return $this->store;
     }
 
-    protected function changeStatus(ProcessStatus $processStatus): void
+    protected function changeStatus(ProcessStatus $status): void
     {
-        $this->status = $this->status->change($processStatus);
-        $this->touch();
+        $this->status = $this->status->change($status);
+        if (!$this->status->equals($status)) {
+            $this->touch();
+        }
     }
 
     public function changeStatusToRunning(): void
@@ -206,19 +208,30 @@ class Process
 
     public function release(): void
     {
+        if ($this->handledAt === null) {
+            return;
+        }
         $this->handledAt = null;
         $this->touch();
     }
 
     public function set($key, $value): void
     {
-        $this->store = $this->store->set($key, $value);
+        $store = $this->store->set($key, $value);
+        if ($this->store->equals($store)) {
+            return;
+        }
+        $this->store = $store;
         $this->touch();
     }
 
     public function unset($key): void
     {
-        $this->store = $this->store->unset($key);
+        $store = $this->store->unset($key);
+        if ($this->store->equals($store)) {
+            return;
+        }
+        $this->store = $store;
         $this->touch();
     }
 
@@ -248,13 +261,22 @@ class Process
 
     public function prepend($data): void
     {
-        $this->store = $this->store->prepend($data);
+        $store = $this->store->prepend($data);
+        if ($this->store->equals($store)) {
+            return;
+        }
+        $this->store = $store;
         $this->touch();
     }
 
     public function append($data): void
     {
-        $this->store = $this->store->append($data);
+        $store = $this->store->append($data);
+        if ($this->store->equals($store)) {
+            return;
+        }
+
+        $this->store = $store;
         $this->touch();
     }
 

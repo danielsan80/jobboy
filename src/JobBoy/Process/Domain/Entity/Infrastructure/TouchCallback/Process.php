@@ -1,8 +1,7 @@
 <?php
 
-namespace JobBoy\Process\Domain\Entity\Infrastructure\Redis;
+namespace JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback;
 
-use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Process as BaseProcess;
 
 class Process extends BaseProcess

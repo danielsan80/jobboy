@@ -3,7 +3,7 @@
 namespace Tests\JobBoy\Process\Domain\Repository\Infrastructure\Redis;
 
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
-use JobBoy\Process\Domain\Entity\Infrastructure\Redis\Process;
+use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\Process;
 use JobBoy\Process\Domain\Repository\Infrastructure\Redis\ProcessRepository;
 use JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
