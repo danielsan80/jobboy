@@ -21,10 +21,6 @@ trait HydrateMethod
             Assertion::null($data->startedAt());
         }
 
-        if (!$data->status()->isStarting()) {
-            Assertion::notNull($data->startedAt());
-        }
-
         if ($data->status()->isActive()) {
             Assertion::null($data->endedAt());
         }

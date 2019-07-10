@@ -81,7 +81,7 @@ class ProcessRepository implements ProcessRepositoryInterface
         $qb = $this->connection->createQueryBuilder()
             ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','desc')
+            ->orderBy('updated_at','asc')
         ;
 
         $processes = $this->_hydrateProcesses($qb, $start, $length);
@@ -92,8 +92,9 @@ class ProcessRepository implements ProcessRepositoryInterface
     public function handled(?int $start = null, ?int $length = null): array
     {
         $qb = $this->connection->createQueryBuilder()
+            ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','desc')
+            ->orderBy('updated_at','asc')
             ->andWhere('handled_at IS NOT NULL')
         ;
 
@@ -105,8 +106,9 @@ class ProcessRepository implements ProcessRepositoryInterface
     public function byStatus(ProcessStatus $status, ?int $start = null, ?int $length = null): array
     {
         $qb = $this->connection->createQueryBuilder()
+            ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','desc')
+            ->orderBy('updated_at','asc')
             ->andWhere('status = :status')
             ->setParameter('status', $status->toScalar())
         ;
@@ -125,10 +127,11 @@ class ProcessRepository implements ProcessRepositoryInterface
         }
 
         $qb = $this->connection->createQueryBuilder()
+            ->select('*')
             ->from($this->tableName)
-            ->orderBy('updated_at','desc')
+            ->orderBy('updated_at','asc')
             ->andWhere('updated_at < :until')
-            ->setParameter('until', $until)
+            ->setParameter('until', $until->format(\DateTime::ISO8601))
         ;
 
         $processes = $this->_hydrateProcesses($qb, $start, $length);
@@ -153,16 +156,16 @@ class ProcessRepository implements ProcessRepositoryInterface
 
         $table = $schema->createTable($this->tableName);
 
-        $table->addColumn('id', Type::GUID, ['length' => 36]);
+        $table->addColumn('id', Type::STRING, ['length' => 36]);
         $table->addColumn('code', Type::STRING, ['length' => 255]);
-        $table->addColumn('parameters', Type::JSON);
+        $table->addColumn('parameters', Type::TEXT);
         $table->addColumn('status', Type::STRING, ['length' => 255]);
-        $table->addColumn('created_at', Type::DATETIMETZ_IMMUTABLE, []);
-        $table->addColumn('updated_at', Type::DATETIMETZ_IMMUTABLE, []);
-        $table->addColumn('started_at', Type::DATETIMETZ_IMMUTABLE, ['notnull' => false]);
-        $table->addColumn('ended_at', Type::DATETIMETZ_IMMUTABLE, ['notnull' => false]);
-        $table->addColumn('handled_at', Type::DATETIMETZ_IMMUTABLE, ['notnull' => false]);
-        $table->addColumn('store', Type::JSON);
+        $table->addColumn('created_at', Type::STRING, []);
+        $table->addColumn('updated_at', Type::STRING, []);
+        $table->addColumn('started_at', Type::STRING, ['notnull' => false]);
+        $table->addColumn('ended_at', Type::STRING, ['notnull' => false]);
+        $table->addColumn('handled_at', Type::STRING, ['notnull' => false]);
+        $table->addColumn('store', Type::TEXT);
 
         $table->setPrimaryKey(['id']);
 
@@ -191,25 +194,14 @@ class ProcessRepository implements ProcessRepositoryInterface
             ->setParameters([
                 'id' => (string)$process->id(),
                 'code' => $process->code(),
-                'parameters' => $process->parameters()->toScalar(),
+                'parameters' => json_encode($process->parameters()->toScalar()),
                 'status' => $process->status()->toScalar(),
-                'created_at' => $process->createdAt(),
-                'updated_at' => $process->updatedAt(),
-                'started_at' => $process->startedAt(),
-                'ended_at' => $process->endedAt(),
-                'handled_at' => $process->handledAt(),
-                'store' => $process->store()->toScalar(),
-            ],[
-                'id' => Type::GUID,
-                'code' => Type::STRING,
-                'parameters' =>Type::JSON,
-                'status' => Type::STRING,
-                'created_at' => Type::DATETIMETZ_IMMUTABLE,
-                'updated_at' => Type::DATETIMETZ_IMMUTABLE,
-                'started_at' =>  Type::DATETIMETZ_IMMUTABLE,
-                'ended_at' => Type::DATETIMETZ_IMMUTABLE,
-                'handled_at' =>Type::DATETIMETZ_IMMUTABLE,
-                'store' => Type::JSON,
+                'created_at' => $this->_datetimeToString($process->createdAt()),
+                'updated_at' => $this->_datetimeToString($process->updatedAt()),
+                'started_at' => $this->_datetimeToString($process->startedAt()),
+                'ended_at' => $this->_datetimeToString($process->endedAt()),
+                'handled_at' => $this->_datetimeToString($process->handledAt()),
+                'store' => json_encode($process->store()->toScalar()),
             ])
         ;
 
@@ -222,7 +214,7 @@ class ProcessRepository implements ProcessRepositoryInterface
     {
 
         $this->connection->executeUpdate('
-            UPDATE ? SET
+            UPDATE '.$this->tableName.' SET
               status = ?,
               updated_at = ?,
               started_at = ?,
@@ -231,13 +223,12 @@ class ProcessRepository implements ProcessRepositoryInterface
               store = ?
             WHERE id = ?',
             [
-                $this->tableName,
                 $process->status()->toScalar(),
-                $process->updatedAt(),
-                $process->startedAt(),
-                $process->endedAt(),
-                $process->handledAt(),
-                $process->store()->toScalar(),
+                $this->_datetimeToString($process->updatedAt()),
+                $this->_datetimeToString($process->startedAt()),
+                $this->_datetimeToString($process->endedAt()),
+                $this->_datetimeToString($process->handledAt()),
+                json_encode($process->store()->toScalar()),
                 $process->id()->toScalar(),
             ]);
     }
@@ -247,10 +238,9 @@ class ProcessRepository implements ProcessRepositoryInterface
 
         $statement = $this->connection->executeQuery('
             SELECT *
-            FROM ?
+            FROM '.$this->tableName.'
             WHERE id = ?',
             [
-                $this->tableName,
                 $id
             ]);
 
@@ -269,31 +259,32 @@ class ProcessRepository implements ProcessRepositoryInterface
         $process = $this->processFactory->create(new ProcessData([
             'id' => new ProcessId($data['id']),
             'code' => $data['code'],
-            'parameters' => new ProcessParameters($data['parameters']),
+            'parameters' => new ProcessParameters(json_decode($data['parameters'], true)),
         ]));
 
         Assertion::isInstanceOf($process, HydratableProcess::class);
 
         $process->hydrate(new HydratableProcessData([
             'status' => new ProcessStatus($data['status']),
-            'created_at' => $data['created_at'],
-            'updated_at' => $data['updated_at'],
-            'started_at' => $data['started_at'],
-            'ended_at' => $data['ended_at'],
-            'handled_at' => $data['handled_at'],
-            'store' => new ProcessStore($data['store']),
+            'createdAt' => $this->_stringToDateTime($data['created_at']),
+            'updatedAt' => $this->_stringToDateTime($data['updated_at']),
+            'startedAt' => $this->_stringToDateTime($data['started_at']),
+            'endedAt' => $this->_stringToDateTime($data['ended_at']),
+            'handledAt' => $this->_stringToDateTime($data['handled_at']),
+            'store' => new ProcessStore(json_decode($data['store'], true)),
         ]));
 
         $process->addTouchCallback($this->touchCallback);
+
+        return $process;
     }
 
     protected function _delete(TouchCallbackProcess $process): void
     {
         $this->connection->executeUpdate('
-            DELETE FROM ? 
+            DELETE FROM '.$this->tableName.' 
             WHERE id = ?',
             [
-                $this->tableName,
                 $process->id()->toScalar(),
             ]);
         $process->removeTouchCallback($this->touchCallback);
@@ -320,6 +311,24 @@ class ProcessRepository implements ProcessRepositoryInterface
         }
 
         return $processes;
+    }
+
+    protected function _datetimeToString(?\DateTimeImmutable $date): ?string
+    {
+        if (!$date) {
+            return null;
+        }
+
+        return $date->format(\DateTime::ISO8601);
+    }
+
+    protected function _stringToDateTime(?string $string): ?\DateTimeImmutable
+    {
+        if (!$string) {
+            return null;
+        }
+
+        return \DateTimeImmutable::createFromFormat(\DateTime::ISO8601,$string);
     }
 
 }

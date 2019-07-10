@@ -113,8 +113,8 @@ class Process
 
     protected function changeStatus(ProcessStatus $status): void
     {
-        $this->status = $this->status->change($status);
         if (!$this->status->equals($status)) {
+            $this->status = $this->status->change($status);
             $this->touch();
         }
     }

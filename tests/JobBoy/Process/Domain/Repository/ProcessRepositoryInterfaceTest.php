@@ -389,13 +389,24 @@ abstract class ProcessRepositoryInterfaceTest extends TestCase
         $this->assertTrue($process1->id()->equals($process2->id()));
         $this->assertEquals($process1->code(), $process2->code());
         $this->assertTrue($process1->parameters()->equals($process2->parameters()));
-        $this->assertEquals($process1->createdAt(), $process2->createdAt());
-        $this->assertEquals($process1->updatedAt(), $process2->updatedAt());
-        $this->assertEquals($process1->startedAt(), $process2->startedAt());
-        $this->assertEquals($process1->endedAt(), $process2->endedAt());
-        $this->assertEquals($process1->handledAt(), $process2->handledAt());
+        $this->assertDateTimeEquals($process1->createdAt(), $process2->createdAt());
+        $this->assertDateTimeEquals($process1->updatedAt(), $process2->updatedAt());
+        $this->assertDateTimeEquals($process1->startedAt(), $process2->startedAt());
+        $this->assertDateTimeEquals($process1->endedAt(), $process2->endedAt());
+        $this->assertDateTimeEquals($process1->handledAt(), $process2->handledAt());
         $this->assertTrue($process1->status()->equals($process2->status()));
         $this->assertTrue($process1->store()->equals($process2->store()));
+
+    }
+
+    protected function assertDateTimeEquals(?\DateTimeImmutable $date1, ?\DateTimeImmutable $date2)
+    {
+        if ($date1 === null) {
+            $this->assertNull($date2);
+            return;
+        }
+
+        $this->assertEquals($date1->format(\DateTime::ISO8601), $date2->format(\DateTime::ISO8601));
 
     }
 

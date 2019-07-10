@@ -152,43 +152,43 @@ class ProcessStatus
         return $this->value();
     }
 
-    public function equals(ProcessStatus $processStatus): bool
+    public function equals(ProcessStatus $status): bool
     {
-        return $this->value() === $processStatus->value();
+        return $this->value() === $status->value();
     }
 
-    public function change(ProcessStatus $processStatus): self
+    public function change(ProcessStatus $status): self
     {
-        if ($this->equals($processStatus)) {
-            return $processStatus;
+        if ($this->equals($status)) {
+            return $status;
         }
 
-        if (in_array($processStatus->value(), [
+        if (in_array($status->value(), [
             self::STARTING,
         ])) {
-            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $processStatus->value()));
+            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $status->value()));
         }
 
         if (in_array($this->value(), [
             self::FAILED,
             self::COMPLETED,
         ])) {
-            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $processStatus->value()));
+            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $status->value()));
         }
 
         if (
             in_array($this->value(), [self::ENDING,])
-            && !in_array($processStatus->value(), [self::FAILING, self::FAILED, self::COMPLETED])  ) {
-            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $processStatus->value()));
+            && !in_array($status->value(), [self::FAILING, self::FAILED, self::COMPLETED])  ) {
+            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $status->value()));
         }
 
         if (
             in_array($this->value(), [self::FAILING,])
-            && !in_array($processStatus->value(), [self::FAILED])  ) {
-            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $processStatus->value()));
+            && !in_array($status->value(), [self::FAILED])  ) {
+            throw new \InvalidArgumentException(sprintf('Status transition from "%s" to "%s" is not allowed', $this->value(), $status->value()));
         }
 
-        return new static($processStatus->value());
+        return new static($status->value());
     }
 
     public function __toString()
