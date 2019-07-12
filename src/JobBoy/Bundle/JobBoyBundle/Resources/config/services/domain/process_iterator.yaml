@@ -1,0 +1,10 @@
+
+JobBoy\Process\Domain\ProcessIterator\ProcessIterator:
+  class: JobBoy\Process\Domain\ProcessIterator\ProcessIterator
+  arguments:
+    - JobBoy\Process\Domain\ProcessIterator\ProcessHandlerRegistry
+    - JobBoy\Process\Domain\Repository\ProcessRepositoryInterface
+
+
+JobBoy\Process\Domain\ProcessIterator\ProcessHandlerRegistry:
+  class: JobBoy\Process\Domain\ProcessIterator\ProcessHandlerRegistry

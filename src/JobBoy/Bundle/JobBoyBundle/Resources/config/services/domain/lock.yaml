@@ -1,0 +1,7 @@
+
+JobBoy\Process\Domain\Lock\LockFactoryInterface:
+  alias: JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory
+
+
+JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory:
+  class: JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory
