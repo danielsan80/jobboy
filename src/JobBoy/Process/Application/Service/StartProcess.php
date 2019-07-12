@@ -4,8 +4,10 @@ namespace JobBoy\Process\Application\Service;
 
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
+use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
+use Ramsey\Uuid\Uuid;
 
 class StartProcess
 {
@@ -28,6 +30,7 @@ class StartProcess
     {
         $process = $this->processFactory->create(
             (new ProcessData())
+                ->setId(new ProcessId(Uuid::uuid4()))
                 ->setCode($code)
                 ->setParameters(new ProcessParameters($parameters))
         );
