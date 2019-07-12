@@ -1,9 +1,9 @@
 <?php
 
 
-namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler;
+namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler\ProcessRepository;
 
-use http\Exception\InvalidArgumentException;
+use JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler\RegisterProcessRepositoryPass;
 use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\HydratableProcess;
 use JobBoy\Process\Domain\Repository\Infrastructure\Doctrine\ProcessRepository;
 use Symfony\Component\Config\FileLocator;

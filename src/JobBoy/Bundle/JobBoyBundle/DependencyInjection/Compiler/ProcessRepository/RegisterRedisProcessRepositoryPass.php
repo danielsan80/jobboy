@@ -1,9 +1,9 @@
 <?php
 
 
-namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler;
+namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler\ProcessRepository;
 
-use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\HydratableProcess;
+use JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler\RegisterProcessRepositoryPass;
 use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\Process;
 use JobBoy\Process\Domain\Repository\Infrastructure\Redis\ProcessRepository;
 use Symfony\Component\Config\FileLocator;

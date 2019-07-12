@@ -20,12 +20,12 @@ class JobBoyExtension extends Extension
 
         $configuration = new Configuration();
 
-        $configs = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('jobboy.process_repository.service_id', $configs['process_repository']);
+        $container->setParameter('jobboy.process_repository.service_id', $config['process_repository']);
 
-        if (isset($configs['process_class'])) {
-            $container->setParameter('jobboy.process.class', $configs['process_class']);
+        if (isset($config['process_class'])) {
+            $container->setParameter('jobboy.process.class', $config['process_class']);
         } else {
             if (!$container->hasParameter('jobboy.process.class')) {
                 $container->setParameter('jobboy.process.class', Process::class);
