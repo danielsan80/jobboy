@@ -1,0 +1,16 @@
+services:
+
+
+  JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory:
+    class: JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory
+    arguments:
+      - '%jobboy.redis.host%'
+
+  Redis:
+    class: Redis
+    factory: ['@JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory', 'create']
+
+  JobBoy\Process\Domain\Repository\Infrastructure\Redis\ProcessRepository:
+    class: JobBoy\Process\Domain\Repository\Infrastructure\Redis\ProcessRepository
+    arguments:
+      - '@Redis'

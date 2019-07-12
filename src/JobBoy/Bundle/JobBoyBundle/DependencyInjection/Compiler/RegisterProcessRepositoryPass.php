@@ -10,11 +10,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class RegisterProcessRepositoryPass implements CompilerPassInterface
 {
+    const PROCESS_REPOSITORY_SERVICE_ID = 'jobboy.process_repository.service_id';
+
     public function process(ContainerBuilder $container)
     {
-        $serviceParameter = 'jobboy.process_repository.service_id';
 
-        $serviceId = $container->getParameter($serviceParameter);
+        $serviceId = $container->getParameter(self::PROCESS_REPOSITORY_SERVICE_ID);
 
         CompilerPassUtil::assertDefinitionImplementsInterface($container, $serviceId, ProcessRepositoryInterface::class);
 

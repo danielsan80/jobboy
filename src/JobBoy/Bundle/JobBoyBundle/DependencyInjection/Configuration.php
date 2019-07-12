@@ -34,7 +34,6 @@ class Configuration implements ConfigurationInterface
                     ->info('a service definition id implementing JobBoy\Process\Domain\Repository\ProcessRepositoryInterface')
                 ->end()
                 ->scalarNode('process_class')
-                    ->defaultValue(Process::class)
                     ->info('a FQCN of the Process class to use in the JobBoy\Process\Domain\Factory\ProcessFactory')
                 ->end()
             ->end();
