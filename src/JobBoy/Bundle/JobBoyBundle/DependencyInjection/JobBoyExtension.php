@@ -32,6 +32,10 @@ class JobBoyExtension extends Extension
             }
         }
 
+        if (isset($config['redis']['host'])) {
+            $container->setParameter('jobboy.redis.host', $config['redis']['host']);
+        }
+
         $locator = new FileLocator(__DIR__ . '/../Resources/config');
 
         $loader = new DirectoryLoader($container, $locator);

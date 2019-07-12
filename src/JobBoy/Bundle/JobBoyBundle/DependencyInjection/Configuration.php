@@ -27,13 +27,21 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-            ->scalarNode('process_repository')
-            ->defaultValue(ProcessRepository::class)
-            ->info('a service definition id implementing JobBoy\Process\Domain\Repository\ProcessRepositoryInterface')
-            ->end()
-            ->scalarNode('process_class')
-            ->info('a FQCN of the Process class to use in the JobBoy\Process\Domain\Factory\ProcessFactory')
-            ->end()
+                ->scalarNode('process_repository')
+                    ->defaultValue(ProcessRepository::class)
+                    ->info('a service definition id implementing JobBoy\Process\Domain\Repository\ProcessRepositoryInterface')
+                ->end()
+                ->scalarNode('process_class')
+                    ->info('a FQCN of the Process class to use in the JobBoy\Process\Domain\Factory\ProcessFactory')
+                ->end()
+                ->arrayNode('redis')
+                    ->info('used in case of RedisProcessRepository, ignored otherwise')
+                    ->children()
+                        ->scalarNode('host')
+                            ->info('the redis host for storing processes')
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

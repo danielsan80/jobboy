@@ -25,16 +25,16 @@ class RegisterRedisProcessRepositoryPass implements CompilerPassInterface
         }
 
 
-        if (!$container->hasDefinition('jobboy.redis.host')) {
+        if (!$container->hasParameter('jobboy.redis.host')) {
             throw new \InvalidArgumentException(sprintf(
-                'to use %s you need to set `jobboy.redis.host` parameters',
+                'to use %s you need to set `job_boy.redis.host` config',
                 ProcessRepository::class
             ));
         }
 
         $container->setParameter('jobboy.process.class', Process::class);
 
-        $locator = new FileLocator(__DIR__ . '/../Resources/config/process_repositories');
+        $locator = new FileLocator(__DIR__ . '/../../../Resources/config/process_repositories');
 
         $loader = new YamlFileLoader($container, $locator);
 
