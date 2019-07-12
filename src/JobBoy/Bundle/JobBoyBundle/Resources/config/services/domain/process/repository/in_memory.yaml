@@ -1,0 +1,5 @@
+services:
+
+
+  JobBoy\Process\Domain\Repository\Infrastructure\InMemory\ProcessRepository:
+    class: JobBoy\Process\Domain\Repository\Infrastructure\InMemory\ProcessRepository

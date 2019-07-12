@@ -1,8 +1,9 @@
+services:
 
 
-JobBoy\Process\Domain\IterationMaker\IterationMaker:
-  class: JobBoy\Process\Domain\IterationMaker\IterationMaker
-  arguments:
-    - JobBoy\Process\Domain\Repository\ProcessRepositoryInterface
-    - JobBoy\Process\Domain\Lock\LockFactoryInterface
-    - JobBoy\Process\Domain\ProcessIterator\ProcessIterator
+  JobBoy\Process\Domain\IterationMaker\IterationMaker:
+    class: JobBoy\Process\Domain\IterationMaker\IterationMaker
+    arguments:
+      - JobBoy\Process\Domain\Repository\ProcessRepositoryInterface
+      - JobBoy\Process\Domain\Lock\LockFactoryInterface
+      - JobBoy\Process\Domain\ProcessIterator\ProcessIterator
