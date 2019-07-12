@@ -34,7 +34,8 @@ class RegisterDoctrineProcessRepositoryPass implements CompilerPassInterface
 
         $container->setParameter('jobboy.process.class', HydratableProcess::class);
 
-        $locator = new FileLocator(__DIR__ . '/../Resources/config/process_repositories');
+
+        $locator = new FileLocator(__DIR__ . '/../../../Resources/config/process_repositories');
 
         $loader = new YamlFileLoader($container, $locator);
 

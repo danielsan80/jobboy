@@ -5,6 +5,6 @@ services:
     class: JobBoy\Process\Domain\Repository\Infrastructure\Doctrine\ProcessRepository
     arguments:
       - '@JobBoy\Process\Domain\Entity\Factory\ProcessFactory'
-      - '@doctrine.dbal.connection'
+      - '@doctrine.dbal.default_connection'
 
 

@@ -139,15 +139,15 @@ class ProcessRepository implements ProcessRepositoryInterface
             return null;
         }
 
-        return $this->configureTable($schema);
+        return self::configureTable($this->tableName, $schema);
     }
 
 
-    public function configureTable(Schema $schema = null)
+    public static function configureTable($tableName = self::DEFAULT_TABLE, Schema $schema = null)
     {
         $schema = $schema ?: new Schema();
 
-        $table = $schema->createTable($this->tableName);
+        $table = $schema->createTable($tableName);
 
         $table->addColumn('id', Type::STRING, ['length' => 36]);
         $table->addColumn('code', Type::STRING, ['length' => 255]);
