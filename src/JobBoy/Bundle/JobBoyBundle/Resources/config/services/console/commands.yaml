@@ -2,6 +2,6 @@ services:
   JobBoy\Bundle\JobBoyBundle\Command\StartProcessCommand:
     class: JobBoy\Bundle\JobBoyBundle\Command\StartProcessCommand
     arguments:
-      - "@JobBoy\Process\Application\Service\StartProcess"
+      - '@JobBoy\Process\Application\Service\StartProcess'
     tags:
       - { name: 'console.command' }

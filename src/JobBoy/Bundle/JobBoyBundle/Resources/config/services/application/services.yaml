@@ -3,29 +3,29 @@ services:
   JobBoy\Process\Application\Service\ExecuteProcess:
     class: JobBoy\Process\Application\Service\ExecuteProcess
     arguments:
-      - JobBoy\Process\Domain\Factory\ProcessFactory
-      - JobBoy\Process\Domain\Repository\ProcessRepositoryInterface
-      - JobBoy\Process\Domain\IterationMaker\IterationMaker
+      - '@JobBoy\Process\Domain\Entity\Factory\ProcessFactory'
+      - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
+      - '@JobBoy\Process\Domain\IterationMaker\IterationMaker'
 
 
   JobBoy\Process\Application\Service\IterateOneProcess:
     class: JobBoy\Process\Application\Service\IterateOneProcess
     arguments:
-      - JobBoy\Process\Domain\IterationMaker\IterationMaker
+      - '@JobBoy\Process\Domain\IterationMaker\IterationMaker'
 
 
 
   JobBoy\Process\Application\Service\ListProcesses:
     class: JobBoy\Process\Application\Service\ListProcesses
     arguments:
-      - JobBoy\Process\Domain\Repository\ProcessRepositoryInterface
+      - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
 
 
 
   JobBoy\Process\Application\Service\RemoveOldProcesses:
     class: JobBoy\Process\Application\Service\RemoveOldProcesses
     arguments:
-      - JobBoy\Process\Domain\Repository\ProcessRepositoryInterface
+      - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
 
 
 
@@ -33,12 +33,12 @@ services:
   JobBoy\Process\Application\Service\StartProcess:
     class: JobBoy\Process\Application\Service\StartProcess
     arguments:
-      - JobBoy\Process\Domain\Factory\ProcessFactory
-      - JobBoy\Process\Domain\Repository\ProcessRepositoryInterface
+      - '@JobBoy\Process\Domain\Entity\Factory\ProcessFactory'
+      - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
 
 
 
   JobBoy\Process\Application\Service\Work:
     class: JobBoy\Process\Application\Service\Work
     arguments:
-      - JobBoy\Process\Domain\IterationMaker\IterationMaker
+      - '@JobBoy\Process\Domain\IterationMaker\IterationMaker'
