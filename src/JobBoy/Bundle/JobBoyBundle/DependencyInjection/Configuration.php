@@ -17,14 +17,14 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder('jobboy');
+        $treeBuilder = new TreeBuilder('job_boy');
 
         if (\method_exists($treeBuilder, 'getRootNode')){
             $rootNode = $treeBuilder->getRootNode();
         }
         else {
             // BC layer for symfony/config 4.1 and older
-            $rootNode = $treeBuilder->root('jobboy');
+            $rootNode = $treeBuilder->root('job_boy');
         }
 
         $rootNode
