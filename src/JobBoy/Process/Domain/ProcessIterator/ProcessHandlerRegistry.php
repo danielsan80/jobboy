@@ -3,6 +3,7 @@
 namespace JobBoy\Process\Domain\ProcessIterator;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\ProcessIterator\Exception\UnsupportedProcessException;
 
 class ProcessHandlerRegistry
 {
@@ -44,7 +45,7 @@ class ProcessHandlerRegistry
                 }
             }
         }
-        throw new \LogicException(sprintf(
+        throw new UnsupportedProcessException(sprintf(
             'No ProcessHandlers supports the process "%s" on channel "%s"',
             $id, $channel));
     }
@@ -56,7 +57,7 @@ class ProcessHandlerRegistry
         }
 
         if (!key_exists($channel, $this->handlers)) {
-            throw new \LogicException(sprintf(
+            throw new UnsupportedProcessException(sprintf(
                 'No ProcessHandlers supports the channel "%s"',
                 $channel
             ));
