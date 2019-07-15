@@ -1,6 +1,6 @@
 services:
-  JobBoy\Bundle\JobBoyBundle\Command\StartProcessCommand:
-    class: JobBoy\Bundle\JobBoyBundle\Command\StartProcessCommand
+  JobBoy\Process\Console\Command\StartProcessCommand:
+    class: JobBoy\Process\Console\Command\StartProcessCommand
     arguments:
       - '@JobBoy\Process\Application\Service\StartProcess'
     tags:

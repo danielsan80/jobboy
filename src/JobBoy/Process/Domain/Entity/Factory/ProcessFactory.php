@@ -26,9 +26,4 @@ class ProcessFactory
         return call_user_func($this->entityClass . '::create', $data);
     }
 
-    public function denormalize(array $array): Process
-    {
-        return call_user_func($this->entityClass . '::normalize', $array);
-    }
-
 }

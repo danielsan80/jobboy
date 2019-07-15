@@ -1,9 +1,9 @@
 <?php
 
-namespace JobBoy\Bundle\JobBoyBundle\Command;
+namespace JobBoy\Process\Console\Command;
 
-use JobBoy\Bundle\JobBoyBundle\Command\Helper\ParametersHelper;
 use JobBoy\Process\Application\Service\StartProcess;
+use JobBoy\Process\Console\Command\Helper\ParametersHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

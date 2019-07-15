@@ -1,7 +1,8 @@
 <?php
 
-namespace JobBoy\Process\Domain\Entity\Data;
+namespace JobBoy\Process\Domain\Entity\Infrastructure\Normalizable\Data;
 
+use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\ProcessStore;
 

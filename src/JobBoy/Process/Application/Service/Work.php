@@ -2,7 +2,7 @@
 
 namespace JobBoy\Process\Application\Service;
 
-use Dan\Clock\Domain\Timer;
+use JobBoy\Clock\Domain\Timer;
 use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 

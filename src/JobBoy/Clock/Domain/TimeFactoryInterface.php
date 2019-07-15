@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Dan\Clock\Domain;
+namespace JobBoy\Clock\Domain;
 
 
 interface TimeFactoryInterface

@@ -22,8 +22,22 @@ class JobBoyExtension extends Extension
 
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('jobboy.process_repository.service_id', $config['process_repository']);
+        $this->readProcessRepository($config, $container);
+        $this->readProcessClass($config, $container);
+        $this->readRedis($config, $container);
+        $this->loadServices($config, $container);
 
+
+    }
+
+    protected function readProcessRepository(array $config, ContainerBuilder $container)
+    {
+        $container->setParameter('jobboy.process_repository.service_id', $config['process_repository']);
+    }
+
+
+    protected function readProcessClass(array $config, ContainerBuilder $container)
+    {
         if (isset($config['process_class'])) {
             $container->setParameter('jobboy.process.class', $config['process_class']);
         } else {
@@ -31,10 +45,18 @@ class JobBoyExtension extends Extension
                 $container->setParameter('jobboy.process.class', Process::class);
             }
         }
+    }
 
+
+    protected function readRedis(array $config, ContainerBuilder $container)
+    {
         if (isset($config['redis']['host'])) {
             $container->setParameter('jobboy.redis.host', $config['redis']['host']);
+            $container->setParameter('jobboy.redis.port', $config['redis']['port']);
         }
+    }
+
+    protected function loadServices(ContainerBuilder $container) {
 
         $locator = new FileLocator(__DIR__ . '/../Resources/config');
 

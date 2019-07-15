@@ -17,10 +17,6 @@ class JobBoyBundle extends Bundle
     {
         parent::build($containerBuilder);
 
-
-        $containerBuilder->addCompilerPass(new RegisterDoctrineProcessRepositoryPass());
-        $containerBuilder->addCompilerPass(new RegisterRedisProcessRepositoryPass());
-
         $containerBuilder->addCompilerPass(new RegisterProcessRepositoryPass());
 
         $containerBuilder->addCompilerPass(new RegisterProcessHandlersPass());

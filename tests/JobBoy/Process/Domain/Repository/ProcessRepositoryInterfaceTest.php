@@ -2,9 +2,9 @@
 
 namespace Tests\JobBoy\Process\Domain\Repository;
 
-use Dan\Clock\Domain\Clock;
-use Dan\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
 use Dan\FixtureHandler\FixtureHandler;
+use JobBoy\Clock\Domain\Clock;
+use JobBoy\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;

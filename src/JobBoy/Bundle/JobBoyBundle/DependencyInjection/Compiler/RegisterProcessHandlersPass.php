@@ -16,7 +16,6 @@ class RegisterProcessHandlersPass implements CompilerPassInterface
     const REGISTRY = ProcessHandlerRegistry::class;
     const TAG = 'jobboy.process_handler';
 
-
     public function process(ContainerBuilder $container)
     {
         if (!$container->has(self::REGISTRY)) {
@@ -31,9 +30,13 @@ class RegisterProcessHandlersPass implements CompilerPassInterface
             Assertion::count($data, 1);
             $data = $data[0];
             if (!isset($data['priority'])) {
-                $data['priority'] = self::DEFAULT_PRIORITY;
+                $data['priority'] = ProcessHandlerRegistry::DEFAULT_PRIORITY;
             }
-            $registry->addMethodCall('add', [new Reference($serviceId), $data['priority']]);
+            if (!isset($data['channel'])) {
+                $data['channel'] = ProcessHandlerRegistry::DEFAULT_CHANNEL;
+            }
+
+            $registry->addMethodCall('add', [new Reference($serviceId), $data['priority'], $data['channel']]);
         }
     }
 

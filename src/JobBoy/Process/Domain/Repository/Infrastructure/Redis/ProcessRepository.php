@@ -3,10 +3,10 @@
 namespace JobBoy\Process\Domain\Repository\Infrastructure\Redis;
 
 use Assert\Assertion;
-use Dan\Clock\Domain\Clock;
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\Process as TouchCallbackProcess;
+use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\Repository\Infrastructure\Util\ProcessRepositoryUtil;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;

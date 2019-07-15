@@ -1,6 +1,6 @@
 <?php
 
-namespace JobBoy\Bundle\JobBoyBundle\Command\Helper;
+namespace JobBoy\Process\Console\Command\Helper;
 
 class ParametersHelper
 {

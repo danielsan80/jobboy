@@ -3,11 +3,11 @@
 namespace JobBoy\Process\Domain\Repository\Infrastructure\Doctrine;
 
 use Assert\Assertion;
-use Dan\Clock\Domain\Clock;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;

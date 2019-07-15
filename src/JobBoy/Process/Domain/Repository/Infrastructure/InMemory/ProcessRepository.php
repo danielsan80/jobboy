@@ -2,7 +2,7 @@
 
 namespace JobBoy\Process\Domain\Repository\Infrastructure\InMemory;
 
-use Dan\Clock\Domain\Clock;
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\ProcessStatus;

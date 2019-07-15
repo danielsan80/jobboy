@@ -3,7 +3,7 @@
 namespace JobBoy\Process\Domain\Entity;
 
 use Assert\Assertion;
-use Dan\Clock\Domain\Clock;
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\ProcessParameters;

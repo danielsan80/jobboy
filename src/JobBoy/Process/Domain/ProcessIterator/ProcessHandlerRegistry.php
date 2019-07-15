@@ -6,43 +6,64 @@ use JobBoy\Process\Domain\Entity\Id\ProcessId;
 
 class ProcessHandlerRegistry
 {
-    /** @var ProcessHandlerInterface[][] */
-    protected $handlers = [];
-    protected $frozen = false;
+    const DEFAULT_PRIORITY = 100;
+    const DEFAULT_CHANNEL = 'default';
 
-    public function add(ProcessHandlerInterface $processHandler, $priority = null)
+    /** @var ProcessHandlerInterface[][][] */
+    protected $handlers = [];
+    protected $frozen = [];
+
+    public function add(ProcessHandlerInterface $processHandler, ?int $priority = null, ?string $channel = null)
     {
         if ($this->frozen) {
             throw new \LogicException('The registry is frozen. You cannot add anything.');
         }
-        if (is_null($priority)) {
-            $priority = 100;
+        if ($priority === null) {
+            $priority = self::DEFAULT_PRIORITY;
         }
-        $this->handlers[$priority][] = $processHandler;
+        if ($channel === null) {
+            $channel = self::DEFAULT_CHANNEL;
+        }
+        $this->handlers[$channel][$priority][] = $processHandler;
 
         return $this;
     }
 
-    public function get(ProcessId $id): ProcessHandlerInterface
+    public function get(ProcessId $id, ?string $channel = null): ProcessHandlerInterface
     {
-        $this->ensureHandlersAreSorted();
+        if ($channel === null) {
+            $channel = self::DEFAULT_CHANNEL;
+        }
 
-        foreach ($this->handlers as $handlers) {
+        $this->ensureHandlersAreSorted($channel);
+
+        foreach ($this->handlers[$channel] as $handlers) {
             foreach ($handlers as $handler) {
                 if ($handler->supports($id)) {
                     return $handler;
                 }
             }
         }
-        throw new \LogicException(sprintf('No ProcessHandlers supports the process "%s"', $id));
+        throw new \LogicException(sprintf(
+            'No ProcessHandlers supports the process "%s" on channel "%s"',
+            $id, $channel));
     }
 
-    private function ensureHandlersAreSorted()
+    private function ensureHandlersAreSorted(string $channel): void
     {
-        if (!$this->frozen) {
-            ksort($this->handlers);
-            $this->frozen = true;
+        if (isset($this->frozen[$channel])) {
+            return;
         }
+
+        if (!key_exists($channel, $this->handlers)) {
+            throw new \LogicException(sprintf(
+                'No ProcessHandlers supports the channel "%s"',
+                $channel
+            ));
+        }
+
+        ksort($this->handlers[$channel]);
+        $this->frozen[$channel] = true;
     }
 
 }

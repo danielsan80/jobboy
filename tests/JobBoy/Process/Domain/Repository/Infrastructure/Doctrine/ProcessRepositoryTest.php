@@ -4,7 +4,6 @@ namespace Tests\JobBoy\Process\Domain\Repository\Infrastructure\Doctrine;
 
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Platforms\AbstractPlatform;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\HydratableProcess;
 use JobBoy\Process\Domain\Repository\Infrastructure\Doctrine\ProcessRepository;
@@ -32,8 +31,8 @@ class ProcessRepositoryTest extends ProcessRepositoryInterfaceTest
         );
 
         $connection = DriverManager::getConnection($params, $config);
-        $schemaManager    = $connection->getSchemaManager();
-        $schema           = $schemaManager->createSchema();
+        $schemaManager = $connection->getSchemaManager();
+        $schema = $schemaManager->createSchema();
 
         $processRepository = new ProcessRepository($processFactory, $connection);
 

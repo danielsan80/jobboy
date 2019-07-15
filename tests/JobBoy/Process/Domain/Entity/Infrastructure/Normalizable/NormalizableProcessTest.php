@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\JobBoy\Process\Domain\Entity;
+namespace Tests\JobBoy\Process\Domain\Entity\Infrastructure\Normalizable;
 
-use Dan\Clock\Domain\Clock;
-use Dan\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
-use JobBoy\Process\Domain\Entity\Data\NormalizableProcessData;
+use JobBoy\Clock\Domain\Clock;
+use JobBoy\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\Entity\NormalizableProcess;
+use JobBoy\Process\Domain\Entity\Infrastructure\Normalizable\Data\NormalizableProcessData;
+use JobBoy\Process\Domain\Entity\Infrastructure\Normalizable\NormalizableProcess;
 use JobBoy\Process\Domain\ProcessParameters;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;

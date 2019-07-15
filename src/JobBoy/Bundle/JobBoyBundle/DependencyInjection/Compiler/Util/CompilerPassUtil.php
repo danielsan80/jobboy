@@ -1,6 +1,6 @@
 <?php
 
-namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler;
+namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler\Util;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

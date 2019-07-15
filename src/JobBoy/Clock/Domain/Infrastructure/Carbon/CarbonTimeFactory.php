@@ -1,10 +1,10 @@
 <?php
 
-namespace Dan\Clock\Domain\Infrastructure\Carbon;
+namespace JobBoy\Clock\Domain\Infrastructure\Carbon;
 
 use Carbon\Carbon;
-use Dan\Clock\Domain\FreezableInterface;
-use Dan\Clock\Domain\TimeFactoryInterface;
+use JobBoy\Clock\Domain\FreezableInterface;
+use JobBoy\Clock\Domain\TimeFactoryInterface;
 
 class CarbonTimeFactory implements TimeFactoryInterface, FreezableInterface
 {

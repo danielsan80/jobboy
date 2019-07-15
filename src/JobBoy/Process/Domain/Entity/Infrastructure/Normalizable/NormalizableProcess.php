@@ -1,11 +1,12 @@
 <?php
 
-namespace JobBoy\Process\Domain\Entity;
+namespace JobBoy\Process\Domain\Entity\Infrastructure\Normalizable;
 
 use Assert\Assertion;
-use Dan\Clock\Domain\Clock;
-use JobBoy\Process\Domain\Entity\Data\NormalizableProcessData;
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\Entity\Infrastructure\Normalizable\Data\NormalizableProcessData;
+use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\NormalizableInterface;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\ProcessStatus;
