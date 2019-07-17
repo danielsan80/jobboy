@@ -25,7 +25,7 @@ class JobBoyExtension extends Extension
         $this->readProcessRepository($config, $container);
         $this->readProcessClass($config, $container);
         $this->readRedis($config, $container);
-        $this->loadServices($config, $container);
+        $this->loadServices($container);
 
 
     }
