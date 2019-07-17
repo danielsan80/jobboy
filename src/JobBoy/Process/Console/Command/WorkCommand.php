@@ -3,7 +3,8 @@
 namespace JobBoy\Process\Console\Command;
 
 use JobBoy\Process\Application\Service\Work;
-use JobBoy\Process\Console\Command\Helper\ParametersHelper;
+use JobBoy\Process\Console\Command\Event\OutputEventListener;
+use JobBoy\Process\Domain\Event\EventBusInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,11 +15,14 @@ class WorkCommand extends Command
 
     /** @var Work */
     protected $work;
+    /** @var EventBusInterface */
+    protected $eventBus;
 
-    public function __construct(Work $work)
+    public function __construct(Work $work, EventBusInterface $eventBus)
     {
         parent::__construct();
         $this->work = $work;
+        $this->eventBus = $eventBus;
     }
 
     protected function configure()
@@ -33,7 +37,10 @@ class WorkCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Worker started');
+        $eventListener = new OutputEventListener($output);
+        $this->eventBus->subscribe($eventListener);
         $this->work->execute($input->getOption('timeout'), $input->getOption('idle-time'));
+        $this->eventBus->unsubscribe($eventListener);
         $output->writeln('Worker stopped');
     }
 

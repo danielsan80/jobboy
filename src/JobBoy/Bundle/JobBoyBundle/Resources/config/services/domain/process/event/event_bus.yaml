@@ -1,0 +1,6 @@
+services:
+  JobBoy\Process\Domain\Event\EventBusInterface:
+    alias: JobBoy\Process\Domain\Event\SimpleEventBus
+
+  JobBoy\Process\Domain\Event\SimpleEventBus:
+    class: JobBoy\Process\Domain\Event\SimpleEventBus

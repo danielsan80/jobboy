@@ -3,6 +3,9 @@
 namespace JobBoy\Process\Domain\IterationMaker;
 
 use JobBoy\Process\Domain\Entity\Process;
+use JobBoy\Process\Domain\Event\EventBusInterface;
+use JobBoy\Process\Domain\Event\NullEventBus;
+use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
 use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\Exception\NotIteratingYetException;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
@@ -22,6 +25,8 @@ class IterationMaker
     protected $lockFactory;
     /** @var ProcessIterator */
     protected $processIterator;
+    /** @var EventBusInterface|NullEventBus|null */
+    protected $eventBus;
 
     /** @var LockInterface */
     protected $lock;
@@ -29,12 +34,18 @@ class IterationMaker
     public function __construct(
         ProcessRepositoryInterface $processRepository,
         LockFactoryInterface $lockFactory,
-        ProcessIterator $processIterator
+        ProcessIterator $processIterator,
+        ?EventBusInterface $eventBus = null
     )
     {
+        if (!$eventBus) {
+            $eventBus = new NullEventBus();
+        }
+
         $this->processRepository = $processRepository;
         $this->lockFactory = $lockFactory;
         $this->processIterator = $processIterator;
+        $this->eventBus = $eventBus;
     }
 
 
@@ -73,6 +84,8 @@ class IterationMaker
         if (!$this->lock->acquire()) {
             throw new IteratingYetException();
         };
+
+        $this->eventBus->publish(new ProcessManagementLocked());
     }
 
     protected function release(): void
@@ -82,6 +95,8 @@ class IterationMaker
         }
         $this->lock->release();
         $this->lock = null;
+
+        $this->eventBus->publish(new ProcessManagementLocked());
     }
 
 
@@ -106,7 +121,7 @@ class IterationMaker
 
     protected function byStatus(ProcessStatus $status): ?Process
     {
-        $processes = $this->processRepository->byStatus($status,0,1);
+        $processes = $this->processRepository->byStatus($status, 0, 1);
 
         foreach ($processes as $process) {
             return $process;
