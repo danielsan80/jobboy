@@ -242,7 +242,7 @@ class Process
 
     public function get($key, $default = null)
     {
-        $this->store->get($key, $default);
+        return $this->store->get($key, $default);
     }
 
     public function inc($key, $step = 1): void
