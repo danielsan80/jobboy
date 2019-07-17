@@ -42,6 +42,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('port')
                             ->info('the Redis port')
+                            ->defaultValue(6379)
                         ->end()
                     ->end()
                 ->end()
