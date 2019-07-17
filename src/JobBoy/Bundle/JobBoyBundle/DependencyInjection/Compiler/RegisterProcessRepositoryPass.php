@@ -42,9 +42,12 @@ class RegisterProcessRepositoryPass implements CompilerPassInterface
     protected function loadDoctrineProcessRepository(ContainerBuilder $container)
     {
 
-        $serviceParameter = RegisterProcessRepositoryPass::PROCESS_REPOSITORY_SERVICE_ID;
+        $serviceId = $container->getParameter(self::PROCESS_REPOSITORY_SERVICE_ID);
 
-        $serviceId = $container->getParameter($serviceParameter);
+        if ($serviceId === 'doctrine') {
+            $container->setParameter(self::PROCESS_REPOSITORY_SERVICE_ID, DoctrineProcessRepository::class);
+            $serviceId = $container->getParameter(self::PROCESS_REPOSITORY_SERVICE_ID);
+        }
 
         if ($serviceId !== DoctrineProcessRepository::class) {
             return;
@@ -73,12 +76,17 @@ class RegisterProcessRepositoryPass implements CompilerPassInterface
 
         $serviceId = $container->getParameter($serviceParameter);
 
+        if ($serviceId === 'redis') {
+            $container->setParameter(self::PROCESS_REPOSITORY_SERVICE_ID, RedisProcessRepository::class);
+            $serviceId = $container->getParameter(self::PROCESS_REPOSITORY_SERVICE_ID);
+        }
+
         if ($serviceId !== RedisProcessRepository::class) {
             return;
         }
 
 
-        if (!$container->hasParameter('jobboy.redis.host')) {
+        if (!$container->hasParameter('jobboy.process_repository.redis.host')) {
             throw new \InvalidArgumentException(sprintf(
                 'To use %s you need to set `job_boy.redis.host` config',
                 RedisProcessRepository::class

@@ -4,13 +4,14 @@ services:
   JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory:
     class: JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory
     arguments:
-      - '%jobboy.redis.host%'
+      - '%jobboy.process_repository.redis.host%'
+      - '%jobboy.process_repository.redis.port%'
 
-  Redis:
+  jobboy.process_repository.redis:
     class: Redis
     factory: ['@JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory', 'create']
 
   JobBoy\Process\Domain\Repository\Infrastructure\Redis\ProcessRepository:
     class: JobBoy\Process\Domain\Repository\Infrastructure\Redis\ProcessRepository
     arguments:
-      - '@Redis'
+      - '@jobboy.process_repository.redis'

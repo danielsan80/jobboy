@@ -51,8 +51,8 @@ class JobBoyExtension extends Extension
     protected function readRedis(array $config, ContainerBuilder $container)
     {
         if (isset($config['redis']['host'])) {
-            $container->setParameter('jobboy.redis.host', $config['redis']['host']);
-            $container->setParameter('jobboy.redis.port', $config['redis']['port']);
+            $container->setParameter('jobboy.process_repository.redis.host', $config['redis']['host']);
+            $container->setParameter('jobboy.process_repository.redis.port', $config['redis']['port']);
         }
     }
 
