@@ -13,7 +13,7 @@
         "php": "^7.1.3",
         "beberlei/assert": "^3.0",
         "ramsey/uuid": "^3.8",
-        "symfony/lock": "^4.3",
+        "symfony/lock": "^4.3"
     },
     "require-dev": {
         "ext-json": "*",
