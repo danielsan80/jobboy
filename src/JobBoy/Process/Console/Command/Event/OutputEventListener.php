@@ -24,7 +24,7 @@ class OutputEventListener implements EventListenerInterface
     {
         if ($event instanceof HasMessageInterface) {
 
-            if ($this->filter && !$this->filter($event)) {
+            if ($this->filter && !call_user_func($this->filter, $event)) {
                 return;
             }
 
