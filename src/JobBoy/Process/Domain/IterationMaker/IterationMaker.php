@@ -6,6 +6,9 @@ use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
+use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementReleased;
+use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
+use JobBoy\Process\Domain\IterationMaker\Events\NoProcessesToPickFound;
 use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\Exception\NotIteratingYetException;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
@@ -65,6 +68,7 @@ class IterationMaker
             $process = $this->process($type);
 
             if ($process) {
+                $this->eventBus->publish(new ProcessPicked($process->id(), $process->code(), $type));
                 $response = $this->iterate($process);
                 $this->release();
                 return $response;
@@ -72,6 +76,7 @@ class IterationMaker
         }
 
         $this->release();
+        $this->eventBus->publish(new NoProcessesToPickFound());
         return new IterationResponse(false);
     }
 
@@ -96,7 +101,7 @@ class IterationMaker
         $this->lock->release();
         $this->lock = null;
 
-        $this->eventBus->publish(new ProcessManagementLocked());
+        $this->eventBus->publish(new ProcessManagementReleased());
     }
 
 

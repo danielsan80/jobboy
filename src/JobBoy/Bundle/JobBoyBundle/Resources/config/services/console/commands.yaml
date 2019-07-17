@@ -10,5 +10,6 @@ services:
     class: JobBoy\Process\Console\Command\WorkCommand
     arguments:
       - '@JobBoy\Process\Application\Service\Work'
+      - '@JobBoy\Process\Domain\Event\EventBusInterface'
     tags:
       - { name: 'console.command' }
