@@ -11,15 +11,24 @@ class OutputEventListener implements EventListenerInterface
 {
     /** @var OutputInterface */
     protected $output;
+    /** @var callable|null */
+    protected $filter;
 
-    public function __construct(OutputInterface $output)
+    public function __construct(OutputInterface $output, ?callable $filter = null)
     {
         $this->output = $output;
+        $this->filter = $filter;
     }
 
     public function handle($event): void
     {
         if ($event instanceof HasMessageInterface) {
+
+            if ($this->filter && !$this->filter($event)) {
+                return;
+            }
+
+
             $message = $event->message();
 
             $message = $this->transformMessage($message);
