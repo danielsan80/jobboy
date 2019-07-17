@@ -240,7 +240,7 @@ class Process
         return $this->store->has($key);
     }
 
-    public function get($key, $default)
+    public function get($key, $default = null)
     {
         $this->store->get($key, $default);
     }
