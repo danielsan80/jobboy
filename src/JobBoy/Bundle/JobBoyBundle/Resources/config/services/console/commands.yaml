@@ -5,3 +5,10 @@ services:
       - '@JobBoy\Process\Application\Service\StartProcess'
     tags:
       - { name: 'console.command' }
+
+  JobBoy\Process\Console\Command\WorkCommand:
+    class: JobBoy\Process\Console\Command\WorkCommand
+    arguments:
+      - '@JobBoy\Process\Application\Service\Work'
+    tags:
+      - { name: 'console.command' }
