@@ -42,3 +42,4 @@ services:
     class: JobBoy\Process\Application\Service\Work
     arguments:
       - '@JobBoy\Process\Domain\IterationMaker\IterationMaker'
+      - '@JobBoy\Process\Domain\Event\EventBusInterface'

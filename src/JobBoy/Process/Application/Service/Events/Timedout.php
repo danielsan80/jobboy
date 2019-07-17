@@ -5,15 +5,15 @@ namespace JobBoy\Process\Application\Service\Events;
 use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
 use JobBoy\Process\Domain\Event\Message\Message;
 
-class IdleTimeStarted implements HasMessageInterface
+class Timedout implements HasMessageInterface
 {
     /** @var Message  */
     protected $message;
 
-    public function __construct(int $idleTime)
+    public function __construct(int $timeout)
     {
-        $this->message = new Message('Idle time for {{seconds}} seconds', [
-            'seconds' => $idleTime
+        $this->message = new Message('Timeout: {{seconds}} seconds', [
+            'seconds' => $timeout
         ]);
     }
 
