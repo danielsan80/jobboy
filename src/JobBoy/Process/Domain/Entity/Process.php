@@ -13,8 +13,6 @@ use JobBoy\Process\Domain\ProcessStore;
 class Process
 {
 
-    const DEFAULT_WAIT_FOR = '1 minute';
-
     /** @var ProcessId */
     protected $id;
 
