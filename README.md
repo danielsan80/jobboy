@@ -1,6 +1,20 @@
 # JobBoy
 
 
+## Introduzione
+
+JobBoy nasce dall'esigenza di gestire dei processi batch.
+
+Inizalmente era stato sviluppato JobMan (contrazione di JobManager) che si proponeva di gestire molti più
+aspetti ma con i primi utilizzi ci siamo resi conto che alcune feature non le avremmo
+utilizzate per ragioni di semplicità a scapito di una presunta minore efficienza.
+
+Così è nata l'idea di realizzare un JobMan più piccolo, portandoci un po' del codice
+di JobMan e l'esperienza accumulata nel realizzarlo.
+
+Forse un giorno JobBoy crescerà e diventerò un nuovo JobMan.
+
+
 ## Getting started
 
 
@@ -9,7 +23,7 @@
 Per iniziare clonare e avviare il progetto, poi eseguire i test.
 
 ```
-git clone [repository] <project_dir>
+git clone git@github.com:danielsan80/jobboy.git <project_dir>
 cd <project_dir>
 ./dc up -d
 ./dc enter
@@ -29,19 +43,6 @@ Se si usa PhpStorm (>=2018.03), per visualizzare l'uml in PlantUML presente dei 
 ```
 sudo apt-get install graphviz
 ```
-
-## Introduzione
-
-JobBoy nasce dall'esigenza di gestire dei processi batch.
-
-Inizalmente era stato sviluppato JobMan (contrazione di JobManager) che si proponeva di gestire molti più
-aspetti ma con i primi utilizzi ci siamo resi conto che alcune feature non le avremmo
-utilizzate per ragioni di semplicità a scapito di una presunta minore efficienza.
-
-Così è nata l'idea di realizzare un JobMan più piccolo, portandoci un po' del codice
-di JobMan e l'esperienza accumulata nel realizzarlo.
-
-Forse un giorno JobBoy crescerà e diventerò un nuovo JobMan.
 
 
 ## Come funziona?
@@ -67,3 +68,7 @@ Forse un giorno JobBoy crescerà e diventerò un nuovo JobMan.
 [Notes](doc/notes.md)
 
 ## To do
+- Separare il repo in `jobboy-bundle`, `jobboy`, `jobboy-process-redis`, `jobboy-process-doctrine`
+- Ottimizzare `RedisProcessRepository`
+- Ottimizzare `DoctrineProcessRepository`?
+

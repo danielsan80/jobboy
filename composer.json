@@ -2,7 +2,7 @@
     "name": "dansan/jobboy",
     "description": "It's a little jobman... a little job manager",
     "type": "library",
-    "license": "proprietary",
+    "license": "MIT",
     "authors": [
         {
             "name": "Danilo Sanchi",
