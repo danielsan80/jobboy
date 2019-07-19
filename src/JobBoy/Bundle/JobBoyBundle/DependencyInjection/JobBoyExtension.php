@@ -2,7 +2,7 @@
 
 namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection;
 
-use JobBoy\Process\Domain\Entity\Process;
+use JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisUtil;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -40,10 +40,6 @@ class JobBoyExtension extends Extension
     {
         if (isset($config['process_class'])) {
             $container->setParameter('jobboy.process.class', $config['process_class']);
-        } else {
-            if (!$container->hasParameter('jobboy.process.class')) {
-                $container->setParameter('jobboy.process.class', Process::class);
-            }
         }
     }
 
@@ -52,11 +48,16 @@ class JobBoyExtension extends Extension
     {
         if (isset($config['redis']['host'])) {
             $container->setParameter('jobboy.process_repository.redis.host', $config['redis']['host']);
-            $container->setParameter('jobboy.process_repository.redis.port', $config['redis']['port']);
+            if (isset($config['redis']['port'])) {
+                $container->setParameter('jobboy.process_repository.redis.port', $config['redis']['port']);
+            } else {
+                $container->setParameter('jobboy.process_repository.redis.port', RedisUtil::DEFAULT_PORT);
+            }
         }
     }
 
-    protected function loadServices(ContainerBuilder $container) {
+    protected function loadServices(ContainerBuilder $container)
+    {
 
         $locator = new FileLocator(__DIR__ . '/../Resources/config');
 

@@ -2,7 +2,7 @@
 
 namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection;
 
-use JobBoy\Process\Domain\Repository\Infrastructure\InMemory\ProcessRepository;
+use JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisUtil;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -28,7 +28,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('process_repository')
-                    ->defaultValue(ProcessRepository::class)
+                    ->defaultValue('in_memory')
                     ->info('a service definition id implementing JobBoy\Process\Domain\Repository\ProcessRepositoryInterface')
                 ->end()
                 ->scalarNode('process_class')
@@ -42,7 +42,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('port')
                             ->info('the Redis port')
-                            ->defaultValue(6379)
+                            ->defaultValue(RedisUtil::DEFAULT_PORT)
                         ->end()
                     ->end()
                 ->end()

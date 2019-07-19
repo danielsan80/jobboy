@@ -2,6 +2,7 @@
 
 namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler\Util;
 
+use Assert\Assertion;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class CompilerPassUtil
@@ -30,4 +31,5 @@ class CompilerPassUtil
             );
         }
     }
+
 }
