@@ -14,6 +14,9 @@ di JobMan e l'esperienza accumulata nel realizzarlo.
 
 Forse un giorno JobBoy crescerà e diventerò un nuovo JobMan.
 
+## Example ##
+A Symfony4 example application using JobBoy is available [here](https://github.com/danielsan80/jobboy-example) 
+
 
 ## Getting started
 
@@ -154,6 +157,10 @@ Thanks to [Akeneo](https://github.com/akeneo/pim-community-dev) for the original
 [Notes](doc/notes.md)
 
 ## To do
+- Testare gli appliation services
+- Creare i comandi mancanti per gli application services
+- add cron example
+- test overlay dei `work`
 - Separare il repo in `jobboy-bundle`, `jobboy`, `jobboy-process-redis`, `jobboy-process-doctrine`
 - Ottimizzare `RedisProcessRepository`
 - Ottimizzare `DoctrineProcessRepository`?
