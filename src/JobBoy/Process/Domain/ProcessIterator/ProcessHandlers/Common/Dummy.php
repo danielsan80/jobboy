@@ -22,10 +22,6 @@ class Dummy extends AbstractProcessHandler
     {
         $process = $this->process($id);
 
-        if ($process->isHandled()) {
-            $process->changeStatusToFailing();
-            return new IterationResponse();
-        }
         if ($process->status()->isFailing()) {
             $process->changeStatusToFailed();
             return new IterationResponse();
