@@ -14,7 +14,7 @@ use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
  * It is a generic ProcessHandler who support ALL Process of a certain code. Then it delegate the handling to other
  * ProcessHandlers registered of the `<code>` channel.
  */
-class CodeProcessHandler extends AbstractProcessHandler implements ProcessHandlerInterface
+class HandleCodeProcess extends AbstractProcessHandler implements ProcessHandlerInterface
 {
     /** @var ProcessHandlerRegistry */
     protected $processHandlerRegistry;
