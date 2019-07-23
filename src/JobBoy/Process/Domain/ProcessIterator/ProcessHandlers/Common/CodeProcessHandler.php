@@ -1,15 +1,19 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator\ProcessHandlers;
+namespace JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Common;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessIterator\AbstractProcessHandler;
 use JobBoy\Process\Domain\ProcessIterator\Exception\UnsupportedProcessException;
 use JobBoy\Process\Domain\ProcessIterator\IterationResponse;
 use JobBoy\Process\Domain\ProcessIterator\ProcessHandlerInterface;
 use JobBoy\Process\Domain\ProcessIterator\ProcessHandlerRegistry;
+use JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Base\AbstractProcessHandler;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
+/**
+ * It is a generic ProcessHandler who support ALL Process of a certain code. Then it delegate the handling to other
+ * ProcessHandlers registered of the `<code>` channel.
+ */
 class CodeProcessHandler extends AbstractProcessHandler implements ProcessHandlerInterface
 {
     /** @var ProcessHandlerRegistry */
