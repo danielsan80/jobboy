@@ -1,13 +1,13 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Common;
+namespace JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Common;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessIterator\Exception\UnsupportedProcessException;
-use JobBoy\Process\Domain\ProcessIterator\IterationResponse;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlerInterface;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlerRegistry;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Base\AbstractProcessHandler;
+use JobBoy\Process\Domain\ProcessHandler\Exception\UnsupportedProcessException;
+use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlerInterface;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlerRegistry;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Base\AbstractProcessHandler;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 /**

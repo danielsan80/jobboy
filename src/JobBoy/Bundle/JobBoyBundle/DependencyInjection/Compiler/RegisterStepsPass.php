@@ -2,19 +2,18 @@
 
 namespace JobBoy\Bundle\JobBoyBundle\DependencyInjection\Compiler;
 
+use JobBoy\Step\Domain\StepManager\Decorator\HasStepDataStepRegistryDecorator;
 use Assert\Assertion;
-use JobBoy\Process\Domain\ProcessHandler\ProcessHandlerRegistry;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RegisterProcessHandlersPass implements CompilerPassInterface
+class RegisterStepsPass implements CompilerPassInterface
 {
+    const DEFAULT_POSITION = 0;
 
-    const DEFAULT_PRIORITY = 100;
-
-    const REGISTRY = ProcessHandlerRegistry::class;
-    const TAG = 'jobboy.process_handler';
+    const REGISTRY = HasStepDataStepRegistryDecorator::class;
+    const TAG = 'jobboy.step';
 
     public function process(ContainerBuilder $container)
     {
@@ -29,14 +28,11 @@ class RegisterProcessHandlersPass implements CompilerPassInterface
         foreach ($services as $serviceId => $data) {
             Assertion::count($data, 1);
             $data = $data[0];
-            if (!isset($data['priority'])) {
-                $data['priority'] = ProcessHandlerRegistry::DEFAULT_PRIORITY;
-            }
-            if (!isset($data['channel'])) {
-                $data['channel'] = ProcessHandlerRegistry::DEFAULT_CHANNEL;
+            if (!isset($data['position'])) {
+                $data['position'] = self::DEFAULT_POSITION;
             }
 
-            $registry->addMethodCall('add', [new Reference($serviceId), $data['priority'], $data['channel']]);
+            $registry->addMethodCall('addHasStepData', [new Reference($serviceId), $data['position']]);
         }
     }
 

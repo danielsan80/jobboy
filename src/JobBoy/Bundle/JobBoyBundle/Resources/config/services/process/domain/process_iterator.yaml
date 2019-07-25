@@ -1,0 +1,11 @@
+services:
+
+  JobBoy\Process\Domain\IterationMaker\ProcessIterator:
+    class: JobBoy\Process\Domain\IterationMaker\ProcessIterator
+    arguments:
+      - '@JobBoy\Process\Domain\ProcessHandler\ProcessHandlerRegistry'
+      - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
+
+
+  JobBoy\Process\Domain\ProcessHandler\ProcessHandlerRegistry:
+    class: JobBoy\Process\Domain\ProcessHandler\ProcessHandlerRegistry

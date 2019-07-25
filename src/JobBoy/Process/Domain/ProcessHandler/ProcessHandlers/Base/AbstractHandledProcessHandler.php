@@ -1,9 +1,9 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Base;
+namespace JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Base;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlerInterface;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlerInterface;
 
 /**
  * It is a generic base for all ProcessHandlers who manages the remained handled processes.

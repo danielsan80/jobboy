@@ -1,10 +1,10 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Common;
+namespace JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Common;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessIterator\IterationResponse;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Base\AbstractHandledProcessHandler;
+use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Base\AbstractHandledProcessHandler;
 
 /**
  * It is a generic ProcessHandler who support all handled processes and change the status to failing.

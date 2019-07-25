@@ -2,11 +2,10 @@
 
 namespace Tests\JobBoy\Process\Application\Service;
 
-use JobBoy\Process\Domain\IterationMaker\IterationMaker;
-use JobBoy\Process\Domain\ProcessIterator\IterationResponse;
-use PHPUnit\Framework\TestCase;
-
 use JobBoy\Process\Application\Service\IterateOneProcess;
+use JobBoy\Process\Domain\IterationMaker\IterationMaker;
+use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
+use PHPUnit\Framework\TestCase;
 
 class IterateOneProcessTest extends TestCase
 {

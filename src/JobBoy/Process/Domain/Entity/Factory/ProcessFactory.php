@@ -3,7 +3,9 @@
 namespace JobBoy\Process\Domain\Entity\Factory;
 
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
+use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
+use Ramsey\Uuid\Uuid;
 
 class ProcessFactory
 {
@@ -23,6 +25,10 @@ class ProcessFactory
 
     public function create(ProcessData $data): Process
     {
+        if (!$data->id()) {
+            $data->setId(new ProcessId(Uuid::uuid4()));
+        }
+
         return call_user_func($this->entityClass . '::create', $data);
     }
 
