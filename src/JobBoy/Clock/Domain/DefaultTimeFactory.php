@@ -16,4 +16,8 @@ class DefaultTimeFactory implements TimeFactoryInterface
         return new \DateTime($time, $timezone);
     }
 
+    public function microtime(): float
+    {
+        return microtime(true);
+    }
 }

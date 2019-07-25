@@ -62,9 +62,9 @@ class RemoveOldProcessesTest extends TestCase
 
         TestCase::assertCount(3, $processRepository->all());
 
-        $removeOldProcesses = new RemoveOldProcesses($processRepository);
+        $service = new RemoveOldProcesses($processRepository);
 
-        $removeOldProcesses->execute(90);
+        $service->execute(90);
 
         TestCase::assertCount(2, $processRepository->all());
         TestCase::assertEquals('staling_process_job', $processRepository->all()[0]->code());
@@ -72,7 +72,7 @@ class RemoveOldProcessesTest extends TestCase
 
         $this->inAFewDays($fh, 20);
 
-        $removeOldProcesses->execute(90);
+        $service->execute(90);
 
         TestCase::assertCount(1, $processRepository->all());
         TestCase::assertEquals('fresh_process_job', $processRepository->all()[0]->code());

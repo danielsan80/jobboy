@@ -10,4 +10,6 @@ interface TimeFactoryInterface
     public function createDateTimeImmutable(string $time = "now", ?\DateTimeZone $timezone = NULL): \DateTimeImmutable;
 
     public function createDateTime(string $time = "now", ?\DateTimeZone $timezone = NULL): \DateTime;
+
+    public function microtime(): float;
 }

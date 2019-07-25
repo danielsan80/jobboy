@@ -34,18 +34,26 @@ class Work
     {
         $timer = new Timer($timeout);
 
-        while (!$timer->isTimedout()) {
+        do {
             try {
                 $response = $this->iterationMaker->work();
                 if (!$response->hasWorked()) {
+                    if ($timer->isTimedout()) {
+                        $this->eventBus->publish(new TimedOut($timeout));
+                        break;
+                    }
                     $this->eventBus->publish(new IdleTimeStarted($idleTime));
                     sleep($idleTime);
                 }
             } catch (IteratingYetException $e) {
+                if ($timer->isTimedout()) {
+                    $this->eventBus->publish(new TimedOut($timeout));
+                    break;
+                }
                 $this->eventBus->publish(new IdleTimeStarted($idleTime));
                 sleep($idleTime);
             }
-        }
+        } while (!$timer->isTimedout());
         $this->eventBus->publish(new TimedOut($timeout));
     }
 
