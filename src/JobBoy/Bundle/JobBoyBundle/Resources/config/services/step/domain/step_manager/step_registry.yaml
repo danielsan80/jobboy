@@ -1,0 +1,15 @@
+services:
+
+  JobBoy\Step\Domain\StepManager\Decorator\HasStepDataStepRegistryDecorator:
+    class: JobBoy\Step\Domain\StepManager\Decorator\HasStepDataStepRegistryDecorator
+    arguments:
+      - '@JobBoy\Step\Domain\StepManager\Decorator\HasStepDataStepRegistryDecorator.inner'
+    decorates: JobBoy\Step\Domain\StepManager\StepRegistry
+    lazy: true
+
+  JobBoy\Step\Domain\StepManager\StepRegistry:
+    class: JobBoy\Step\Domain\StepManager\StepRegistry
+    lazy: true
+
+
+
