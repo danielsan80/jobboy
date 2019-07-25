@@ -1,0 +1,13 @@
+services:
+
+  JobBoy\Step\Domain\StepManager\Decorator\HasStepDataStepRegistryDecorator:
+    class: JobBoy\Step\Domain\StepManager\Decorator\HasStepDataStepRegistryDecorator
+    arguments:
+      - '@JobBoy\Step\Domain\StepManager\StepRegistry.inner'
+    decorates: JobBoy\Step\Domain\StepManager\StepRegistry
+
+  JobBoy\Step\Domain\StepManager\StepRegistry:
+    class: JobBoy\Step\Domain\StepManager\StepRegistry
+
+
+
