@@ -1,7 +1,7 @@
 services:
 
-  JobBoy\Step\Domain\StepManager\Manager:
-    class: JobBoy\Step\Domain\StepManager\Manager
+  JobBoy\Step\Domain\StepManager\StepManager:
+    class: JobBoy\Step\Domain\StepManager\StepManager
     arguments:
       - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
       - '@JobBoy\Step\Domain\StepManager\StepRegistry'
