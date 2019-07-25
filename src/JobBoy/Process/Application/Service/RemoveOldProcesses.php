@@ -2,6 +2,7 @@
 
 namespace JobBoy\Process\Application\Service;
 
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class RemoveOldProcesses
@@ -20,7 +21,7 @@ class RemoveOldProcesses
     public function execute(int $days = 90): void
     {
 
-        $processes = $this->processRepository->stale(new \DateTimeImmutable(sprintf('-%d days', $days)));
+        $processes = $this->processRepository->stale(Clock::createDateTimeImmutable(sprintf('-%d days', $days)));
 
         foreach ($processes as $process) {
             $this->processRepository->remove($process);

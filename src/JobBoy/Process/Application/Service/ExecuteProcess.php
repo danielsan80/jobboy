@@ -2,7 +2,6 @@
 
 namespace JobBoy\Process\Application\Service;
 
-use Assert\Assertion;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
