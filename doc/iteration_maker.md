@@ -2,13 +2,13 @@
 
 Veniamo al cuore esecutivo di tutto il sistema.
 
-Una volta create un `Process` e aggiunto al `ProcessRepository` ci aspettiamo che qualcosa lo prenda
+Una volta creato un `Process` e aggiunto al `ProcessRepository` ci aspettiamo che qualcosa lo prenda,
 esegua il lavoro che il `Process` rappresenta, ne alteri progressivamente lo stato interno e
 lo porti allo stato `completed`.
 
 L'idea alla base di JobBoy (e precedentemente di JobMan) è che su un `Process` debbano essere fatte una serie
 di "iterazioni" le quali fanno una parte del lavoro da svolgere fino al completamento o al fallimento
-del lavoro. C'è quindi bisogno di qualcosa che esegua una singola iterazione su uno dei `Process` da processare
+del lavoro stesso. C'è quindi bisogno di qualcosa che esegua una singola iterazione su uno dei `Process` da processare
 presenti nel `ProcessRepository`.
 
 Ebbene il servizio di dominio che fa questo è l'`IterationMaker`.
@@ -25,7 +25,7 @@ non prevista del metodo `work()` ) ed in caso li gestisce.
 Se non ha trovato nulla chiede se ci sono `Process` negli stati `evolving` al fine di portare a termine
 ciò che era stato iniziato ed in caso li gestisce.
 
-Infine se non c'è nulla negli stati `evolving` chiede se ci sono `Process` in `starting` ed in caso i gestisce.
+Infine se non c'è nulla negli stati `evolving` chiede se ci sono `Process` in `starting` ed in caso li gestisce.
 
 Se proprio non c'è nulla da gestire non fa nulla... ovviamente.
 
