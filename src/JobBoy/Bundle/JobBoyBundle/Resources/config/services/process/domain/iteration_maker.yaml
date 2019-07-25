@@ -6,5 +6,5 @@ services:
     arguments:
       - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
       - '@JobBoy\Process\Domain\Lock\LockFactoryInterface'
-      - '@JobBoy\Process\Domain\ProcessIterator\ProcessIterator'
+      - '@JobBoy\Process\Domain\IterationMaker\ProcessIterator'
       - '@JobBoy\Process\Domain\Event\EventBusInterface'

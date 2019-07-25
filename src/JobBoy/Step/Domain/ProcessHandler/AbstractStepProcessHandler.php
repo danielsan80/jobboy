@@ -2,13 +2,13 @@
 
 namespace JobBoy\Step\Domain\ProcessHandler;
 
+use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\Entity\Process;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlerInterface;
+use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 use JobBoy\Step\Domain\StepManager\HasStepDataInterface;
 use JobBoy\Step\Domain\StepManager\StepData;
 use JobBoy\Step\Domain\StepManager\StepManager;
-use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\Entity\Process;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlerInterface;
-use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 abstract class AbstractStepProcessHandler implements ProcessHandlerInterface, HasStepDataInterface
 {

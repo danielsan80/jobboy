@@ -1,10 +1,10 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Base;
+namespace JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Base;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlerInterface;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlerInterface;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 /**

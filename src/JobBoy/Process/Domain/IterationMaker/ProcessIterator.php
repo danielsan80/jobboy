@@ -1,8 +1,10 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator;
+namespace JobBoy\Process\Domain\IterationMaker;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlerRegistry;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class ProcessIterator

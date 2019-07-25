@@ -1,9 +1,9 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator;
+namespace JobBoy\Process\Domain\ProcessHandler;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessIterator\Exception\UnsupportedProcessException;
+use JobBoy\Process\Domain\ProcessHandler\Exception\UnsupportedProcessException;
 
 class ProcessHandlerRegistry
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Common;
+namespace JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Common;
 
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessIterator\IterationResponse;
-use JobBoy\Process\Domain\ProcessIterator\ProcessHandlers\Base\AbstractProcessHandler;
+use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
+use JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Base\AbstractProcessHandler;
 
 /**
  * It is a generic Dummy ProcessHandler who support all processes and move them to end to avoid errors.

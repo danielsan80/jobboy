@@ -2,13 +2,12 @@
 
 namespace Tests\JobBoy\Process\Application\Service;
 
+use JobBoy\Process\Application\Service\ExecuteProcess;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
-use JobBoy\Process\Domain\ProcessIterator\IterationResponse;
+use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
 use JobBoy\Process\Domain\Repository\Infrastructure\InMemory\ProcessRepository;
 use PHPUnit\Framework\TestCase;
-
-use JobBoy\Process\Application\Service\ExecuteProcess;
 
 class ExecuteProcessTest extends TestCase
 {
