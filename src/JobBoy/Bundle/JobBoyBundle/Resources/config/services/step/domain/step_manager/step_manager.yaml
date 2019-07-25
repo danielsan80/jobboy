@@ -5,3 +5,4 @@ services:
     arguments:
       - '@JobBoy\Process\Domain\Repository\ProcessRepositoryInterface'
       - '@JobBoy\Step\Domain\StepManager\StepRegistry'
+    lazy: true
