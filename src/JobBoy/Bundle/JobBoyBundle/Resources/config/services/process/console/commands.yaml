@@ -20,6 +20,13 @@ services:
     tags:
       - { name: 'console.command' }
 
+  JobBoy\Process\Console\Command\RemoveOldProcessesCommand:
+    class: JobBoy\Process\Console\Command\RemoveOldProcessesCommand
+    arguments:
+      - '@JobBoy\Process\Application\Service\RemoveOldProcesses'
+    tags:
+      - { name: 'console.command' }
+
   JobBoy\Process\Console\Command\WorkCommand:
     class: JobBoy\Process\Console\Command\WorkCommand
     arguments:
