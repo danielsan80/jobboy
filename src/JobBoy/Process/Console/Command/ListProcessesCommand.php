@@ -174,7 +174,7 @@ class ListProcessesCommand extends Command
 
     protected function formatArray(array $array): string
     {
-        return json_encode($array, JSON_PRETTY_PRINT);
+        return json_encode($array, JSON_PRETTY_PRINT ^ JSON_UNESCAPED_SLASHES);
     }
 
 }
