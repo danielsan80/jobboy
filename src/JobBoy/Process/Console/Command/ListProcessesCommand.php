@@ -45,7 +45,15 @@ class ListProcessesCommand extends Command
     protected function writeShowTable(OutputInterface $output, Process $process)
     {
         $rows = [
-            [ 'id', $process->id() ]
+            ['id', $process->id()],
+            ['code', $process->code()],
+            ['parameters', json_encode($process->parameters())],
+            ['created at', $this->formatDate($process->createdAt())],
+            ['updated at', $this->formatDate($process->updatedAt())],
+            ['started at', $this->formatDate($process->startedAt())],
+            ['ended at', $this->formatDate($process->endedAt())],
+            ['status', $process->status()],
+            ['store', json_encode($process->store())],
         ];
 
         array_walk_recursive($rows, function (&$item, $i) {
@@ -78,6 +86,7 @@ class ListProcessesCommand extends Command
                 'started at' => $this->formatDate($process->startedAt()),
                 'ended at' => $this->formatDate($process->endedAt()),
                 'status' => $process->status(),
+                'handled' => $this->formatBoolean($process->isHandled()),
 //                'store' => json_encode($process->store()),
             ];
             $rows[] = $row;
@@ -106,6 +115,11 @@ class ListProcessesCommand extends Command
         }
 
         return '';
+    }
+
+    protected function formatBoolean(bool $bool): string
+    {
+        return $bool?'<fg=green>✔</>':'<fg=red>✘</>';
     }
 
 }
