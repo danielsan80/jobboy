@@ -35,8 +35,25 @@ class ListProcessesCommand extends Command
     {
         $processes =  $this->listProcesses->execute();
 
-        $this->writeShowTable($output, $processes[0]);
+        if ($id = $input->getOption('show')) {
+            $matchingProcesses = array_filter($processes, function (Process $process) use ($id) {
+               return strpos($process->id(), $id) === 0;
+            });
+            foreach ($matchingProcesses as $process) {
+                $this->writeShowTable($output, $process);
+                $output->writeln('');
+            }
+        }
+
+        if ($input->getOption('active')) {
+            $processes = array_filter($processes, function(Process $process){
+                return $process->isActive();
+            });
+        }
+
+
         $this->writeListTable($output, $processes);
+        $output->writeln('');
 
     }
 
@@ -44,16 +61,18 @@ class ListProcessesCommand extends Command
 
     protected function writeShowTable(OutputInterface $output, Process $process)
     {
+        
         $rows = [
-            ['id', $process->id()],
+            ['id', '<fg=cyan;options=bold>'.$process->id().'</>'],
             ['code', $process->code()],
-            ['parameters', json_encode($process->parameters())],
+            ['parameters', $this->formatArray($process->parameters())],
             ['created at', $this->formatDate($process->createdAt())],
             ['updated at', $this->formatDate($process->updatedAt())],
             ['started at', $this->formatDate($process->startedAt())],
             ['ended at', $this->formatDate($process->endedAt())],
             ['status', $process->status()],
-            ['store', json_encode($process->store())],
+            ['store', $this->formatArray($process->store())],
+            ['handled at', $this->formatBoolean($process->isHandled()).($process->isHandled()?': '.$this->formatDate($process->handledAt()):'')],
         ];
 
         array_walk_recursive($rows, function (&$item, $i) {
@@ -74,7 +93,7 @@ class ListProcessesCommand extends Command
     protected function writeListTable(OutputInterface $output, array $processes)
     {
         $rows = [];
-        $headers = null;
+        $headers = [];
         /** @var Process $process */
         foreach ($processes as $process) {
             $row = [
@@ -95,6 +114,11 @@ class ListProcessesCommand extends Command
             }
         }
 
+        if (!$rows) {
+            $output->writeln('<comment>No processes found</comment>');
+            return;
+        }
+
         $table = new Table($output);
         $table
             ->setHeaders($headers);
@@ -104,6 +128,7 @@ class ListProcessesCommand extends Command
 
         $table
             ->setRows($rows);
+
 
         $table->render();
     }
@@ -120,6 +145,11 @@ class ListProcessesCommand extends Command
     protected function formatBoolean(bool $bool): string
     {
         return $bool?'<fg=green>✔</>':'<fg=red>✘</>';
+    }
+
+    protected function formatArray(array $array): string
+    {
+        return json_encode($array, JSON_PRETTY_PRINT);
     }
 
 }

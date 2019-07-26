@@ -37,6 +37,13 @@ class Process
     /** @var array */
     protected $store;
 
+    /** @var boolean */
+    protected $isActive;
+
+    /** @var boolean */
+    protected $isEvolving;
+
+
 
     public function __construct(ProcessEntity $process)
     {
@@ -51,6 +58,8 @@ class Process
         $this->handledAt = $process->handledAt();
         $this->store = $process->store()->data();
 
+        $this->isActive = $process->status()->isActive();
+        $this->isEvolving = $process->status()->isEvolving();
     }
 
 
@@ -99,6 +108,11 @@ class Process
         return $this->handledAt;
     }
 
+    public function store(): array
+    {
+        return $this->store;
+    }
+
     public function isStarted(): bool
     {
         return (bool)$this->startedAt;
@@ -125,11 +139,15 @@ class Process
         return (bool)$this->handledAt;
     }
 
-    public function store(): array
+    public function isActive(): bool
     {
-        return $this->store;
+        return $this->isActive;
     }
 
+    public function isEvolving(): bool
+    {
+        return $this->isEvolving;
+    }
 
 
 }
