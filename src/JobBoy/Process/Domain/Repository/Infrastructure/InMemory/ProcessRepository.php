@@ -72,7 +72,7 @@ class ProcessRepository implements ProcessRepositoryInterface
     public function stale(?\DateTimeImmutable $until = null, ?int $start = null, ?int $length = null): array
     {
         if (!$until) {
-            $until = Clock::createDateTimeImmutable(sprintf('- %d days', self::DEFAULT_STALE_DAYS));
+            $until = ProcessRepositoryUtil::aFewDaysAgo(self::DEFAULT_STALE_DAYS);
         }
 
         $processes = $this->processes;

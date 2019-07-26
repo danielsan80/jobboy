@@ -51,6 +51,7 @@ class ListProcessesCommand extends Command
             });
         }
 
+        $processes = array_reverse($processes);
 
         $this->writeListTable($output, $processes);
         $output->writeln('');
@@ -70,7 +71,7 @@ class ListProcessesCommand extends Command
             ['updated at', $this->formatDate($process->updatedAt())],
             ['started at', $this->formatDate($process->startedAt())],
             ['ended at', $this->formatDate($process->endedAt())],
-            ['status', $process->status()],
+            ['status', $this->formatStatus($process->status())],
             ['store', $this->formatArray($process->store())],
             ['handled at', $this->formatBoolean($process->isHandled()).($process->isHandled()?': '.$this->formatDate($process->handledAt()):'')],
         ];
@@ -104,7 +105,7 @@ class ListProcessesCommand extends Command
                 'updated at' => $this->formatDate($process->updatedAt()),
                 'started at' => $this->formatDate($process->startedAt()),
                 'ended at' => $this->formatDate($process->endedAt()),
-                'status' => $process->status(),
+                'status' => $this->formatStatus($process->status()),
                 'handled' => $this->formatBoolean($process->isHandled()),
 //                'store' => json_encode($process->store()),
             ];
@@ -142,9 +143,33 @@ class ListProcessesCommand extends Command
         return '';
     }
 
+    protected function formatStatus(string $status): string
+    {
+        switch ($status) {
+            case 'starting':
+                $format = '<fg=blue>%s</>';
+                break;
+            case 'running':
+            case 'ending':
+                $format = '<fg=yellow>%s</>';
+                break;
+            case 'failing':
+            case 'failed':
+                $format = '<fg=red>%s</>';
+                break;
+            case 'completed':
+                $format = '<fg=green>%s</>';
+                break;
+            default:
+                $format = '%s';
+        }
+
+        return sprintf($format, $status);
+    }
+
     protected function formatBoolean(bool $bool): string
     {
-        return $bool?'<fg=green>✔</>':'<fg=red>✘</>';
+        return $bool?'✔':'';
     }
 
     protected function formatArray(array $array): string
