@@ -6,6 +6,13 @@ services:
     tags:
       - { name: 'console.command' }
 
+  JobBoy\Process\Console\Command\ExecuteProcessCommand:
+    class: JobBoy\Process\Console\Command\ExecuteProcessCommand
+    arguments:
+      - '@JobBoy\Process\Application\Service\ExecuteProcess'
+    tags:
+      - { name: 'console.command' }
+
   JobBoy\Process\Console\Command\WorkCommand:
     class: JobBoy\Process\Console\Command\WorkCommand
     arguments:
