@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 class ListProcessesCommand extends Command
 {
@@ -25,6 +26,8 @@ class ListProcessesCommand extends Command
     {
         $this
             ->setName('jobboy:process:list')
+            ->addOption('show', 's', InputOption::VALUE_REQUIRED, 'The id of the process to show')
+            ->addOption('active', 'a', InputOption::VALUE_NONE, 'List only active processes')
             ->setDescription('List the processes');
     }
 
@@ -32,36 +35,62 @@ class ListProcessesCommand extends Command
     {
         $processes =  $this->listProcesses->execute();
 
+        $this->writeShowTable($output, $processes[0]);
+        $this->writeListTable($output, $processes);
+
+    }
+
+
+
+    protected function writeShowTable(OutputInterface $output, Process $process)
+    {
+        $rows = [
+            [ 'id', $process->id() ]
+        ];
+
+        array_walk_recursive($rows, function (&$item, $i) {
+            if ($i==0) {
+                $item = sprintf('<info>%s</info>', $item);
+            }
+        });
+
+
+
         $table = new Table($output);
         $table
-            ->setHeaders([
-                'id',
-                'code',
-                'parameters',
-                'created at',
-                'updated at',
-                'started at',
-                'ended at',
-                'status',
-                'store'
-            ]);
+            ->setRows($rows);
 
+        $table->render();
+    }
+
+    protected function writeListTable(OutputInterface $output, array $processes)
+    {
         $rows = [];
-
+        $headers = null;
         /** @var Process $process */
         foreach ($processes as $process) {
-            $rows[] = [
-                $process->id(),
-                $process->code(),
-                json_encode($process->parameters()),
-                $this->formatDate($process->createdAt()),
-                $this->formatDate($process->updatedAt()),
-                $this->formatDate($process->startedAt()),
-                $this->formatDate($process->endedAt()),
-                json_encode($process->status()),
-                json_encode($process->store()),
+            $row = [
+                'id' => substr($process->id(),0,5),
+                'code' => $process->code(),
+//                'parameters' => json_encode($process->parameters()),
+                'created at' => $this->formatDate($process->createdAt()),
+                'updated at' => $this->formatDate($process->updatedAt()),
+                'started at' => $this->formatDate($process->startedAt()),
+                'ended at' => $this->formatDate($process->endedAt()),
+                'status' => $process->status(),
+//                'store' => json_encode($process->store()),
             ];
+            $rows[] = $row;
+            if (!$headers) {
+                $headers = array_keys($row);
+            }
         }
+
+        $table = new Table($output);
+        $table
+            ->setHeaders($headers);
+
+
 
 
         $table
