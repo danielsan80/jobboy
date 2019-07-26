@@ -18,6 +18,7 @@ use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\ProcessStore;
+use JobBoy\Process\Domain\Repository\Infrastructure\Util\ProcessRepositoryUtil;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class ProcessRepository implements ProcessRepositoryInterface
@@ -116,8 +117,9 @@ class ProcessRepository implements ProcessRepositoryInterface
 
     public function stale(?\DateTimeImmutable $until = null, ?int $start = null, ?int $length = null): array
     {
+
         if (!$until) {
-            $until = Clock::createDateTimeImmutable(sprintf('- %d days', self::DEFAULT_STALE_DAYS));
+            $until = ProcessRepositoryUtil::aFewDaysAgo(self::DEFAULT_STALE_DAYS);
         }
 
         $qb = $this->connection->createQueryBuilder()

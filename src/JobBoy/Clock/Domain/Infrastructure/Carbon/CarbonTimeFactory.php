@@ -9,17 +9,22 @@ use JobBoy\Clock\Domain\TimeFactoryInterface;
 class CarbonTimeFactory implements TimeFactoryInterface, FreezableInterface
 {
 
+    /** @var \DateTime|null */
+    protected $realFirstMicrotime;
+
     public function freeze($now): void
     {
         if (is_string($now)) {
             $now = new \DateTime($now);
         }
         Carbon::setTestNow($now);
+        $this->realFirstMicrotime = null;
     }
 
     public function unfreeze(): void
     {
         Carbon::setTestNow();
+        $this->realFirstMicrotime = null;
     }
 
     public function createDateTimeImmutable(string $time = "now", ?\DateTimeZone $timezone = NULL): \DateTimeImmutable
@@ -37,4 +42,19 @@ class CarbonTimeFactory implements TimeFactoryInterface, FreezableInterface
         return $datetime;
     }
 
+    public function microtime(): float
+    {
+        if (!Carbon::getTestNow()) {
+            return (float)(new \DateTimeImmutable())->format('U.u');
+        }
+
+        if (!$this->realFirstMicrotime) {
+            $this->realFirstMicrotime = (float)(new \DateTimeImmutable())->format('U.u');
+            return (float)$this->createDateTimeImmutable()->format('U.u');
+        }
+
+        $realPastMicrotime = (float)(new \DateTimeImmutable())->format('U.u') - $this->realFirstMicrotime;
+
+        return (float)$this->createDateTimeImmutable()->format('U.u') + $realPastMicrotime;
+    }
 }

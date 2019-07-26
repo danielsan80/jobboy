@@ -6,6 +6,27 @@ services:
     tags:
       - { name: 'console.command' }
 
+  JobBoy\Process\Console\Command\ExecuteProcessCommand:
+    class: JobBoy\Process\Console\Command\ExecuteProcessCommand
+    arguments:
+      - '@JobBoy\Process\Application\Service\ExecuteProcess'
+    tags:
+      - { name: 'console.command' }
+
+  JobBoy\Process\Console\Command\ListProcessesCommand:
+    class: JobBoy\Process\Console\Command\ListProcessesCommand
+    arguments:
+      - '@JobBoy\Process\Application\Service\ListProcesses'
+    tags:
+      - { name: 'console.command' }
+
+  JobBoy\Process\Console\Command\RemoveOldProcessesCommand:
+    class: JobBoy\Process\Console\Command\RemoveOldProcessesCommand
+    arguments:
+      - '@JobBoy\Process\Application\Service\RemoveOldProcesses'
+    tags:
+      - { name: 'console.command' }
+
   JobBoy\Process\Console\Command\WorkCommand:
     class: JobBoy\Process\Console\Command\WorkCommand
     arguments:

@@ -29,6 +29,12 @@ final class Clock
         return self::$timeFactory->createDateTime($time, $timezone);
     }
 
+    public static function microtime(): float
+    {
+        self::ensureTimeFactoryExists();
+        return self::$timeFactory->microtime();
+    }
+
     private static function ensureTimeFactoryExists()
     {
         if (!self::$timeFactory) {

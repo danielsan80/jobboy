@@ -44,9 +44,12 @@ class ExecuteProcessTest extends TestCase
             $iterationMaker
         );
 
+        $this->assertCount(0, $processRepository->all());
+
         $service->execute('a_job', ['a_key' => 'a_value']);
 
         $this->assertCount(1, $processRepository->all());
+
         $this->assertEquals('completed', (string)$processRepository->all()[0]->status());
 
 

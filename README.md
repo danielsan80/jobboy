@@ -5,7 +5,7 @@
 
 JobBoy nasce dall'esigenza di gestire dei processi batch.
 
-Inizalmente era stato sviluppato JobMan (contrazione di JobManager) che si proponeva di gestire molti più
+Inizialmente era stato sviluppato JobMan (contrazione di JobManager) che si proponeva di gestire molti più
 aspetti ma con i primi utilizzi ci siamo resi conto che alcune feature non le avremmo
 utilizzate per ragioni di semplicità a scapito di una presunta minore efficienza.
 
@@ -20,7 +20,7 @@ A Symfony4 example application using JobBoy is available [here](https://github.c
 
 ## Getting started
 
-Add JobBoy in your composer.json
+Add JobBoy to your composer.json
 
 ```
 composer require dansan/jobboy
@@ -138,6 +138,7 @@ sudo apt-get install graphviz
 - [Il ProcessRepository](./doc/process_repository.md)
 - [IterationMaker](./doc/iteration_maker.md)
 - [ProcessIterator](./doc/process_iterator.md)
+- [ProcessHandlers](./doc/process_handlers.md)
 - [Gli Application services](./doc/application_services.md)
 - [L'EventBus](./doc/event_bus.md)
 - [I Console Command](./doc/console_commands.md)

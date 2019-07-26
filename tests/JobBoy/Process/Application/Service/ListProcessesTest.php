@@ -35,7 +35,7 @@ class ListProcessesTest extends TestCase
 
         $processes = $service->execute();
 
-        $this->assertCount(1,$processes);
+        $this->assertCount(1, $processes);
 
         $process = $processes[0];
 

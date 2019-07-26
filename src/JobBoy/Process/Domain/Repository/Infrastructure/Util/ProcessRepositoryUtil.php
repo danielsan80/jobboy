@@ -4,6 +4,8 @@ namespace JobBoy\Process\Domain\Repository\Infrastructure\Util;
 
 use JobBoy\Process\Domain\Entity\Process;
 
+use JobBoy\Clock\Domain\Clock;
+
 class ProcessRepositoryUtil
 {
     public static function sort(array $processes): array
@@ -28,6 +30,11 @@ class ProcessRepositoryUtil
             }
             return ($a->updatedAt() < $b->updatedAt()) ? -1 : 1;
         };
+    }
+
+    public static function aFewDaysAgo(int $days): \DateTimeImmutable
+    {
+        return Clock::createDateTimeImmutable(sprintf('today - %d days', $days));
     }
 
     public static function notImplemented()
