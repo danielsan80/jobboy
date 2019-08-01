@@ -1,7 +1,0 @@
-services:
-
-
-  JobBoy\Process\Domain\Entity\Factory\ProcessFactory:
-    class: JobBoy\Process\Domain\Entity\Factory\ProcessFactory
-    arguments:
-      - '%jobboy.process.class%'

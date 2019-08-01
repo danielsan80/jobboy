@@ -1,4 +1,0 @@
-services:
-
-  #JobBoy\Process\Domain\Repository\ProcessRepositoryInterface:
-  #  alias: ...
