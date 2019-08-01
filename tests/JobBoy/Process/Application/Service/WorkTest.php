@@ -7,11 +7,14 @@ use JobBoy\Clock\Domain\Clock;
 use JobBoy\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
 use JobBoy\Process\Application\Service\Events\IdleTimeStarted;
 use JobBoy\Process\Application\Service\Events\Timedout;
+use JobBoy\Process\Application\Service\Events\WorkLocked;
+use JobBoy\Process\Application\Service\Events\WorkReleased;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Event\Message\Message;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
+use JobBoy\Process\Domain\Lock\Infrastructure\InMemory\LockFactory;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\Repository\Infrastructure\InMemory\ProcessRepository;
@@ -86,8 +89,11 @@ class WorkTest extends TestCase
 
         $eventBus = new SpyEventBus();
 
+        $lockFactory = new LockFactory();
+
         $service = new Work(
             $iterationMaker,
+            $lockFactory,
             $eventBus
         );
 
@@ -139,12 +145,25 @@ class WorkTest extends TestCase
 
 
         $this->assertEventBusEquals([
+            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
             ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
+            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+
+            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
             ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
+            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+
+            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
             ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
+            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+
+            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
             ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
+            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+
+            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
             ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
-            ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
+            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
         ], $eventBus);
 
     }

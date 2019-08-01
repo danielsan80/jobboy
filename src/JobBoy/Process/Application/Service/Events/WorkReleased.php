@@ -12,7 +12,7 @@ class WorkReleased implements HasMessageInterface
 
     public function __construct()
     {
-        $this->message = new Message('Work service released.');
+        $this->message = new Message('Work service released');
     }
 
     public function message(): Message

@@ -58,7 +58,6 @@ class Work
                 $response = $this->iterationMaker->work();
                 if (!$response->hasWorked()) {
                     if ($timer->isTimedout()) {
-                        $this->eventBus->publish(new TimedOut($timeout));
                         break;
                     }
                     $this->eventBus->publish(new IdleTimeStarted($idleTime));

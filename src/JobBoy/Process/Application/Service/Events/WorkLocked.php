@@ -12,7 +12,7 @@ class WorkLocked implements HasMessageInterface
 
     public function __construct()
     {
-        $this->message = new Message('Work service locked.');
+        $this->message = new Message('Work service locked');
     }
 
     public function message(): Message
