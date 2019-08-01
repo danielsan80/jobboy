@@ -26,7 +26,7 @@ class ListProcessesCommand extends Command
     {
         $this
             ->setName('jobboy:process:list')
-            ->addOption('show', 's', InputOption::VALUE_REQUIRED, 'The id of the process to show')
+            ->addOption('show', 's', InputOption::VALUE_OPTIONAL, 'The id of the process to show')
             ->addOption('active', 'a', InputOption::VALUE_NONE, 'List only active processes')
             ->setDescription('List the processes');
     }
@@ -35,15 +35,6 @@ class ListProcessesCommand extends Command
     {
         $processes =  $this->listProcesses->execute();
 
-        if ($id = $input->getOption('show')) {
-            $matchingProcesses = array_filter($processes, function (Process $process) use ($id) {
-               return strpos($process->id(), $id) === 0;
-            });
-            foreach ($matchingProcesses as $process) {
-                $this->writeShowTable($output, $process);
-                $output->writeln('');
-            }
-        }
 
         if ($input->getOption('active')) {
             $processes = array_filter($processes, function(Process $process){
@@ -56,9 +47,37 @@ class ListProcessesCommand extends Command
         $this->writeListTable($output, $processes);
         $output->writeln('');
 
+
+        if ($input->hasArgument('show')) {
+            $id = $input->getOption('show');
+
+            $this->writeShowTables($output, $processes, $id);
+        }
     }
 
 
+    protected function writeShowTables(OutputInterface $output, array $processes, string $id)
+    {
+        if (!$processes) {
+            $output->writeln('<comment>No processes to show</comment>');
+            return;
+        }
+
+        if (!$id) {
+            $this->writeShowTable($output, $processes[0]);
+            $output->writeln('');
+            return;
+        }
+
+        $matchingProcesses = array_filter($processes, function (Process $process) use ($id) {
+            return strpos($process->id(), $id) === 0;
+        });
+        foreach ($matchingProcesses as $process) {
+            $this->writeShowTables($output, $processes, $id);
+            $output->writeln('');
+        }
+
+    }
 
     protected function writeShowTable(OutputInterface $output, Process $process)
     {
