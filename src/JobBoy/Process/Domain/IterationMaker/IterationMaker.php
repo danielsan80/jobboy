@@ -2,6 +2,7 @@
 
 namespace JobBoy\Process\Domain\IterationMaker;
 
+use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
@@ -27,7 +28,7 @@ class IterationMaker
     protected $lockFactory;
     /** @var ProcessIterator */
     protected $processIterator;
-    /** @var EventBusInterface|NullEventBus|null */
+    /** @var EventBusInterface */
     protected $eventBus;
 
     /** @var LockInterface */
@@ -82,11 +83,11 @@ class IterationMaker
     protected function lock(): void
     {
         if ($this->lock) {
-            throw new IteratingYetException();
+            throw new WorkRunningYetException();
         }
         $this->lock = $this->lockFactory->create(self::LOCK_KEY);
         if (!$this->lock->acquire()) {
-            throw new IteratingYetException();
+            throw new WorkRunningYetException();
         };
 
         $this->eventBus->publish(new ProcessManagementLocked());

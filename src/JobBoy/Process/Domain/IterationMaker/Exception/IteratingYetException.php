@@ -2,7 +2,7 @@
 
 namespace JobBoy\Process\Domain\IterationMaker\Exception;
 
-class IteratingYetException extends \RuntimeException
+class IteratingYetException extends \DomainException
 {
     public function __construct()
     {
