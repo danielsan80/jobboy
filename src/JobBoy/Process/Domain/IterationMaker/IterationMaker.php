@@ -68,7 +68,7 @@ class IterationMaker
             $process = $this->process($type);
 
             if ($process) {
-                $this->eventBus->publish(new ProcessPicked($process->id(), $process->code(), $type));
+                $this->eventBus->publish(new ProcessPicked($process->id(), $process->code(), $type, $process->store()->toScalar()));
                 $response = $this->iterate($process);
                 $this->release();
                 return $response;
