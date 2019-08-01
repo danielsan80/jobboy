@@ -2,6 +2,7 @@
 
 namespace JobBoy\Process\Console\Command;
 
+use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
 use JobBoy\Process\Application\Service\Work;
 use JobBoy\Process\Console\Command\Event\OutputEventListener;
 use JobBoy\Process\Domain\Event\EventBusInterface;
@@ -46,7 +47,11 @@ class WorkCommand extends Command
             ]);
         });
         $this->eventBus->subscribe($eventListener);
-        $this->work->execute($input->getOption('timeout'), $input->getOption('idle-time'));
+        try {
+            $this->work->execute($input->getOption('timeout'), $input->getOption('idle-time'));
+        } catch (WorkRunningYetException $e) {
+            $output->writeln($e->getMessage());
+        }
         $this->eventBus->unsubscribe($eventListener);
         $output->writeln('Worker stopped');
     }

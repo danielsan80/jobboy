@@ -48,7 +48,7 @@ class ListProcessesCommand extends Command
         $output->writeln('');
 
 
-        if ($input->hasArgument('show')) {
+        if ($input->hasOption('show')) {
             $id = $input->getOption('show');
 
             $this->writeShowTables($output, $processes, $id);
@@ -56,7 +56,7 @@ class ListProcessesCommand extends Command
     }
 
 
-    protected function writeShowTables(OutputInterface $output, array $processes, string $id)
+    protected function writeShowTables(OutputInterface $output, array $processes, ?string $id)
     {
         if (!$processes) {
             $output->writeln('<comment>No processes to show</comment>');
@@ -73,7 +73,7 @@ class ListProcessesCommand extends Command
             return strpos($process->id(), $id) === 0;
         });
         foreach ($matchingProcesses as $process) {
-            $this->writeShowTables($output, $processes, $id);
+            $this->writeShowTable($output, $process);
             $output->writeln('');
         }
 
@@ -81,7 +81,7 @@ class ListProcessesCommand extends Command
 
     protected function writeShowTable(OutputInterface $output, Process $process)
     {
-        
+
         $rows = [
             ['id', '<fg=cyan;options=bold>'.$process->id().'</>'],
             ['code', $process->code()],

@@ -44,6 +44,7 @@ abstract class AbstractStepProcessHandler implements ProcessHandlerInterface, Ha
     public function supports(ProcessId $id): bool
     {
         return !$this->process($id)->isHandled()
+            && $this->process($id)->status()->isRunning()
             && $this->process($id)->code() === static::job()
             && $this->stepManager->atStep($id, static::step());
     }
