@@ -17,8 +17,11 @@ solo nei test
 ma come db temporaneo.
 
 Le implementazioni Doctrine e Redis attualmente non prevedono nessun tipo di `flush`: ad ogni modifica il `Process`
-viene saltato. Non prevedono attualmente neppure un caching dei processi: ad ogni query sul repository viene fatta una
+viene salvato. Non prevedono attualmente neppure un caching dei processi: ad ogni query sul repository viene fatta una
 query al database sottostante.
 
 Ovviamente sarà necessario intervenire su questi aspetti per razionalizzare l'interazione con i db sottostanti
-ma per ora vanno bene così.  
+ma per ora vanno bene così.
+
+I ProcessRepository Doctrine e Redis sono disponibili in package separati,
+rispettivamente `dansan/jobboy-processes-doctrine` e `dansan/jobboy-processes-redis`.

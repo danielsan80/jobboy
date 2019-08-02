@@ -18,8 +18,6 @@
         "symfony/lock": "^4.3"
     },
     "require-dev": {
-        "ext-redis": "*",
-        "doctrine/dbal": "~2.4",
         "dansan/fixture-handler": "*",
         "mockery/mockery": "dev-master",
         "symfony/console": "^3.4",

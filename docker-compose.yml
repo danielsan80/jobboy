@@ -3,8 +3,8 @@ version: '3'
 volumes:
   composer_volume: {}
   history_volume: {}
-  redis_volume: {}
-  db_volume: {}
+#  redis_volume: {}
+#  db_volume: {}
 
 services:
 
@@ -17,29 +17,29 @@ services:
       - ./:/var/www/project
       - composer_volume:/home/user/.composer
       - history_volume:/home/user/history
-
-  db:
-    image: mysql:5.7
-    command: mysqld --sql_mode=""
-    volumes:
-      - db_volume:/var/lib/mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-    ports:
-      - '${LOCALHOST}:3306:3306'
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - "${LOCALHOST}:81:80"
-    depends_on:
-      - db
-    environment:
-      - PMA_HOST=db
-
-  redis:
-    image: 'redis:5.0.4-alpine3.9'
-    volumes:
-      - redis_volume:/data
-
+#
+#  db:
+#    image: mysql:5.7
+#    command: mysqld --sql_mode=""
+#    volumes:
+#      - db_volume:/var/lib/mysql
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+#    ports:
+#      - '${LOCALHOST}:3306:3306'
+#
+#  phpmyadmin:
+#    image: phpmyadmin/phpmyadmin
+#    ports:
+#      - "${LOCALHOST}:81:80"
+#    depends_on:
+#      - db
+#    environment:
+#      - PMA_HOST=db
+#
+#  redis:
+#    image: 'redis:5.0.4-alpine3.9'
+#    volumes:
+#      - redis_volume:/data
+#
 
