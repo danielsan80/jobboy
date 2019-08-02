@@ -26,13 +26,19 @@ class ListProcessesCommand extends Command
     {
         $this
             ->setName('jobboy:process:list')
-            ->addOption('show', 's', InputOption::VALUE_OPTIONAL, 'The id of the process to show')
+            ->addOption('show', 's', InputOption::VALUE_REQUIRED, 'The id of the process to show')
+            ->addOption('show-first', 'sf', InputOption::VALUE_NONE, 'The id of the process to show')
             ->addOption('active', 'a', InputOption::VALUE_NONE, 'List only active processes')
             ->setDescription('List the processes');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        if ($input->getOption('show') && $input->getOption('show-first')) {
+            throw new \InvalidArgumentException('Only `show` oOR `show-first` is allowed');
+        }
+
+
         $processes =  $this->listProcesses->execute();
 
 
@@ -48,11 +54,14 @@ class ListProcessesCommand extends Command
         $output->writeln('');
 
 
-        if ($input->hasOption('show')) {
-            $id = $input->getOption('show');
 
+        if ($id = $input->getOption('show')) {
             $this->writeShowTables($output, $processes, $id);
         }
+        if ($input->getOption('show-first')) {
+            $this->writeShowTables($output, $processes, null);
+        }
+
     }
 
 
