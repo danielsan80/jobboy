@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\JobBoy\Process\Domain\Repository;
+namespace JobBoy\Process\Domain\Repository\Test;
 
 use Dan\FixtureHandler\FixtureHandler;
 use JobBoy\Clock\Domain\Clock;

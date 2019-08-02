@@ -7,8 +7,8 @@ use JobBoy\Process\Domain\Entity\Infrastructure\TouchCallback\Process;
 use JobBoy\Process\Domain\Repository\Infrastructure\Redis\ProcessRepository;
 use JobBoy\Process\Domain\Repository\Infrastructure\Redis\RedisFactory;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
+use JobBoy\Process\Domain\Repository\Test\ProcessRepositoryInterfaceTest;
 use Ramsey\Uuid\Uuid;
-use Tests\JobBoy\Process\Domain\Repository\ProcessRepositoryInterfaceTest;
 
 class ProcessRepositoryTest extends ProcessRepositoryInterfaceTest
 {
