@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40975b6aec40960f330fbee68bfbbd23",
+    "content-hash": "e71778b53f3ccfe95dc0688fbe2edb4d",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -399,6 +399,49 @@
             "time": "2019-03-29T11:11:19+00:00"
         },
         {
+            "name": "dansan/jobboy-test-pack",
+            "version": "0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/danielsan80/jobboy-test-pack.git",
+                "reference": "c3f81339dbadfcde2c98cf7e79363897688681b7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/danielsan80/jobboy-test-pack/zipball/c3f81339dbadfcde2c98cf7e79363897688681b7",
+                "reference": "c3f81339dbadfcde2c98cf7e79363897688681b7",
+                "shasum": ""
+            },
+            "require": {
+                "mockery/mockery": "*",
+                "nesbot/carbon": "^2.0",
+                "php": "^7.1.3",
+                "symfony/dotenv": "^4.2",
+                "symfony/phpunit-bridge": "*"
+            },
+            "type": "metapackage",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.0.x-dev"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Danilo Sanchi",
+                    "email": "danilo.sanchi@gmail.com"
+                }
+            ],
+            "description": "Just a pack to share test dependencies between all JobBoy repositories",
+            "support": {
+                "source": "https://github.com/danielsan80/jobboy-test-pack/tree/master",
+                "issues": "https://github.com/danielsan80/jobboy-test-pack/issues"
+            },
+            "time": "2019-08-05T14:02:32+00:00"
+        },
+        {
             "name": "hamcrest/hamcrest-php",
             "version": "v2.0.0",
             "source": {
@@ -448,16 +491,16 @@
         },
         {
             "name": "mockery/mockery",
-            "version": "dev-master",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mockery/mockery.git",
-                "reference": "ffe255a19a1862d3a601ba74925d4f3c15896dfa"
+                "reference": "0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mockery/mockery/zipball/ffe255a19a1862d3a601ba74925d4f3c15896dfa",
-                "reference": "ffe255a19a1862d3a601ba74925d4f3c15896dfa",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2",
+                "reference": "0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2",
                 "shasum": ""
             },
             "require": {
@@ -509,7 +552,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2019-07-22T18:06:51+00:00"
+            "time": "2019-02-13T09:37:52+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -2235,9 +2278,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "mockery/mockery": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

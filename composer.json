@@ -17,12 +17,9 @@
         "symfony/lock": "^4.3"
     },
     "require-dev": {
+        "dansan/jobboy-test-pack":"*",
         "dansan/fixture-handler": "*",
-        "nesbot/carbon": "^2.0",
-        "mockery/mockery": "dev-master",
         "symfony/console": "^3.4",
-        "symfony/dotenv": "^4.2",
-        "symfony/phpunit-bridge": "*",
         "symfony/var-dumper": "^4.2",
         "symfony/framework-bundle": "^4.0"
     },
@@ -50,5 +47,11 @@
         }
     },
 
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:danielsan80/jobboy-test-pack.git"
+        }
+    ]
 }
