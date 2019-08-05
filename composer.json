@@ -17,10 +17,8 @@
         "symfony/lock": "^4.3"
     },
     "require-dev": {
-        "ext-redis": "*",
-        "doctrine/dbal": "~2.4",
-        "nesbot/carbon": "^2.0",
         "dansan/fixture-handler": "*",
+        "nesbot/carbon": "^2.0",
         "mockery/mockery": "dev-master",
         "symfony/console": "^3.4",
         "symfony/dotenv": "^4.2",
