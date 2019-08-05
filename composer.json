@@ -32,8 +32,7 @@
     },
     "autoload": {
         "psr-4": {
-            "JobBoy\\": "src/JobBoy/",
-            "Dan\\": "src/Dan/"
+            "JobBoy\\": "src/JobBoy/"
         }
     },
     "autoload-dev": {
