@@ -48,10 +48,5 @@
     },
 
     "minimum-stability": "stable",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:danielsan80/jobboy-test-pack.git"
-        }
-    ]
+    "repositories": []
 }
