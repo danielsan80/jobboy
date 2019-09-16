@@ -39,6 +39,12 @@ class OutputEventListener implements EventListenerInterface
             }
 
             $this->output->writeln($message->text().$parameters);
+        } else {
+            try {
+                $this->output->writeln((string)$event);
+            } catch (\Throwable $e) {
+                
+            }
         }
     }
 
