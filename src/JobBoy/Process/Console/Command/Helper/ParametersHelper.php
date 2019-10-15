@@ -38,7 +38,7 @@ class ParametersHelper
 
                 $message .= ' ('.$jsonError.')';
             }
-            
+
             throw new \InvalidArgumentException($message);
         }
         return $parameters;
