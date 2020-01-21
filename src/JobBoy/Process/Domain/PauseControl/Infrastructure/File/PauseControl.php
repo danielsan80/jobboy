@@ -35,16 +35,22 @@ class PauseControl implements PauseControlInterface
 
     public function pause(): void
     {
+        $this->ensureFileExists();
+
         file_put_contents($this->filename,'true');
     }
 
     public function unpause(): void
     {
+        $this->ensureFileExists();
+
         file_put_contents($this->filename,'false');
     }
 
     public function isPaused(): bool
     {
+        $this->ensureFileExists();
+
         $paused = file_get_contents($this->filename);
         return $paused=='true';
     }
