@@ -53,24 +53,36 @@ class Work
 
         $timer = new Timer($timeout);
 
-        do {
-            try {
-                $response = $this->iterationMaker->work();
-                if (!$response->hasWorked()) {
-                    if ($timer->isTimedout()) {
-                        break;
-                    }
-                    $this->eventBus->publish(new IdleTimeStarted($idleTime));
-                    sleep($idleTime);
-                }
-            } catch (IteratingYetException $e) {
-                $this->eventBus->publish(new IteratingYetOccured());
-                return;
-            }
-        } while (!$timer->isTimedout());
-        $this->eventBus->publish(new TimedOut($timeout));
+        while (true) {
+
+            $continue = $this->makeIteration($timer, $timeout, $idleTime);
+            if (!$continue) {
+                break;
+            };
+        }
 
         $this->release();
+    }
+
+    protected function makeIteration(Timer $timer, int $timeout, int $idleTime): bool
+    {
+        try {
+            $response = $this->iterationMaker->work();
+            if (!$response->hasWorked() && !$timer->isTimedout()) {
+                $this->eventBus->publish(new IdleTimeStarted($idleTime));
+                sleep($idleTime);
+            }
+        } catch (IteratingYetException $e) {
+            $this->eventBus->publish(new IteratingYetOccured());
+            return false;
+        }
+
+        if ($timer->isTimedout()) {
+            $this->eventBus->publish(new TimedOut($timeout));
+            return false;
+        }
+
+        return true;
     }
 
     protected function lock(): void
