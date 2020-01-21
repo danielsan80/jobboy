@@ -3,6 +3,8 @@
 /.env.local
 /.tmp
 /.build
+/.phpunit.result.cache
+
 
 /var/data/**
 !/var/data/**/

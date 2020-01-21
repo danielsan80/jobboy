@@ -15,6 +15,7 @@ use JobBoy\Process\Domain\Event\Message\Message;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 use JobBoy\Process\Domain\Lock\Infrastructure\InMemory\LockFactory;
+use JobBoy\Process\Domain\PauseControl\NullPauseControl;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\Repository\Infrastructure\InMemory\ProcessRepository;
@@ -87,6 +88,7 @@ class WorkTest extends TestCase
                 return new IterationResponse(true);
             });
 
+        $pauseControl = new NullPauseControl();
         $eventBus = new SpyEventBus();
 
         $lockFactory = new LockFactory();
@@ -94,6 +96,7 @@ class WorkTest extends TestCase
         $service = new Work(
             $iterationMaker,
             $lockFactory,
+            $pauseControl,
             $eventBus
         );
 
@@ -162,6 +165,7 @@ class WorkTest extends TestCase
             ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
 
             ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
+            ['class' =>IdleTimeStarted::class, 'text' => 'Idle time for {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
             ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
             ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
         ], $eventBus);

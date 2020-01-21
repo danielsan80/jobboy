@@ -26,8 +26,6 @@ class ProcessHandlerRegistry
             $channel = self::DEFAULT_CHANNEL;
         }
         $this->handlers[$channel][$priority][] = $processHandler;
-
-        return $this;
     }
 
     public function get(ProcessId $id, ?string $channel = null): ProcessHandlerInterface
