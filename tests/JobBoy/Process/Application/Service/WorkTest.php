@@ -9,26 +9,24 @@ use JobBoy\Process\Application\Service\Events\IdleTimeStarted;
 use JobBoy\Process\Application\Service\Events\Timedout;
 use JobBoy\Process\Application\Service\Events\WorkLocked;
 use JobBoy\Process\Application\Service\Events\WorkReleased;
+use JobBoy\Process\Application\Service\Work;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
-use JobBoy\Process\Domain\Event\Message\Message;
-use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 use JobBoy\Process\Domain\Lock\Infrastructure\InMemory\LockFactory;
+use JobBoy\Process\Domain\MemoryLimit\NullMemoryLimit;
 use JobBoy\Process\Domain\PauseControl\NullPauseControl;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
 use JobBoy\Process\Domain\ProcessStatus;
 use JobBoy\Process\Domain\Repository\Infrastructure\InMemory\ProcessRepository;
 use PHPUnit\Framework\TestCase;
-
-use JobBoy\Process\Application\Service\Work;
 use Tests\JobBoy\Process\Test\Domain\Event\SpyEventBus;
 
 class WorkTest extends TestCase
 {
 
 
-    protected function createFixtureHandler():FixtureHandler
+    protected function createFixtureHandler(): FixtureHandler
     {
         $fh = new FixtureHandler();
 
@@ -67,7 +65,7 @@ class WorkTest extends TestCase
 
         $iterationMaker = \Mockery::mock(IterationMaker::class);
         $iterationMaker->shouldReceive('work')
-            ->andReturnUsing(function() use ($processRepository) {
+            ->andReturnUsing(function () use ($processRepository) {
                 $processes = array_merge(
                     $processRepository->byStatus(ProcessStatus::running()),
                     $processRepository->byStatus(ProcessStatus::starting())
@@ -88,6 +86,7 @@ class WorkTest extends TestCase
                 return new IterationResponse(true);
             });
 
+        $memoryLimit = new NullMemoryLimit();
         $pauseControl = new NullPauseControl();
         $eventBus = new SpyEventBus();
 
@@ -96,8 +95,9 @@ class WorkTest extends TestCase
         $service = new Work(
             $iterationMaker,
             $lockFactory,
-            $pauseControl,
-            $eventBus
+            $eventBus,
+            $memoryLimit,
+            $pauseControl
         );
 
         $this->assertProcessRepositoryEquals([
@@ -107,7 +107,7 @@ class WorkTest extends TestCase
 
 
         $this->aFewMinutesLater($fh);
-        $service->execute(0,0);
+        $service->execute(0, 0);
 
         $this->assertProcessRepositoryEquals([
             'job2' => 'starting',
@@ -115,7 +115,7 @@ class WorkTest extends TestCase
         ], $processRepository);
 
         $this->aFewMinutesLater($fh);
-        $service->execute(0,0);
+        $service->execute(0, 0);
 
         $this->assertProcessRepositoryEquals([
             'job2' => 'starting',
@@ -123,7 +123,7 @@ class WorkTest extends TestCase
         ], $processRepository);
 
         $this->aFewMinutesLater($fh);
-        $service->execute(0,0);
+        $service->execute(0, 0);
 
         $this->assertProcessRepositoryEquals([
             'job1' => 'completed',
@@ -131,7 +131,7 @@ class WorkTest extends TestCase
         ], $processRepository);
 
         $this->aFewMinutesLater($fh);
-        $service->execute(0,0);
+        $service->execute(0, 0);
 
         $this->assertProcessRepositoryEquals([
             'job1' => 'completed',
@@ -139,7 +139,7 @@ class WorkTest extends TestCase
         ], $processRepository);
 
         $this->aFewMinutesLater($fh);
-        $service->execute(0,0);
+        $service->execute(0, 0);
 
         $this->assertProcessRepositoryEquals([
             'job1' => 'completed',
@@ -148,26 +148,26 @@ class WorkTest extends TestCase
 
 
         $this->assertEventBusEquals([
-            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
-            ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
-            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+            ['class' => WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
+            ['class' => Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
+            ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
 
-            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
-            ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
-            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+            ['class' => WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
+            ['class' => Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
+            ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
 
-            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
-            ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
-            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+            ['class' => WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
+            ['class' => Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
+            ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
 
-            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
-            ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
-            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+            ['class' => WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
+            ['class' => Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
+            ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
 
-            ['class' =>WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
-            ['class' =>IdleTimeStarted::class, 'text' => 'Idle time for {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
-            ['class' =>Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' =>0]],
-            ['class' =>WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+            ['class' => WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
+            ['class' => IdleTimeStarted::class, 'text' => 'Idle time for {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
+            ['class' => Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
+            ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
         ], $eventBus);
 
     }
@@ -208,10 +208,9 @@ class WorkTest extends TestCase
         TestCase::assertEquals(count($expected), count($events));
 
         foreach ($events as $i => $event) {
-            TestCase::assertEquals($expected[$i], $event->toArray(), 'index: '.$i);
+            TestCase::assertEquals($expected[$i], $event->toArray(), 'index: ' . $i);
         }
     }
-
 
 
 }
