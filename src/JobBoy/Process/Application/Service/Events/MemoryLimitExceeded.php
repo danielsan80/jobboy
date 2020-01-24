@@ -12,7 +12,7 @@ class MemoryLimitExceeded implements HasMessageInterface
 
     public function __construct()
     {
-        $this->message = new Message('MemoryLimitExceeded', []);
+        $this->message = new Message('Memory limit exceeded', []);
     }
 
     public function message(): Message

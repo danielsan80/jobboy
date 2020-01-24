@@ -86,13 +86,14 @@ class Work
                 break;
             };
 
+            if ($this->checkMemoryLimit() === self::BREAK) {
+                break;
+            };
+
             if ($this->checkTimeout($timer, $timeout) === self::BREAK) {
                 break;
             };
 
-            if ($this->checkMemoryLimit() === self::BREAK) {
-                break;
-            };
         }
 
         $this->release();

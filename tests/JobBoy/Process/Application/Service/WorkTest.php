@@ -6,6 +6,7 @@ use Dan\FixtureHandler\FixtureHandler;
 use JobBoy\Clock\Domain\Clock;
 use JobBoy\Clock\Domain\Infrastructure\Carbon\CarbonTimeFactory;
 use JobBoy\Process\Application\Service\Events\IdleTimeStarted;
+use JobBoy\Process\Application\Service\Events\MemoryLimitExceeded;
 use JobBoy\Process\Application\Service\Events\Timedout;
 use JobBoy\Process\Application\Service\Events\WorkLocked;
 use JobBoy\Process\Application\Service\Events\WorkReleased;
@@ -14,6 +15,7 @@ use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 use JobBoy\Process\Domain\Lock\Infrastructure\InMemory\LockFactory;
+use JobBoy\Process\Domain\MemoryLimit\MemoryLimit;
 use JobBoy\Process\Domain\MemoryLimit\NullMemoryLimit;
 use JobBoy\Process\Domain\PauseControl\NullPauseControl;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
@@ -168,6 +170,79 @@ class WorkTest extends TestCase
             ['class' => IdleTimeStarted::class, 'text' => 'Idle time for {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
             ['class' => Timedout::class, 'text' => 'Timeout: {{seconds}} seconds', 'parameters' => ['seconds' => 0]],
             ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+        ], $eventBus);
+
+    }
+
+
+    /**
+     * @test
+     */
+    public function it_checks_memory()
+    {
+
+        $fh = $this->createFixtureHandler();
+
+        $processRepository = new ProcessRepository();
+        $processFactory = new ProcessFactory();
+
+        $this->aFewMinutesAgo($fh);
+
+        $process = $processFactory->create(new ProcessData([
+            'code' => 'job'
+        ]));
+        $processRepository->add($process);
+
+        $iterationMaker = \Mockery::mock(IterationMaker::class);
+        $iterationMaker->shouldReceive('work')
+            ->andReturnUsing(function () use ($process) {
+                $process->changeStatusToCompleted();
+                return new IterationResponse(true);
+            });
+
+        $memoryLimit = new class() implements MemoryLimit {
+
+            public function get(): int
+            {
+                return 100;
+            }
+
+            public function isExceeded(): bool
+            {
+                return true;
+            }
+        };
+
+        $pauseControl = new NullPauseControl();
+        $eventBus = new SpyEventBus();
+
+        $lockFactory = new LockFactory();
+
+        $service = new Work(
+            $iterationMaker,
+            $lockFactory,
+            $eventBus,
+            $memoryLimit,
+            $pauseControl
+        );
+
+        $this->assertProcessRepositoryEquals([
+            'job' => 'starting',
+        ], $processRepository);
+
+
+        $this->aFewMinutesLater($fh);
+        $service->execute(0, 0);
+
+        $this->assertProcessRepositoryEquals([
+            'job' => 'completed',
+        ], $processRepository);
+
+        $this->assertEventBusEquals([
+            ['class' => WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
+            ['class' => MemoryLimitExceeded::class, 'text' => 'Memory limit exceeded', 'parameters' => []],
+            ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
+
         ], $eventBus);
 
     }
