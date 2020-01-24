@@ -4,6 +4,7 @@ namespace JobBoy\Process\Application\Service;
 
 use JobBoy\Clock\Domain\Timer;
 use JobBoy\Process\Application\Service\Events\IdleTimeStarted;
+use JobBoy\Process\Application\Service\Events\MemoryLimitExceeded;
 use JobBoy\Process\Application\Service\Events\Timedout;
 use JobBoy\Process\Application\Service\Events\WorkLocked;
 use JobBoy\Process\Application\Service\Events\PauseTimeStarted;
@@ -17,6 +18,8 @@ use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 use JobBoy\Process\Application\Service\Events\IteratingYetOccured;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
+use JobBoy\Process\Domain\MemoryLimit\MemoryLimit;
+use JobBoy\Process\Domain\MemoryLimit\NullMemoryLimit;
 use JobBoy\Process\Domain\PauseControl\NullPauseControl;
 use JobBoy\Process\Domain\PauseControl\PauseControl;
 
@@ -32,11 +35,15 @@ class Work
     /** @var LockFactoryInterface */
     protected $lockFactory;
 
+    /** @var EventBusInterface */
+    protected $eventBus;
+
+    /** @var MemoryLimit|null */
+    protected $memoryLimit;
+
     /** @var NullPauseControl|PauseControl|null */
     protected $pauseControl;
 
-    /** @var EventBusInterface */
-    protected $eventBus;
 
     /** @var LockInterface */
     protected $lock;
@@ -44,20 +51,27 @@ class Work
     public function __construct(
         IterationMaker $iterationMaker,
         LockFactoryInterface $lockFactory,
-        ?PauseControl $pauseControl = null,
-        ?EventBusInterface $eventBus = null
+        ?EventBusInterface $eventBus = null,
+        ?MemoryLimit $memoryLimit = null,
+        ?PauseControl $pauseControl = null
     )
     {
-        if (!$pauseControl) {
-            $pauseControl = new NullPauseControl();
-        }
         if (!$eventBus) {
             $eventBus = new NullEventBus();
         }
+
+        if (!$memoryLimit) {
+            $memoryLimit = new NullMemoryLimit();
+        }
+
+        if (!$pauseControl) {
+            $pauseControl = new NullPauseControl();
+        }
         $this->iterationMaker = $iterationMaker;
         $this->lockFactory = $lockFactory;
-        $this->pauseControl = $pauseControl;
         $this->eventBus = $eventBus;
+        $this->memoryLimit = $memoryLimit;
+        $this->pauseControl = $pauseControl;
     }
 
     public function execute(int $timeout, int $idleTime): void
@@ -72,9 +86,14 @@ class Work
                 break;
             };
 
+            if ($this->checkMemoryLimit() === self::BREAK) {
+                break;
+            };
+
             if ($this->checkTimeout($timer, $timeout) === self::BREAK) {
                 break;
             };
+
         }
 
         $this->release();
@@ -109,6 +128,16 @@ class Work
     {
         if ($timer->isTimedout()) {
             $this->eventBus->publish(new TimedOut($timeout));
+            return self::BREAK;
+        }
+
+        return self::CONTINUE;
+    }
+
+    protected function checkMemoryLimit(): bool
+    {
+        if ($this->memoryLimit->isExceeded()) {
+            $this->eventBus->publish(new MemoryLimitExceeded());
             return self::BREAK;
         }
 
