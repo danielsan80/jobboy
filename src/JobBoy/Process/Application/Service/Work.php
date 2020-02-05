@@ -4,10 +4,11 @@ namespace JobBoy\Process\Application\Service;
 
 use JobBoy\Clock\Domain\Timer;
 use JobBoy\Process\Application\Service\Events\IdleTimeStarted;
+use JobBoy\Process\Application\Service\Events\IteratingYetOccured;
 use JobBoy\Process\Application\Service\Events\MemoryLimitExceeded;
+use JobBoy\Process\Application\Service\Events\PauseTimeStarted;
 use JobBoy\Process\Application\Service\Events\Timedout;
 use JobBoy\Process\Application\Service\Events\WorkLocked;
-use JobBoy\Process\Application\Service\Events\PauseTimeStarted;
 use JobBoy\Process\Application\Service\Events\WorkReleased;
 use JobBoy\Process\Application\Service\Exception\WorkIsNotRunningYetException;
 use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
@@ -15,7 +16,6 @@ use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
 use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
-use JobBoy\Process\Application\Service\Events\IteratingYetOccured;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\MemoryLimit\MemoryLimit;
@@ -26,8 +26,12 @@ use JobBoy\Process\Domain\PauseControl\PauseControl;
 class Work
 {
     const LOCK_KEY = 'work';
-    protected const CONTINUE = true;
+    protected const GO_ON = true;
     protected const BREAK = false;
+
+    protected const PAUSED = true;
+    protected const NOT_PAUSED = false;
+
 
     /** @var IterationMaker */
     protected $iterationMaker;
@@ -99,13 +103,23 @@ class Work
         $this->release();
     }
 
-    protected function makeIteration(int $idleTime): bool
+    protected function checkIsPaused($idleTime): bool
     {
         if ($this->pauseControl->isPaused()) {
             $this->eventBus->publish(new PauseTimeStarted($idleTime));
             sleep($idleTime);
 
-            return self::CONTINUE;
+            return self::PAUSED;
+        }
+        return self::NOT_PAUSED;
+
+    }
+
+    protected function makeIteration(int $idleTime): bool
+    {
+
+        if ($this->checkIsPaused($idleTime)==self::PAUSED) {
+            return self::GO_ON;
         }
 
         try {
@@ -118,10 +132,10 @@ class Work
         if (!$response->hasWorked()) {
             $this->eventBus->publish(new IdleTimeStarted($idleTime));
             sleep($idleTime);
-            return self::CONTINUE;
+            return self::GO_ON;
         }
 
-        return self::CONTINUE;
+        return self::GO_ON;
     }
 
     protected function checkTimeout(Timer $timer, int $timeout): bool
@@ -131,7 +145,7 @@ class Work
             return self::BREAK;
         }
 
-        return self::CONTINUE;
+        return self::GO_ON;
     }
 
     protected function checkMemoryLimit(): bool
@@ -141,7 +155,7 @@ class Work
             return self::BREAK;
         }
 
-        return self::CONTINUE;
+        return self::GO_ON;
     }
 
     protected function lock(): void

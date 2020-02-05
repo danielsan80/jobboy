@@ -10,7 +10,6 @@ use JobBoy\Process\Domain\IterationMaker\Events\NoProcessesToPickFound;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementReleased;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
-use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\Exception\NotIteratingYetException;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
