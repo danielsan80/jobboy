@@ -3,6 +3,7 @@
 namespace JobBoy\Process\Domain\IterationMaker;
 
 use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
+use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
@@ -11,6 +12,8 @@ use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementReleased;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
 use JobBoy\Process\Domain\IterationMaker\Exception\NotIteratingYetException;
+use JobBoy\Process\Domain\KillList\KillList;
+use JobBoy\Process\Domain\KillList\NullKillList;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
@@ -27,6 +30,8 @@ class IterationMaker
     protected $lockFactory;
     /** @var ProcessIterator */
     protected $processIterator;
+    /** @var KillList|null */
+    protected $killList;
     /** @var EventBusInterface */
     protected $eventBus;
 
@@ -37,9 +42,14 @@ class IterationMaker
         ProcessRepositoryInterface $processRepository,
         LockFactoryInterface $lockFactory,
         ProcessIterator $processIterator,
+        ?KillList $killList = null,
         ?EventBusInterface $eventBus = null
     )
     {
+        if (!$killList) {
+            $killList = new NullKillList();
+        }
+
         if (!$eventBus) {
             $eventBus = new NullEventBus();
         }
@@ -48,6 +58,7 @@ class IterationMaker
         $this->lockFactory = $lockFactory;
         $this->processIterator = $processIterator;
         $this->eventBus = $eventBus;
+        $this->killList = $killList;
     }
 
 
@@ -57,6 +68,7 @@ class IterationMaker
 
         $types = [
             'handled',
+            'killed',
             'failing',
             'ending',
             'running',
@@ -109,6 +121,11 @@ class IterationMaker
         if ($type == 'handled') {
             return $this->handled();
         }
+
+        if ($type == 'killed') {
+            return $this->killed();
+        }
+
         return $this->byStatus(ProcessStatus::fromScalar($type));
     }
 
@@ -121,6 +138,21 @@ class IterationMaker
         }
 
         return null;
+    }
+
+    protected function killed(): ?Process
+    {
+        $ids = $this->killList->all();
+
+        if ($ids) {
+            return null;
+        }
+        $id = array_unshift($ids);
+
+        $process = $this->processRepository->byId(ProcessId::fromScalar($id));
+
+        return $process;
+
     }
 
     protected function byStatus(ProcessStatus $status): ?Process

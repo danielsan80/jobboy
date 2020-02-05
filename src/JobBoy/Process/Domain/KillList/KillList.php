@@ -10,4 +10,6 @@ interface KillList
 
     public function all(): array;
 
+    public function toBeKilled(string $processId): bool;
+
 }

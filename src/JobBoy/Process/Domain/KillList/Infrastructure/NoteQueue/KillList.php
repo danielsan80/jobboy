@@ -17,6 +17,7 @@ class KillList implements KillListInterface
         $this->noteQueueControl = $noteQueueControl;
     }
 
+
     public function kill(string $processId): void
     {
         $this->noteQueueControl->send(new KillProcess($processId));
@@ -33,5 +34,10 @@ class KillList implements KillListInterface
         $this->noteQueueControl->resolve($resolver);
 
         return $resolver->list();
+    }
+
+    public function toBeKilled(string $processId): bool
+    {
+        return in_array($processId, $this->all());
     }
 }

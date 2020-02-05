@@ -17,4 +17,9 @@ class NullKillList implements KillList
     {
         return [];
     }
+
+    public function toBeKilled(string $processId): bool
+    {
+        return false;
+    }
 }
