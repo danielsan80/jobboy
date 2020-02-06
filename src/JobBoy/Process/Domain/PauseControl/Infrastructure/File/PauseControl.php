@@ -57,4 +57,8 @@ class PauseControl implements PauseControlInterface
         $paused = file_get_contents($this->filename);
         return $paused=='true';
     }
+
+    public function resolveRequests(): void
+    {
+    }
 }
