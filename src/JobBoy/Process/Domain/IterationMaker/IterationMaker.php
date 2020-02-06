@@ -180,7 +180,7 @@ class IterationMaker
 
                 $process->set('reason', 'killed');
 
-                if (!$process->status()->isStarting()) {
+                if ($process->status()->isStarting()) {
                     $process->changeStatusToFailed();
                     return $response;
                 }

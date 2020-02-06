@@ -34,12 +34,16 @@ class KillProcessCommand extends Command
         $this
             ->setName('jobboy:process:kill')
             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'The id of the process to kill or `current`')
-            ->addOption('current', 'c', InputOption::VALUE_REQUIRED, 'Kill the current process')
+            ->addOption('current', 'c', InputOption::VALUE_NONE, 'Kill the current process')
             ->setDescription('Kill a process');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
+        if (!$input->getOption('id') && !$input->getOption('current')) {
+            throw new \InvalidArgumentException('No process to kill specified');
+        }
 
         if ($input->getOption('id') && $input->getOption('current')) {
             throw new \InvalidArgumentException('Only `id` OR `current` is allowed');
@@ -48,7 +52,8 @@ class KillProcessCommand extends Command
         $id = $input->getOption('id');
 
         if ($id === 'current' || $input->getOption('current')) {
-            $current = $this->listProcesses->execute(0,1);
+            $processes = $this->listProcesses->execute();
+            $current = array_pop($processes);
             if ($current) {
                 $id = $current->id();
             }
