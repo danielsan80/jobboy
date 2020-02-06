@@ -34,7 +34,7 @@ class ProcessRepositoryUtil
 
     public static function aFewDaysAgo(int $days): \DateTimeImmutable
     {
-        return Clock::createDateTimeImmutable(sprintf('today - %d days', $days));
+        return Clock::createDateTimeImmutable(sprintf('today %d days', -$days));
     }
 
     public static function notImplemented()
