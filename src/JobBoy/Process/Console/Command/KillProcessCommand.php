@@ -72,13 +72,11 @@ class KillProcessCommand extends Command
 
         Assertion::count($matchingProcesses, 1, 'More then one processes found: specify the whole process id, please');
 
-        $this->killProcess->execute($id);
+        $process = $matchingProcesses[0];
 
-        if ($id==='current') {
-            $output->writeln('The current process will be killed ASAP');
-        } else {
-            $output->writeln(sprintf('The process "%s" will be killed ASAP', $id));
-        }
+        $this->killProcess->execute($process->id());
+
+        $output->writeln(sprintf('The process "%s" will be killed ASAP', $id));
 
     }
 
