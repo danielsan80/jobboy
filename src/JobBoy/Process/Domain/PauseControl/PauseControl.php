@@ -8,5 +8,7 @@ interface PauseControl
 
     public function unpause(): void;
 
+    public function resolveRequests(): void;
+
     public function isPaused(): bool;
 }

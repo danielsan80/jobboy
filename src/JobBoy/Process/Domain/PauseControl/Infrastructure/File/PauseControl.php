@@ -4,6 +4,9 @@ namespace JobBoy\Process\Domain\PauseControl\Infrastructure\File;
 
 use JobBoy\Process\Domain\PauseControl\PauseControl as PauseControlInterface;
 
+/**
+ * @deprecated use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\PauseControl
+ */
 class PauseControl implements PauseControlInterface
 {
     const DEFAULT_FILE = '/jobboy/pause_control';
@@ -12,7 +15,7 @@ class PauseControl implements PauseControlInterface
 
     public function __construct(?string $filename=null)
     {
-        if (!$this->filename) {
+        if (!$filename) {
             $filename = sys_get_temp_dir() . self::DEFAULT_FILE;
         }
 
@@ -53,5 +56,9 @@ class PauseControl implements PauseControlInterface
 
         $paused = file_get_contents($this->filename);
         return $paused=='true';
+    }
+
+    public function resolveRequests(): void
+    {
     }
 }

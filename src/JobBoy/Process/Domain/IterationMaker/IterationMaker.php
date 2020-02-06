@@ -3,6 +3,7 @@
 namespace JobBoy\Process\Domain\IterationMaker;
 
 use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
+use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
@@ -10,8 +11,9 @@ use JobBoy\Process\Domain\IterationMaker\Events\NoProcessesToPickFound;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementReleased;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
-use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\Exception\NotIteratingYetException;
+use JobBoy\Process\Domain\KillList\KillList;
+use JobBoy\Process\Domain\KillList\NullKillList;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
@@ -20,7 +22,7 @@ use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class IterationMaker
 {
-    const LOCK_KEY = 'process-management';
+    const LOCK_KEY = 'iteration-maker';
 
     /** @var ProcessRepositoryInterface */
     protected $processRepository;
@@ -28,6 +30,8 @@ class IterationMaker
     protected $lockFactory;
     /** @var ProcessIterator */
     protected $processIterator;
+    /** @var KillList|null */
+    protected $killList;
     /** @var EventBusInterface */
     protected $eventBus;
 
@@ -38,9 +42,14 @@ class IterationMaker
         ProcessRepositoryInterface $processRepository,
         LockFactoryInterface $lockFactory,
         ProcessIterator $processIterator,
+        ?KillList $killList = null,
         ?EventBusInterface $eventBus = null
     )
     {
+        if (!$killList) {
+            $killList = new NullKillList();
+        }
+
         if (!$eventBus) {
             $eventBus = new NullEventBus();
         }
@@ -49,6 +58,7 @@ class IterationMaker
         $this->lockFactory = $lockFactory;
         $this->processIterator = $processIterator;
         $this->eventBus = $eventBus;
+        $this->killList = $killList;
     }
 
 
@@ -58,6 +68,7 @@ class IterationMaker
 
         $types = [
             'handled',
+            'killed',
             'failing',
             'ending',
             'running',
@@ -110,6 +121,11 @@ class IterationMaker
         if ($type == 'handled') {
             return $this->handled();
         }
+
+        if ($type == 'killed') {
+            return $this->killed();
+        }
+
         return $this->byStatus(ProcessStatus::fromScalar($type));
     }
 
@@ -122,6 +138,25 @@ class IterationMaker
         }
 
         return null;
+    }
+
+    protected function killed(): ?Process
+    {
+        $id = $this->killList->first();
+
+        if (!$id) {
+            return null;
+        }
+
+        try {
+            $process = $this->processRepository->byId(ProcessId::fromScalar($id));
+        } catch (\InvalidArgumentException $e) {
+            $this->killList->remove($id);
+            return null;
+        }
+
+        return $process;
+
     }
 
     protected function byStatus(ProcessStatus $status): ?Process
@@ -139,12 +174,32 @@ class IterationMaker
     {
         $id = $process->id();
         try {
+
+            if ($this->killList->inList($process->id())) {
+                $this->killList->remove($process->id());
+                $response = new IterationResponse();
+
+                if (!$process->status()->isActive()) {
+                    return $response;
+                }
+
+                $process->set('reason', 'killed');
+
+                if ($process->status()->isStarting()) {
+                    $process->changeStatusToFailed();
+                    return $response;
+                }
+
+                $process->changeStatusToFailing();
+                return $response;
+            }
+
             $response = $this->processIterator->iterate($id);
             return $response;
 
         } catch (\Throwable $e) {
             $process = $this->processRepository->byId($id);
-            $process->set('exception', $e->getMessage());
+            $process->set('reason', 'exception: '.$e->getMessage());
             $process->changeStatusToFailing();
             $process->release();
             throw $e;
