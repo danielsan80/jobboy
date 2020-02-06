@@ -10,8 +10,8 @@ use JobBoy\Process\Domain\NoteQueue\NoteQueueControl;
 class FileNoteQueueControl implements NoteQueueControl
 {
 
-    const LOCK_KEY = 'work-control';
-    const DEFAULT_FILE = '/jobboy/work-control';
+    const LOCK_KEY = 'note-queue-control';
+    const DEFAULT_FILE = '/jobboy/note-queue-control';
 
     protected $filename;
 
@@ -27,8 +27,12 @@ class FileNoteQueueControl implements NoteQueueControl
     public function __construct(LockFactoryInterface $lockFactory, ?string $filename=null)
     {
         if (!$filename) {
-            $filename = sys_get_temp_dir() . self::DEFAULT_FILE;
+            $filename = '{{tmp}}' . self::DEFAULT_FILE;
         }
+
+        $filename = strtr($filename, [
+            '{{tmp}}' => sys_get_temp_dir()
+        ]);
 
         $this->lockFactory = $lockFactory;
         $this->filename = $filename;

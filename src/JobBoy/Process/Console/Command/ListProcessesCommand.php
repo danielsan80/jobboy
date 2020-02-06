@@ -35,7 +35,7 @@ class ListProcessesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if ($input->getOption('show') && $input->getOption('show-first')) {
-            throw new \InvalidArgumentException('Only `show` oOR `show-first` is allowed');
+            throw new \InvalidArgumentException('Only `show` OR `show-first` is allowed');
         }
 
 
