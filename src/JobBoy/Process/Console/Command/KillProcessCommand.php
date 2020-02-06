@@ -2,6 +2,8 @@
 
 namespace JobBoy\Process\Console\Command;
 
+use Assert\Assertion;
+use JobBoy\Process\Application\DTO\Process;
 use JobBoy\Process\Application\Service\KillProcess;
 use JobBoy\Process\Application\Service\ListProcesses;
 use Symfony\Component\Console\Command\Command;
@@ -50,14 +52,25 @@ class KillProcessCommand extends Command
         }
 
         $id = $input->getOption('id');
+        $processes = $this->listProcesses->execute();
 
         if ($id === 'current' || $input->getOption('current')) {
-            $processes = $this->listProcesses->execute();
             $current = array_pop($processes);
             if ($current) {
                 $id = $current->id();
             }
         }
+
+        $matchingProcesses = array_filter($processes, function (Process $process) use ($id) {
+            return strpos($process->id(), $id) === 0;
+        });
+
+        if (count($matchingProcesses)===0) {
+            $output->writeln('No processes to kill found');
+            return;
+        }
+
+        Assertion::count($matchingProcesses, 1, 'More then one processes found: specify the whole process id, please');
 
         $this->killProcess->execute($id);
 
