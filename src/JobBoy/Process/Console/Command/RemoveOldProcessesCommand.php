@@ -2,6 +2,7 @@
 
 namespace JobBoy\Process\Console\Command;
 
+use Assert\Assertion;
 use JobBoy\Process\Application\Service\ExecuteProcess;
 use JobBoy\Process\Application\Service\RemoveOldProcesses;
 use JobBoy\Process\Console\Command\Helper\ParametersHelper;
@@ -32,6 +33,9 @@ class RemoveOldProcessesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        Assertion::greaterOrEqualThan($input->getOption('days'), 0);
+
+
         $this->removeOldProcesses->execute($input->getOption('days'));
         $output->writeln('<comment>DONE</comment>');
     }
