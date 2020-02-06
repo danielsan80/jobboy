@@ -148,7 +148,12 @@ class IterationMaker
             return null;
         }
 
-        $process = $this->processRepository->byId(ProcessId::fromScalar($id));
+        try {
+            $process = $this->processRepository->byId(ProcessId::fromScalar($id));
+        } catch (\InvalidArgumentException $e) {
+            $this->killList->remove($id);
+            return null;
+        }
 
         return $process;
 

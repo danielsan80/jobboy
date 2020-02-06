@@ -61,9 +61,9 @@ class KillProcessCommand extends Command
             }
         }
 
-        $matchingProcesses = array_filter($processes, function (Process $process) use ($id) {
+        $matchingProcesses = array_values(array_filter($processes, function (Process $process) use ($id) {
             return strpos($process->id(), $id) === 0;
-        });
+        }));
 
         if (count($matchingProcesses)===0) {
             $output->writeln('No processes to kill found');
