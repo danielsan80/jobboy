@@ -20,12 +20,12 @@ class KillList implements KillListInterface
 
     public function add(string $processId): void
     {
-        $this->noteQueueControl->send(new KillProcess($processId));
+        $this->noteQueueControl->push(new KillProcess($processId));
     }
 
     public function remove(string $processId): void
     {
-        $this->noteQueueControl->send(new KillProcessDone($processId));
+        $this->noteQueueControl->push(new KillProcessDone($processId));
     }
 
     public function first(): ?string

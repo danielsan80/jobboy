@@ -18,4 +18,7 @@ class NullPauseControl implements PauseControl
         return false;
     }
 
+    public function resolveRequests(): void
+    {
+    }
 }

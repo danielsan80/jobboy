@@ -99,28 +99,36 @@ class FileNoteQueueControl implements NoteQueueControl
     protected function begin(): void
     {
         $this->lock();
-        $this->ensureFileExists();
         $this->loadQueue();
     }
 
     protected function commit(): void
     {
-        $this->ensureFileExists();
         $this->saveQueue();
         $this->release();
     }
 
-    public function send($note): void
+    public function push($note): void
     {
+        $this->ensureFileExists();
         $this->begin();
         $this->queue->add($note);
         $this->commit();
     }
 
+    public function get(): array
+    {
+        $this->ensureFileExists();
+        $this->loadQueue();
+        return $this->queue->all();
+    }
+
     public function resolve(callable $resolver)
     {
+        $this->ensureFileExists();
         $this->begin();
         $resolver($this->queue);
         $this->commit();
     }
+
 }

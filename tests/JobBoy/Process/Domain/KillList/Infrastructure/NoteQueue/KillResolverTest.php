@@ -31,17 +31,17 @@ class KillResolverTest extends TestCase
         $queueControl->resolve($killResolver);
         $this->assertEquals([],$killResolver->list());
 
-        $queueControl->send(new KillProcess(UuidUtil::uuid(1)));
-        $queueControl->send(new KillProcess(UuidUtil::uuid(1)));
-        $queueControl->send(new KillProcess(UuidUtil::uuid(2)));
+        $queueControl->push(new KillProcess(UuidUtil::uuid(1)));
+        $queueControl->push(new KillProcess(UuidUtil::uuid(1)));
+        $queueControl->push(new KillProcess(UuidUtil::uuid(2)));
 
         $killResolver = new KillResolver();
         $queueControl->resolve($killResolver);
         $this->assertEquals([UuidUtil::uuid(1), UuidUtil::uuid(2)],$killResolver->list());
 
-        $queueControl->send(new KillProcessDone(UuidUtil::uuid(1)));
-        $queueControl->send(new KillProcess(UuidUtil::uuid(3)));
-        $queueControl->send(new KillProcessDone(UuidUtil::uuid(3)));
+        $queueControl->push(new KillProcessDone(UuidUtil::uuid(1)));
+        $queueControl->push(new KillProcess(UuidUtil::uuid(3)));
+        $queueControl->push(new KillProcessDone(UuidUtil::uuid(3)));
 
         $killResolver = new KillResolver();
         $queueControl->resolve($killResolver);

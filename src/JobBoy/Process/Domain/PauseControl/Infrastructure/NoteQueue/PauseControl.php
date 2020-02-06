@@ -3,8 +3,9 @@
 namespace JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue;
 
 use JobBoy\Process\Domain\NoteQueue\NoteQueueControl;
-use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\Pause;
-use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\Unpause;
+use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\IsPaused;
+use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\PauseRequest;
+use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\UnpauseRequest;
 use JobBoy\Process\Domain\PauseControl\PauseControl as PauseControlInterface;
 
 class PauseControl implements PauseControlInterface
@@ -19,18 +20,28 @@ class PauseControl implements PauseControlInterface
 
     public function pause(): void
     {
-        $this->noteQueueControl->send(new Pause());
+        $this->noteQueueControl->push(new PauseRequest());
     }
 
     public function unpause(): void
     {
-        $this->noteQueueControl->send(new Unpause());
+        $this->noteQueueControl->push(new UnpauseRequest());
     }
 
     public function isPaused(): bool
     {
-        $pauseResolver = new PauseResolver();
-        $this->noteQueueControl->resolve($pauseResolver);
-        return $pauseResolver->isPaused();
+        foreach ($this->noteQueueControl->get() as $note) {
+            if ($note instanceof IsPaused) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function resolveRequests(): void
+    {
+        $resolver = new ResolveRequestsResolver();
+        $this->noteQueueControl->resolve($resolver);
     }
 }

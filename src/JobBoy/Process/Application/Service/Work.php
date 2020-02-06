@@ -105,6 +105,7 @@ class Work
 
     protected function checkIsPaused($idleTime): bool
     {
+        $this->pauseControl->resolveRequests();
         if ($this->pauseControl->isPaused()) {
             $this->eventBus->publish(new PauseTimeStarted($idleTime));
             sleep($idleTime);
