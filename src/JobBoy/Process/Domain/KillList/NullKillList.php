@@ -5,12 +5,17 @@ namespace JobBoy\Process\Domain\KillList;
 class NullKillList implements KillList
 {
 
-    public function kill(string $processId): void
+    public function add(string $processId): void
     {
     }
 
-    public function done(string $processId): void
+    public function remove(string $processId): void
     {
+    }
+
+    public function first(): ?string
+    {
+        return null;
     }
 
     public function all(): array
@@ -18,8 +23,9 @@ class NullKillList implements KillList
         return [];
     }
 
-    public function toBeKilled(string $processId): bool
+    public function inList(string $processId): bool
     {
         return false;
     }
+
 }

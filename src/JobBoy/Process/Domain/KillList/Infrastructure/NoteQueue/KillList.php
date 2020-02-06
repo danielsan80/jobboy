@@ -18,14 +18,25 @@ class KillList implements KillListInterface
     }
 
 
-    public function kill(string $processId): void
+    public function add(string $processId): void
     {
         $this->noteQueueControl->send(new KillProcess($processId));
     }
 
-    public function done(string $processId): void
+    public function remove(string $processId): void
     {
         $this->noteQueueControl->send(new KillProcessDone($processId));
+    }
+
+    public function first(): ?string
+    {
+        $all = $this->all();
+
+        if (!$all) {
+            return null;
+        }
+
+        return array_shift($all);
     }
 
     public function all(): array
@@ -36,8 +47,9 @@ class KillList implements KillListInterface
         return $resolver->list();
     }
 
-    public function toBeKilled(string $processId): bool
+    public function inList(string $processId): bool
     {
         return in_array($processId, $this->all());
     }
+
 }

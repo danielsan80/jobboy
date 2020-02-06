@@ -27,15 +27,15 @@ class KillListTest extends TestCase
 
         $this->assertEquals([], $killList->all());
 
-        $killList->kill(UuidUtil::uuid(1));
-        $killList->kill(UuidUtil::uuid(1));
-        $killList->kill(UuidUtil::uuid(2));
+        $killList->add(UuidUtil::uuid(1));
+        $killList->add(UuidUtil::uuid(1));
+        $killList->add(UuidUtil::uuid(2));
 
         $this->assertEquals([UuidUtil::uuid(1), UuidUtil::uuid(2)], $killList->all());
 
-        $killList->done(UuidUtil::uuid(1));
-        $killList->kill(UuidUtil::uuid(3));
-        $killList->done(UuidUtil::uuid(3));
+        $killList->remove(UuidUtil::uuid(1));
+        $killList->add(UuidUtil::uuid(3));
+        $killList->remove(UuidUtil::uuid(3));
 
         $this->assertEquals([UuidUtil::uuid(2)],$killList->all());
 

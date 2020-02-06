@@ -22,7 +22,7 @@ use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 
 class IterationMaker
 {
-    const LOCK_KEY = 'process-management';
+    const LOCK_KEY = 'iteration-maker';
 
     /** @var ProcessRepositoryInterface */
     protected $processRepository;
@@ -142,12 +142,11 @@ class IterationMaker
 
     protected function killed(): ?Process
     {
-        $ids = $this->killList->all();
+        $id = $this->killList->first();
 
-        if ($ids) {
+        if (!$id) {
             return null;
         }
-        $id = array_unshift($ids);
 
         $process = $this->processRepository->byId(ProcessId::fromScalar($id));
 
@@ -170,12 +169,32 @@ class IterationMaker
     {
         $id = $process->id();
         try {
+
+            if ($this->killList->inList($process->id())) {
+                $this->killList->remove($process->id());
+                $response = new IterationResponse();
+
+                if (!$process->status()->isActive()) {
+                    return $response;
+                }
+
+                $process->set('reason', 'killed');
+
+                if (!$process->status()->isStarting()) {
+                    $process->changeStatusToFailed();
+                    return $response;
+                }
+
+                $process->changeStatusToFailing();
+                return $response;
+            }
+
             $response = $this->processIterator->iterate($id);
             return $response;
 
         } catch (\Throwable $e) {
             $process = $this->processRepository->byId($id);
-            $process->set('exception', $e->getMessage());
+            $process->set('reason', 'exception: '.$e->getMessage());
             $process->changeStatusToFailing();
             $process->release();
             throw $e;
