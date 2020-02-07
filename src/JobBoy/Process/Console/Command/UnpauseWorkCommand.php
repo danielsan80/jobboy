@@ -39,7 +39,7 @@ class UnpauseWorkCommand extends Command
     {
         $this->unpause->execute();
 
-        if ($input->hasOption('wait')) {
+        if ($input->getOption('wait')) {
             $output->writeln('Waiting until the worker has been unpaused...');
             while ($this->isWorkPaused->execute()) {
                 sleep(1);
