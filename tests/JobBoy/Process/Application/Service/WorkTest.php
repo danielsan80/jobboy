@@ -15,8 +15,8 @@ use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 use JobBoy\Process\Domain\Lock\Infrastructure\InMemory\LockFactory;
-use JobBoy\Process\Domain\MemoryLimit\MemoryLimit;
-use JobBoy\Process\Domain\MemoryLimit\NullMemoryLimit;
+use JobBoy\Process\Domain\MemoryControl\MemoryControl;
+use JobBoy\Process\Domain\MemoryControl\NullMemoryControl;
 use JobBoy\Process\Domain\PauseControl\NullPauseControl;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
 use JobBoy\Process\Domain\ProcessStatus;
@@ -88,7 +88,7 @@ class WorkTest extends TestCase
                 return new IterationResponse(true);
             });
 
-        $memoryLimit = new NullMemoryLimit();
+        $memoryLimit = new NullMemoryControl();
         $pauseControl = new NullPauseControl();
         $eventBus = new SpyEventBus();
 
@@ -200,16 +200,21 @@ class WorkTest extends TestCase
                 return new IterationResponse(true);
             });
 
-        $memoryLimit = new class() implements MemoryLimit {
+        $memoryLimit = new class() implements MemoryControl {
 
-            public function get(): int
+            public function limit(): int
             {
                 return 100;
             }
 
-            public function isExceeded(): bool
+            public function isLimitExceeded(): bool
             {
                 return true;
+            }
+
+            public function usage(): int
+            {
+                return 110;
             }
         };
 
@@ -240,7 +245,7 @@ class WorkTest extends TestCase
 
         $this->assertEventBusEquals([
             ['class' => WorkLocked::class, 'text' => 'Work service locked', 'parameters' => []],
-            ['class' => MemoryLimitExceeded::class, 'text' => 'Memory limit exceeded', 'parameters' => []],
+            ['class' => MemoryLimitExceeded::class, 'text' => 'Memory limit exceeded', 'parameters' => ['usage' => '110B']],
             ['class' => WorkReleased::class, 'text' => 'Work service released', 'parameters' => []],
 
         ], $eventBus);

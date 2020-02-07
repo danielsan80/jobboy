@@ -1,8 +1,8 @@
 <?php
 
-namespace JobBoy\Process\Domain\MemoryLimit;
+namespace JobBoy\Process\Domain\MemoryControl;
 
-class AutodetectedMemoryLimit implements MemoryLimit
+class AutodetectedMemoryControl implements MemoryControl
 {
     const MEMORY_LIMIT_MULTIPLIER = 0.8;
     const MEMORY_LIMIT_DEFAULT = '512M';
@@ -47,15 +47,20 @@ class AutodetectedMemoryLimit implements MemoryLimit
         $this->memoryLimit = (int)$memoryLimit;
     }
 
-    public function get(): int
+    public function limit(): int
     {
         $this->ensureMemoryLimitWasCalculated();
         return $this->memoryLimit;
     }
 
-    public function isExceeded(): bool
+    public function usage(): int
     {
-        return Util::isMemoryLimitExceeded($this->get());
+        return memory_get_usage(true);
+    }
+
+    public function isLimitExceeded(): bool
+    {
+        return $this->usage() > $this->limit();
     }
 
 
