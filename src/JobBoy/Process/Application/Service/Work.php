@@ -18,8 +18,8 @@ use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\IterationMaker;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
-use JobBoy\Process\Domain\MemoryLimit\MemoryLimit;
-use JobBoy\Process\Domain\MemoryLimit\NullMemoryLimit;
+use JobBoy\Process\Domain\MemoryControl\MemoryControl;
+use JobBoy\Process\Domain\MemoryControl\NullMemoryControl;
 use JobBoy\Process\Domain\PauseControl\NullPauseControl;
 use JobBoy\Process\Domain\PauseControl\PauseControl;
 
@@ -42,8 +42,8 @@ class Work
     /** @var EventBusInterface */
     protected $eventBus;
 
-    /** @var MemoryLimit|null */
-    protected $memoryLimit;
+    /** @var MemoryControl|null */
+    protected $memoryControl;
 
     /** @var NullPauseControl|PauseControl|null */
     protected $pauseControl;
@@ -56,7 +56,7 @@ class Work
         IterationMaker $iterationMaker,
         LockFactoryInterface $lockFactory,
         ?EventBusInterface $eventBus = null,
-        ?MemoryLimit $memoryLimit = null,
+        ?MemoryControl $memoryControl = null,
         ?PauseControl $pauseControl = null
     )
     {
@@ -64,8 +64,8 @@ class Work
             $eventBus = new NullEventBus();
         }
 
-        if (!$memoryLimit) {
-            $memoryLimit = new NullMemoryLimit();
+        if (!$memoryControl) {
+            $memoryControl = new NullMemoryControl();
         }
 
         if (!$pauseControl) {
@@ -74,7 +74,7 @@ class Work
         $this->iterationMaker = $iterationMaker;
         $this->lockFactory = $lockFactory;
         $this->eventBus = $eventBus;
-        $this->memoryLimit = $memoryLimit;
+        $this->memoryControl = $memoryControl;
         $this->pauseControl = $pauseControl;
     }
 
@@ -151,8 +151,8 @@ class Work
 
     protected function checkMemoryLimit(): bool
     {
-        if ($this->memoryLimit->isExceeded()) {
-            $this->eventBus->publish(new MemoryLimitExceeded());
+        if ($this->memoryControl->isLimitExceeded()) {
+            $this->eventBus->publish(new MemoryLimitExceeded($this->memoryControl->usage()));
             return self::BREAK;
         }
 
