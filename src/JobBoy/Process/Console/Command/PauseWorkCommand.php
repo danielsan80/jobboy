@@ -39,7 +39,7 @@ class PauseWorkCommand extends Command
     {
         $this->pauseWork->execute();
 
-        if ($input->hasOption('wait')) {
+        if ($input->getOption('wait')) {
             $output->writeln('Waiting until the worker has been paused...');
             while (!$this->isWorkPaused->execute()) {
                 sleep(1);
