@@ -2,12 +2,12 @@
 
 namespace JobBoy\Process\Application\Service;
 
-use JobBoy\Process\Application\Service\Events\ProcessCreated;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
+use JobBoy\Process\Domain\Events\Process\ProcessCreated;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 use Ramsey\Uuid\Uuid;

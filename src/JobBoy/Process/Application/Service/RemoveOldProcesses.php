@@ -2,9 +2,9 @@
 
 namespace JobBoy\Process\Application\Service;
 
-use JobBoy\Process\Application\Service\Events\ProcessRemoved;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
+use JobBoy\Process\Domain\Events\Process\ProcessRemoved;
 use JobBoy\Process\Domain\Repository\Infrastructure\Util\ProcessRepositoryUtil;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 

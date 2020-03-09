@@ -1,8 +1,8 @@
 <?php
 
-namespace JobBoy\Process\Domain\IterationMaker\Events;
+namespace JobBoy\Process\Domain\Events\Process;
 
-class ProcessKilled
+class ProcessRemoved
 {
 
     /** @var string */

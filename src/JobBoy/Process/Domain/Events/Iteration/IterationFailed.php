@@ -1,6 +1,6 @@
 <?php
 
-namespace JobBoy\Process\Domain\IterationMaker\Events;
+namespace JobBoy\Process\Domain\Events\Iteration;
 
 class IterationFailed
 {

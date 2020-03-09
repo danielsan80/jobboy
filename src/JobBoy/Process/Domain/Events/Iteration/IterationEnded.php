@@ -1,8 +1,8 @@
 <?php
 
-namespace JobBoy\Process\Application\Service\Events;
+namespace JobBoy\Process\Domain\Events\Iteration;
 
-class ProcessCreated
+class IterationEnded
 {
 
     /** @var string */

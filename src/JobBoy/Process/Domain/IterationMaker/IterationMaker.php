@@ -2,16 +2,16 @@
 
 namespace JobBoy\Process\Domain\IterationMaker;
 
-use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
+use JobBoy\Process\Domain\Events\Process\ProcessKilled;
+use JobBoy\Process\Domain\IterationMaker\Events\IterationMakerLocked;
+use JobBoy\Process\Domain\IterationMaker\Events\IterationMakerReleased;
 use JobBoy\Process\Domain\IterationMaker\Events\NoProcessesToPickFound;
-use JobBoy\Process\Domain\IterationMaker\Events\ProcessKilled;
-use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
-use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementReleased;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
+use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
 use JobBoy\Process\Domain\IterationMaker\Exception\NotIteratingYetException;
 use JobBoy\Process\Domain\KillList\KillList;
 use JobBoy\Process\Domain\KillList\NullKillList;
@@ -95,14 +95,14 @@ class IterationMaker
     protected function lock(): void
     {
         if ($this->lock) {
-            throw new WorkRunningYetException();
+            throw new IteratingYetException();
         }
         $this->lock = $this->lockFactory->create(self::LOCK_KEY);
         if (!$this->lock->acquire()) {
-            throw new WorkRunningYetException();
+            throw new IteratingYetException();
         };
 
-        $this->eventBus->publish(new ProcessManagementLocked());
+        $this->eventBus->publish(new IterationMakerLocked());
     }
 
     protected function release(): void
@@ -113,7 +113,7 @@ class IterationMaker
         $this->lock->release();
         $this->lock = null;
 
-        $this->eventBus->publish(new ProcessManagementReleased());
+        $this->eventBus->publish(new IterationMakerReleased());
     }
 
 
@@ -191,7 +191,7 @@ class IterationMaker
 
         } catch (\Throwable $e) {
             $process = $this->processRepository->byId($id);
-            $process->set('reason', 'exception: '.$e->getMessage());
+            $process->set('reason', 'exception: ' . $e->getMessage());
             $process->changeStatusToFailing();
             throw $e;
         }

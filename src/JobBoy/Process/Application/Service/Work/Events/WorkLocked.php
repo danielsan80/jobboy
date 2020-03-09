@@ -1,22 +1,23 @@
 <?php
 
-namespace JobBoy\Process\Domain\IterationMaker\Events;
+namespace JobBoy\Process\Application\Service\Work\Events;
 
 use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
 use JobBoy\Process\Domain\Event\Message\Message;
 
-class ProcessManagementLocked implements HasMessageInterface
+class WorkLocked implements HasMessageInterface
 {
-
-    private $message;
+    /** @var Message  */
+    protected $message;
 
     public function __construct()
     {
-        $this->message = new Message("Process management locked");
+        $this->message = new Message('Work service locked');
     }
 
     public function message(): Message
     {
         return $this->message;
     }
+
 }
