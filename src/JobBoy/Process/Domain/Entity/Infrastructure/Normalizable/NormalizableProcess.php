@@ -32,6 +32,7 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->setKilledAt($data->killedAt());
 
         $this->setStore($data->store());
+        $this->setReports($data->reports());
 
     }
 
@@ -46,12 +47,14 @@ class NormalizableProcess extends Process implements NormalizableInterface
             Assertion::null($data->endedAt());
             Assertion::null($data->handledAt());
             Assertion::null($data->store());
+            Assertion::null($data->reports());
             return;
         }
 
         Assertion::notNull($data->createdAt());
         Assertion::notNull($data->updatedAt());
         Assertion::notNull($data->store());
+        Assertion::notNull($data->reports());
 
         if ($data->status()->isStarting()) {
             Assertion::null($data->startedAt());
@@ -128,6 +131,14 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->store = $store;
     }
 
+    protected function setReports(?ProcessStore $reports): void
+    {
+        if (!$reports) {
+            $reports = new ProcessStore();
+        }
+        $this->reports = $reports;
+    }
+
     public function normalize(): array
     {
         return [
@@ -142,11 +153,27 @@ class NormalizableProcess extends Process implements NormalizableInterface
             'handled_at' => self::normalizeDateTime($this->handledAt),
             'killed_at' => self::normalizeDateTime($this->killedAt),
             'store' => $this->store->data(),
+            'reports' => $this->reports->data(),
         ];
     }
 
     public static function denormalize(array $data)
     {
+        $data = array_replace([
+            'id' => null,
+            'code' => null,
+            'parameters' => null,
+            'status' => null,
+            'created_at' => null,
+            'updated_at' => null,
+            'started_at' => null,
+            'ended_at' => null,
+            'handled_at' => null,
+            'killed_at' => null,
+            'store' => null,
+            'reports' => null,
+        ], $data);
+
         $processData = new NormalizableProcessData();
         $processData
             ->setId(new ProcessId($data['id']))
@@ -160,6 +187,7 @@ class NormalizableProcess extends Process implements NormalizableInterface
             ->setHandledAt(self::denormalizeDateTime($data['handled_at']))
             ->setKilledAt(self::denormalizeDateTime($data['killed_at']))
             ->setStore(new ProcessStore($data['store']))
+            ->setReports(new ProcessStore($data['reports']))
         ;
 
         return new static($processData);

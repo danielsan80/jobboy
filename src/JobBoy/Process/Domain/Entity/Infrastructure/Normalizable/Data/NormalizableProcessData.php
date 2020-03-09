@@ -33,6 +33,9 @@ class NormalizableProcessData extends ProcessData
     /** @var ProcessStore */
     protected $store;
 
+    /** @var ProcessStore */
+    protected $reports;
+
 
     public function setStatus(?ProcessStatus $status): self
     {
@@ -83,6 +86,12 @@ class NormalizableProcessData extends ProcessData
         return $this;
     }
 
+    public function setReports(?ProcessStore $reports): self
+    {
+        $this->reports = $reports;
+        return $this;
+    }
+
     public function status(): ?ProcessStatus
     {
         return $this->status;
@@ -121,6 +130,11 @@ class NormalizableProcessData extends ProcessData
     public function store(): ?ProcessStore
     {
         return $this->store;
+    }
+
+    public function reports(): ?ProcessStore
+    {
+        return $this->reports;
     }
 
 }

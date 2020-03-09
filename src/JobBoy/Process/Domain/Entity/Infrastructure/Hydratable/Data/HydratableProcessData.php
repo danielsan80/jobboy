@@ -31,6 +31,10 @@ class HydratableProcessData
     /** @var ProcessStore */
     protected $store;
 
+    /** @var ProcessStore */
+    protected $reports;
+
+
 
     public function __construct(array $data = [])
     {
@@ -89,6 +93,13 @@ class HydratableProcessData
         return $this;
     }
 
+    public function setReports(?ProcessStore $reports): self
+    {
+        $this->reports = $reports;
+        return $this;
+    }
+
+
     public function status(): ?ProcessStatus
     {
         return $this->status;
@@ -127,6 +138,11 @@ class HydratableProcessData
     public function store(): ?ProcessStore
     {
         return $this->store;
+    }
+
+    public function reports(): ?ProcessStore
+    {
+        return $this->reports;
     }
 
 

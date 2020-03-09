@@ -60,6 +60,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
     }
 
     /**
@@ -96,6 +97,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertTrue($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
         $this->aFewMinutesLater($fh);
@@ -112,6 +114,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
     }
@@ -156,6 +159,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertTrue($process->isHandled());
         $this->assertEquals(['city' => 'Roma'], $process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
         $this->aFewMinutesLater($fh);
@@ -180,10 +184,81 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
     }
 
+
+    /**
+     * @test
+     */
+    public function process_reports()
+    {
+
+        $fh = $this->createFixtureHandler();
+
+        $this->aFewMinutesAgo($fh);
+        $t0 = Clock::createDateTimeImmutable('now');
+
+        $process = Process::create(new ProcessData([
+            'id' => new ProcessId(UuidUtil::uuid(1)),
+            'code' => 'a_code',
+            'parameters' => new ProcessParameters(['a_key' => 'a_value']),
+        ]));
+
+        $this->assertEmpty($process->reports()->data());
+
+
+        $this->aFewMinutesLater($fh);
+        $t1 = Clock::createDateTimeImmutable('now');
+
+        $process->changeStatusToRunning();
+
+
+        $this->aFewMinutesLater($fh);
+        $t2 = Clock::createDateTimeImmutable('now');
+
+        $process->changeStatusToFailing();
+
+
+        $this->aFewMinutesLater($fh);
+        $t3 = Clock::createDateTimeImmutable('now');
+
+        $process->setReport('reason', 'something goes wrong');
+
+        $process->addReport('items', 'item 1');
+        $process->addReport('items', 'item 2');
+
+        $process->appendReports(['log_file' => 'errors.log']);
+
+        $process->prependReports(['reason' => 'a default reason']);
+
+
+        $this->assertEquals($t3, $process->updatedAt());
+
+
+        $this->aFewMinutesLater($fh);
+        $t4 = Clock::createDateTimeImmutable('now');
+
+        $process->changeStatusToFailed();
+
+        $this->assertTrue($process->status()->isFailed());
+        $this->assertEquals($t0, $process->createdAt());
+        $this->assertEquals($t4, $process->updatedAt());
+        $this->assertEquals($t1, $process->startedAt());
+        $this->assertEquals($t4, $process->endedAt());
+        $this->assertNull($process->handledAt());
+        $this->assertNull($process->killedAt());
+        $this->assertFalse($process->isHandled());
+        $this->assertEmpty($process->store()->data());
+        $this->assertEquals([
+            'reason' => 'something goes wrong',
+            'items' => ['item 1', 'item 2'],
+            'log_file' => 'errors.log'
+        ], $process->reports()->data());
+
+    }
 
 
     /**
@@ -219,6 +294,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertTrue($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
         $this->aFewMinutesLater($fh);
@@ -236,6 +312,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertTrue($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
         $this->aFewMinutesLater($fh);
         $t3 = Clock::createDateTimeImmutable('now');
@@ -251,6 +328,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertTrue($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
         $this->aFewMinutesLater($fh);
         $t4 = Clock::createDateTimeImmutable('now');
@@ -266,6 +344,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
     }
 
@@ -308,6 +387,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertTrue($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
         $this->aFewMinutesLater($fh);
@@ -324,6 +404,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertTrue($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
         $this->aFewMinutesLater($fh);
         $t4 = Clock::createDateTimeImmutable('now');
@@ -339,6 +420,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
     }
 
@@ -375,6 +457,7 @@ class ProcessTest extends TestCase
         $this->assertEquals($t1, $process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
     }
@@ -415,6 +498,7 @@ class ProcessTest extends TestCase
         $this->assertEquals($t2, $process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
 
         $this->aFewMinutesLater($fh);
@@ -431,6 +515,7 @@ class ProcessTest extends TestCase
         $this->assertEquals($t2, $process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
     }
 
@@ -475,6 +560,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
         $this->aFewMinutesLater($fh);
         $t4 = Clock::createDateTimeImmutable('now');
@@ -495,6 +581,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
     }
 
@@ -544,6 +631,7 @@ class ProcessTest extends TestCase
         $this->assertNull($process->killedAt());
         $this->assertFalse($process->isHandled());
         $this->assertEmpty($process->store()->data());
+        $this->assertEmpty($process->reports()->data());
 
     }
 

@@ -46,6 +46,9 @@ class Process
     /** @var ProcessStore */
     protected $store;
 
+    /** @var ProcessStore */
+    protected $reports;
+
     static public function create(ProcessData $data): self
     {
         return new static($data);
@@ -65,6 +68,7 @@ class Process
         $this->updatedAt = $now;
 
         $this->store = new ProcessStore();
+        $this->reports = new ProcessStore();
     }
 
     protected function setId(ProcessId $id): void
@@ -110,6 +114,11 @@ class Process
     public function store(): ProcessStore
     {
         return $this->store;
+    }
+
+    public function reports(): ProcessStore
+    {
+        return $this->reports;
     }
 
     protected function changeStatus(ProcessStatus $status): void
@@ -289,6 +298,52 @@ class Process
         }
 
         $this->store = $store;
+        $this->touch();
+    }
+
+
+    public function setReport($key, $value): void
+    {
+        $reports = $this->reports->set($key, $value);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function addReport($key, $value): void
+    {
+        $currentValues = $this->reports->get($key, []);
+        Assertion::isArray($currentValues);
+        $currentValues[] = $value;
+        $reports = $this->reports->set($key, $currentValues);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function prependReports($data): void
+    {
+        $reports = $this->reports->prepend($data);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function appendReports($data): void
+    {
+        $reports = $this->reports->append($data);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+
+        $this->reports = $reports;
         $this->touch();
     }
 

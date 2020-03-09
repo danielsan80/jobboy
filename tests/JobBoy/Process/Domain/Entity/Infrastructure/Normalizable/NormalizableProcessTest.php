@@ -60,7 +60,8 @@ class NormalizableProcessTest extends TestCase
             'ended_at' => null,
             'handled_at' => null,
             'killed_at' => null,
-            'store' => []
+            'store' => [],
+            'reports' => [],
         ], $normalizedProcess);
 
         $denormalizedProcess = NormalizableProcess::denormalize($normalizedProcess);
@@ -76,7 +77,8 @@ class NormalizableProcessTest extends TestCase
             'ended_at' => null,
             'handled_at' => null,
             'killed_at' => null,
-            'store' => []
+            'store' => [],
+            'reports' => [],
         ], $denormalizedProcess->normalize());
 
         Clock::resetTimeFactory();
