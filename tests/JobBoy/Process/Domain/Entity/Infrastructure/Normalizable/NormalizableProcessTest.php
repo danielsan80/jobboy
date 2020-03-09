@@ -44,6 +44,7 @@ class NormalizableProcessTest extends TestCase
         $this->assertNull($process->startedAt());
         $this->assertNull($process->endedAt());
         $this->assertNull($process->handledAt());
+        $this->assertNull($process->killedAt());
 
 
         $normalizedProcess = $process->normalize();
@@ -58,6 +59,7 @@ class NormalizableProcessTest extends TestCase
             'started_at' => null,
             'ended_at' => null,
             'handled_at' => null,
+            'killed_at' => null,
             'store' => []
         ], $normalizedProcess);
 
@@ -73,6 +75,7 @@ class NormalizableProcessTest extends TestCase
             'started_at' => null,
             'ended_at' => null,
             'handled_at' => null,
+            'killed_at' => null,
             'store' => []
         ], $denormalizedProcess->normalize());
 

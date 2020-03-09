@@ -27,6 +27,9 @@ class NormalizableProcessData extends ProcessData
     /** @var \DateTimeImmutable */
     protected $handledAt;
 
+    /** @var \DateTimeImmutable */
+    protected $killedAt;
+
     /** @var ProcessStore */
     protected $store;
 
@@ -67,6 +70,13 @@ class NormalizableProcessData extends ProcessData
         return $this;
     }
 
+
+    public function setKilledAt(?\DateTimeImmutable $killedAt): self
+    {
+        $this->killedAt = $killedAt;
+        return $this;
+    }
+
     public function setStore(?ProcessStore $store): self
     {
         $this->store = $store;
@@ -101,6 +111,11 @@ class NormalizableProcessData extends ProcessData
     public function handledAt(): ?\DateTimeImmutable
     {
         return $this->handledAt;
+    }
+
+    public function killedAt(): ?\DateTimeImmutable
+    {
+        return $this->killedAt;
     }
 
     public function store(): ?ProcessStore

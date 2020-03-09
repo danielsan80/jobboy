@@ -40,6 +40,9 @@ class Process
     /** @var \DateTimeImmutable */
     protected $handledAt;
 
+    /** @var \DateTimeImmutable */
+    protected $killedAt;
+
     /** @var ProcessStore */
     protected $store;
 
@@ -132,7 +135,10 @@ class Process
 
     public function changeStatusToFailed(): void
     {
-        $this->endedAt = Clock::createDateTimeImmutable();
+
+        if ($this->startedAt) {
+            $this->endedAt = Clock::createDateTimeImmutable();
+        }
         $this->changeStatus(ProcessStatus::failed());
     }
 
@@ -191,6 +197,14 @@ class Process
     public function handledAt(): ?\DateTimeImmutable
     {
         return $this->handledAt;
+    }
+
+    /**
+     * @return \DateTimeImmutable
+     */
+    public function killedAt(): ?\DateTimeImmutable
+    {
+        return $this->killedAt;
     }
 
     public function isHandled(): bool
@@ -276,6 +290,26 @@ class Process
 
         $this->store = $store;
         $this->touch();
+    }
+
+    public function kill(): void
+    {
+        if (
+            $this->status->isCompleted() ||
+            $this->status->isFailed() ||
+            $this->status->isFailing()
+        ) {
+            return;
+        }
+
+        $this->killedAt = Clock::createDateTimeImmutable();
+
+        if ($this->status()->isStarting()) {
+            $this->changeStatusToFailed();
+            return;
+        }
+
+        $this->changeStatusToFailing();
     }
 
 }

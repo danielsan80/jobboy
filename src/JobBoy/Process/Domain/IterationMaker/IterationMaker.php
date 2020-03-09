@@ -8,6 +8,7 @@ use JobBoy\Process\Domain\Entity\Process;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
 use JobBoy\Process\Domain\IterationMaker\Events\NoProcessesToPickFound;
+use JobBoy\Process\Domain\IterationMaker\Events\ProcessKilled;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementReleased;
 use JobBoy\Process\Domain\IterationMaker\Events\ProcessPicked;
@@ -175,23 +176,14 @@ class IterationMaker
         $id = $process->id();
         try {
 
-            if ($this->killList->inList($process->id())) {
-                $this->killList->remove($process->id());
-                $response = new IterationResponse();
+            if ($this->killList->inList($id)) {
+                $this->killList->remove($id);
 
-                if (!$process->status()->isActive()) {
-                    return $response;
-                }
+                $process->kill();
 
-                $process->set('reason', 'killed');
+                $this->eventBus->publish(new ProcessKilled($id));
 
-                if ($process->status()->isStarting()) {
-                    $process->changeStatusToFailed();
-                    return $response;
-                }
-
-                $process->changeStatusToFailing();
-                return $response;
+                return new IterationResponse();
             }
 
             $response = $this->processIterator->iterate($id);
@@ -201,7 +193,6 @@ class IterationMaker
             $process = $this->processRepository->byId($id);
             $process->set('reason', 'exception: '.$e->getMessage());
             $process->changeStatusToFailing();
-            $process->release();
             throw $e;
         }
     }

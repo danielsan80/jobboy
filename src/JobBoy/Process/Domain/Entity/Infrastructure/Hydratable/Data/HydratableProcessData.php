@@ -25,6 +25,9 @@ class HydratableProcessData
     /** @var \DateTimeImmutable */
     protected $handledAt;
 
+    /** @var \DateTimeImmutable */
+    protected $killedAt;
+
     /** @var ProcessStore */
     protected $store;
 
@@ -74,6 +77,12 @@ class HydratableProcessData
         return $this;
     }
 
+    public function setKilledAt(?\DateTimeImmutable $killedAt): self
+    {
+        $this->killedAt = $killedAt;
+        return $this;
+    }
+
     public function setStore(?ProcessStore $store): self
     {
         $this->store = $store;
@@ -108,6 +117,11 @@ class HydratableProcessData
     public function handledAt(): ?\DateTimeImmutable
     {
         return $this->handledAt;
+    }
+
+    public function killedAt(): ?\DateTimeImmutable
+    {
+        return $this->killedAt;
     }
 
     public function store(): ?ProcessStore

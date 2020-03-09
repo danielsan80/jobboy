@@ -29,6 +29,7 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->setStartedAt($data->startedAt());
         $this->setEndedAt($data->endedAt());
         $this->setHandledAt($data->handledAt());
+        $this->setKilledAt($data->killedAt());
 
         $this->setStore($data->store());
 
@@ -64,8 +65,12 @@ class NormalizableProcess extends Process implements NormalizableInterface
             Assertion::null($data->endedAt());
         }
 
-        if (!$data->status()->isActive()) {
+        if (!$data->status()->isActive() && $data->startedAt()) {
             Assertion::notNull($data->endedAt());
+        }
+
+        if (!$data->status()->isActive() && !$data->startedAt()) {
+            Assertion::null($data->endedAt());
         }
 
     }
@@ -110,6 +115,11 @@ class NormalizableProcess extends Process implements NormalizableInterface
         $this->handledAt = $handledAt;
     }
 
+    protected function setKilledAt(?\DateTimeImmutable $killedAt): void
+    {
+        $this->killedAt = $killedAt;
+    }
+
     protected function setStore(?ProcessStore $store): void
     {
         if (!$store) {
@@ -130,6 +140,7 @@ class NormalizableProcess extends Process implements NormalizableInterface
             'started_at' => self::normalizeDateTime($this->startedAt),
             'ended_at' => self::normalizeDateTime($this->endedAt),
             'handled_at' => self::normalizeDateTime($this->handledAt),
+            'killed_at' => self::normalizeDateTime($this->killedAt),
             'store' => $this->store->data(),
         ];
     }
@@ -147,6 +158,7 @@ class NormalizableProcess extends Process implements NormalizableInterface
             ->setStartedAt(self::denormalizeDateTime($data['started_at']))
             ->setEndedAt(self::denormalizeDateTime($data['ended_at']))
             ->setHandledAt(self::denormalizeDateTime($data['handled_at']))
+            ->setKilledAt(self::denormalizeDateTime($data['killed_at']))
             ->setStore(new ProcessStore($data['store']))
         ;
 

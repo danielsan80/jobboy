@@ -29,12 +29,17 @@ trait HydrateMethod
             Assertion::notNull($data->endedAt());
         }
 
+        if ($data->killedAt()) {
+            Assertion::true($data->status()->isFailed() || $data->status()->isFailing());
+        }
+
         $this->status = $data->status();
         $this->createdAt = $data->createdAt();
         $this->updatedAt = $data->updatedAt();
         $this->startedAt = $data->startedAt();
         $this->endedAt = $data->endedAt();
         $this->handledAt = $data->handledAt();
+        $this->killedAt = $data->killedAt();
         $this->store = $data->store();
     }
 

@@ -2,9 +2,12 @@
 
 namespace JobBoy\Process\Application\Service;
 
+use JobBoy\Process\Application\Service\Events\ProcessCreated;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\Event\EventBusInterface;
+use JobBoy\Process\Domain\Event\NullEventBus;
 use JobBoy\Process\Domain\ProcessParameters;
 use JobBoy\Process\Domain\Repository\ProcessRepositoryInterface;
 use Ramsey\Uuid\Uuid;
@@ -16,14 +19,22 @@ class StartProcess
     protected $processFactory;
     /** @var ProcessRepositoryInterface */
     protected $processRepository;
+    /** @var EventBusInterface */
+    protected $eventBus;
 
     public function __construct(
         ProcessFactory $processFactory,
-        ProcessRepositoryInterface $processRepository
+        ProcessRepositoryInterface $processRepository,
+        ?EventBusInterface $eventBus = null
     )
     {
+        if (!$eventBus) {
+            $eventBus = new NullEventBus();
+        }
+
         $this->processFactory = $processFactory;
         $this->processRepository = $processRepository;
+        $this->eventBus = $eventBus;
     }
 
     public function execute(string $code, array $parameters = []): void
@@ -36,6 +47,8 @@ class StartProcess
         );
 
         $this->processRepository->add($process);
+
+        $this->eventBus->publish(new ProcessCreated($process->id()));
 
     }
 
