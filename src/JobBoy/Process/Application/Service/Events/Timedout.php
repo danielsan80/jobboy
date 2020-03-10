@@ -2,23 +2,11 @@
 
 namespace JobBoy\Process\Application\Service\Events;
 
-use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
-use JobBoy\Process\Domain\Event\Message\Message;
+use JobBoy\Process\Application\Service\Work\Events\Timedout as BaseTimedout;
 
-class Timedout implements HasMessageInterface
+/**
+ * @deprecated
+ */
+class Timedout extends BaseTimedout
 {
-    /** @var Message  */
-    protected $message;
-
-    public function __construct(int $timeout)
-    {
-        $this->message = new Message('Timeout: {{seconds}} seconds', [
-            'seconds' => $timeout
-        ]);
-    }
-
-    public function message(): Message
-    {
-        return $this->message;
-    }
 }

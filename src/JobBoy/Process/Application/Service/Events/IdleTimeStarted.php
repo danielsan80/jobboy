@@ -2,23 +2,11 @@
 
 namespace JobBoy\Process\Application\Service\Events;
 
-use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
-use JobBoy\Process\Domain\Event\Message\Message;
+use JobBoy\Process\Application\Service\Work\Events\IdleTimeStarted as BaseIdleTimeStarted;
 
-class IdleTimeStarted implements HasMessageInterface
+/**
+ * @deprecated
+ */
+class IdleTimeStarted extends BaseIdleTimeStarted
 {
-    /** @var Message  */
-    protected $message;
-
-    public function __construct(int $idleTime)
-    {
-        $this->message = new Message('Idle time for {{seconds}} seconds', [
-            'seconds' => $idleTime
-        ]);
-    }
-
-    public function message(): Message
-    {
-        return $this->message;
-    }
 }

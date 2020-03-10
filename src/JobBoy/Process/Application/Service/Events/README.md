@@ -1,0 +1,1 @@
+This namespace contains only deprecated classes, so it is deprecated.

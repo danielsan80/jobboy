@@ -40,8 +40,14 @@ class Process
     /** @var \DateTimeImmutable */
     protected $handledAt;
 
+    /** @var \DateTimeImmutable */
+    protected $killedAt;
+
     /** @var ProcessStore */
     protected $store;
+
+    /** @var ProcessStore */
+    protected $reports;
 
     static public function create(ProcessData $data): self
     {
@@ -62,6 +68,7 @@ class Process
         $this->updatedAt = $now;
 
         $this->store = new ProcessStore();
+        $this->reports = new ProcessStore();
     }
 
     protected function setId(ProcessId $id): void
@@ -109,6 +116,11 @@ class Process
         return $this->store;
     }
 
+    public function reports(): ProcessStore
+    {
+        return $this->reports;
+    }
+
     protected function changeStatus(ProcessStatus $status): void
     {
         if (!$this->status->equals($status)) {
@@ -132,7 +144,10 @@ class Process
 
     public function changeStatusToFailed(): void
     {
-        $this->endedAt = Clock::createDateTimeImmutable();
+
+        if ($this->startedAt) {
+            $this->endedAt = Clock::createDateTimeImmutable();
+        }
         $this->changeStatus(ProcessStatus::failed());
     }
 
@@ -191,6 +206,14 @@ class Process
     public function handledAt(): ?\DateTimeImmutable
     {
         return $this->handledAt;
+    }
+
+    /**
+     * @return \DateTimeImmutable
+     */
+    public function killedAt(): ?\DateTimeImmutable
+    {
+        return $this->killedAt;
     }
 
     public function isHandled(): bool
@@ -276,6 +299,72 @@ class Process
 
         $this->store = $store;
         $this->touch();
+    }
+
+
+    public function setReport($key, $value): void
+    {
+        $reports = $this->reports->set($key, $value);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function addReport($key, $value): void
+    {
+        $currentValues = $this->reports->get($key, []);
+        Assertion::isArray($currentValues);
+        $currentValues[] = $value;
+        $reports = $this->reports->set($key, $currentValues);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function prependReports($data): void
+    {
+        $reports = $this->reports->prepend($data);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function appendReports($data): void
+    {
+        $reports = $this->reports->append($data);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function kill(): void
+    {
+        if (
+            $this->status->isCompleted() ||
+            $this->status->isFailed() ||
+            $this->status->isFailing()
+        ) {
+            return;
+        }
+
+        $this->killedAt = Clock::createDateTimeImmutable();
+
+        if ($this->status()->isStarting()) {
+            $this->changeStatusToFailed();
+            return;
+        }
+
+        $this->changeStatusToFailing();
     }
 
 }

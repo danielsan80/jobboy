@@ -25,8 +25,12 @@ trait HydrateMethod
             Assertion::null($data->endedAt());
         }
 
-        if (!$data->status()->isActive()) {
+        if (!$data->status()->isActive() && $data->startedAt()) {
             Assertion::notNull($data->endedAt());
+        }
+
+        if ($data->killedAt()) {
+            Assertion::true($data->status()->isFailed() || $data->status()->isFailing());
         }
 
         $this->status = $data->status();
@@ -35,7 +39,9 @@ trait HydrateMethod
         $this->startedAt = $data->startedAt();
         $this->endedAt = $data->endedAt();
         $this->handledAt = $data->handledAt();
+        $this->killedAt = $data->killedAt();
         $this->store = $data->store();
+        $this->reports = $data->reports();
     }
 
 }

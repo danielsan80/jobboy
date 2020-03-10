@@ -3,15 +3,15 @@
 namespace JobBoy\Process\Application\Service;
 
 use JobBoy\Clock\Domain\Timer;
-use JobBoy\Process\Application\Service\Events\IdleTimeStarted;
-use JobBoy\Process\Application\Service\Events\IteratingYetOccured;
-use JobBoy\Process\Application\Service\Events\MemoryLimitExceeded;
-use JobBoy\Process\Application\Service\Events\PauseTimeStarted;
-use JobBoy\Process\Application\Service\Events\Timedout;
-use JobBoy\Process\Application\Service\Events\WorkLocked;
-use JobBoy\Process\Application\Service\Events\WorkReleased;
-use JobBoy\Process\Application\Service\Exception\WorkIsNotRunningYetException;
-use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
+use JobBoy\Process\Application\Service\Work\Events\IdleTimeStarted;
+use JobBoy\Process\Application\Service\Work\Events\IteratingYetOccured;
+use JobBoy\Process\Application\Service\Work\Events\MemoryLimitExceeded;
+use JobBoy\Process\Application\Service\Work\Events\PauseTimeStarted;
+use JobBoy\Process\Application\Service\Work\Events\Timedout;
+use JobBoy\Process\Application\Service\Work\Events\WorkLocked;
+use JobBoy\Process\Application\Service\Work\Events\WorkReleased;
+use JobBoy\Process\Application\Service\Work\Exception\WorkIsNotRunningYetException;
+use JobBoy\Process\Application\Service\Work\Exception\WorkRunningYetException;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\Event\NullEventBus;
 use JobBoy\Process\Domain\IterationMaker\Exception\IteratingYetException;
