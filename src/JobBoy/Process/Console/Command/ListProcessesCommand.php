@@ -136,8 +136,7 @@ class ListProcessesCommand extends Command
                 'started at' => $this->formatDate($process->startedAt()),
                 'ended at' => $this->formatDate($process->endedAt()),
                 'status' => $this->formatStatus($process->status()),
-                'handled' => $this->formatBoolean($process->isHandled()),
-                'killed' => $this->formatBoolean($process->isKilled()),
+                '' => $this->formatList([$this->formatHandled($process->isHandled()), $this->formatKilled($process->isKilled())]),
 //                'store' => json_encode($process->store()),
 //                'reports' => json_encode($process->reports()),
             ];
@@ -202,6 +201,23 @@ class ListProcessesCommand extends Command
     protected function formatBoolean(bool $bool): string
     {
         return $bool?'✔':'';
+    }
+
+    protected function formatHandled(bool $handled): string
+    {
+        return $handled?'<fg=blue>H</>':'';
+    }
+
+    protected function formatKilled(bool $handled): string
+    {
+        return $handled?'<fg=red>K</>':'';
+    }
+
+    protected function formatList(array $list): string
+    {
+        return implode(' ', array_filter($list, function($item){
+            return (bool)$item;
+        }));
     }
 
     protected function formatArray(array $array): string
