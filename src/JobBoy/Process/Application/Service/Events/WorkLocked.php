@@ -2,22 +2,11 @@
 
 namespace JobBoy\Process\Application\Service\Events;
 
-use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
-use JobBoy\Process\Domain\Event\Message\Message;
+use JobBoy\Process\Application\Service\Work\Events\WorkLocked as BaseWorkLocked;
 
-class WorkLocked implements HasMessageInterface
+/**
+ * @deprecated
+ */
+class WorkLocked extends BaseWorkLocked
 {
-    /** @var Message  */
-    protected $message;
-
-    public function __construct()
-    {
-        $this->message = new Message('Work service locked');
-    }
-
-    public function message(): Message
-    {
-        return $this->message;
-    }
-
 }

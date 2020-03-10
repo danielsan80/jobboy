@@ -2,22 +2,12 @@
 
 namespace JobBoy\Process\Application\Service\Events;
 
-use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
-use JobBoy\Process\Domain\Event\Message\Message;
+use JobBoy\Process\Application\Service\Work\Events\WorkReleased as BaseWorkReleased;
 
-class WorkReleased implements HasMessageInterface
+/**
+ * @deprecated
+ */
+class WorkReleased extends BaseWorkReleased
 {
-    /** @var Message  */
-    protected $message;
-
-    public function __construct()
-    {
-        $this->message = new Message('Work service released');
-    }
-
-    public function message(): Message
-    {
-        return $this->message;
-    }
 
 }

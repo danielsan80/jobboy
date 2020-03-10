@@ -2,21 +2,11 @@
 
 namespace JobBoy\Process\Application\Service\Events;
 
-use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
-use JobBoy\Process\Domain\Event\Message\Message;
+use JobBoy\Process\Application\Service\Work\Events\IteratingYetOccured as BaseIteratingYetOccured;
 
-class IteratingYetOccured implements HasMessageInterface
+/**
+ * @deprecated
+ */
+class IteratingYetOccured extends BaseIteratingYetOccured
 {
-    /** @var Message  */
-    protected $message;
-
-    public function __construct()
-    {
-        $this->message = new Message('Someone is iterating yet.');
-    }
-
-    public function message(): Message
-    {
-        return $this->message;
-    }
 }

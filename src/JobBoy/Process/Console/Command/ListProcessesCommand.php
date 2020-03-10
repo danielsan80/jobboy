@@ -101,7 +101,9 @@ class ListProcessesCommand extends Command
             ['ended at', $this->formatDate($process->endedAt())],
             ['status', $this->formatStatus($process->status())],
             ['store', $this->formatArray($process->store())],
+            ['reports', $this->formatArray($process->reports())],
             ['handled at', $this->formatBoolean($process->isHandled()).($process->isHandled()?': '.$this->formatDate($process->handledAt()):'')],
+            ['killed at', $this->formatBoolean($process->isKilled()).($process->isKilled()?': '.$this->formatDate($process->killedAt()):'')],
         ];
 
         array_walk_recursive($rows, function (&$item, $i) {
@@ -135,7 +137,9 @@ class ListProcessesCommand extends Command
                 'ended at' => $this->formatDate($process->endedAt()),
                 'status' => $this->formatStatus($process->status()),
                 'handled' => $this->formatBoolean($process->isHandled()),
+                'killed' => $this->formatBoolean($process->isKilled()),
 //                'store' => json_encode($process->store()),
+//                'reports' => json_encode($process->reports()),
             ];
             $rows[] = $row;
             if (!$headers) {

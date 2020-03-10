@@ -6,8 +6,8 @@ use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
 use JobBoy\Process\Application\Service\Work;
 use JobBoy\Process\Console\Command\Event\OutputEventListener;
 use JobBoy\Process\Domain\Event\EventBusInterface;
-use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementLocked;
-use JobBoy\Process\Domain\IterationMaker\Events\ProcessManagementReleased;
+use JobBoy\Process\Domain\IterationMaker\Events\IterationMakerLocked;
+use JobBoy\Process\Domain\IterationMaker\Events\IterationMakerReleased;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,8 +42,8 @@ class WorkCommand extends Command
         $output->writeln('Worker started');
         $eventListener = new OutputEventListener($output, function($event){
             return !in_array(get_class($event),[
-                ProcessManagementLocked::class,
-                ProcessManagementReleased::class
+                IterationMakerLocked::class,
+                IterationMakerReleased::class
             ]);
         });
         $this->eventBus->subscribe($eventListener);

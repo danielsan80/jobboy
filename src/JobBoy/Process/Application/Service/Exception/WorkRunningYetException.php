@@ -2,10 +2,11 @@
 
 namespace JobBoy\Process\Application\Service\Exception;
 
-class WorkRunningYetException extends \DomainException
+use JobBoy\Process\Application\Service\Work\Exception\WorkRunningYetException as BaseWorkRunningYetException;
+
+/**
+ * @deprecated
+ */
+class WorkRunningYetException extends BaseWorkRunningYetException
 {
-    public function __construct()
-    {
-        parent::__construct('Work service is running yet');
-    }
 }

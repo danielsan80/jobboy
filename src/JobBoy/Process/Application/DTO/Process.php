@@ -34,8 +34,14 @@ class Process
     /** @var \DateTimeImmutable */
     protected $handledAt;
 
+    /** @var \DateTimeImmutable */
+    protected $killedAt;
+
     /** @var array */
     protected $store;
+
+    /** @var array */
+    protected $reports;
 
     /** @var boolean */
     protected $isActive;
@@ -56,7 +62,9 @@ class Process
         $this->startedAt = $process->startedAt();
         $this->endedAt = $process->endedAt();
         $this->handledAt = $process->handledAt();
+        $this->killedAt = $process->killedAt();
         $this->store = $process->store()->data();
+        $this->reports = $process->reports()->data();
 
         $this->isActive = $process->status()->isActive();
         $this->isEvolving = $process->status()->isEvolving();
@@ -108,9 +116,19 @@ class Process
         return $this->handledAt;
     }
 
+    public function killedAt(): ?\DateTimeImmutable
+    {
+        return $this->killedAt;
+    }
+
     public function store(): array
     {
         return $this->store;
+    }
+
+    public function reports(): array
+    {
+        return $this->reports;
     }
 
     public function isStarted(): bool
@@ -137,6 +155,11 @@ class Process
     public function isHandled(): bool
     {
         return (bool)$this->handledAt;
+    }
+
+    public function isKilled(): bool
+    {
+        return (bool)$this->killedAt;
     }
 
     public function isActive(): bool
