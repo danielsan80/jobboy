@@ -116,8 +116,14 @@ class Process
         return $this->store;
     }
 
+    /**
+     * @todo remove the fix
+     */
     public function reports(): ProcessStore
     {
+        if (!$this->reports) {
+            $this->reports = new ProcessStore();
+        }
         return $this->reports;
     }
 
@@ -280,6 +286,19 @@ class Process
         $this->touch();
     }
 
+    public function add($key, $value): void
+    {
+        $currentValues = $this->store->get($key, []);
+        Assertion::isArray($currentValues);
+        $currentValues[] = $value;
+        $store = $this->store->set($key, $currentValues);
+        if ($this->store->equals($store)) {
+            return;
+        }
+        $this->store = $store;
+        $this->touch();
+    }
+
     public function prepend($data): void
     {
         $store = $this->store->prepend($data);
@@ -309,6 +328,41 @@ class Process
             return;
         }
         $this->reports = $reports;
+        $this->touch();
+    }
+
+
+    public function unsetReport($key): void
+    {
+        $reports = $this->reports->unset($key);
+        if ($this->reports->equals($reports)) {
+            return;
+        }
+        $this->reports = $reports;
+        $this->touch();
+    }
+
+    public function hasReport($key): bool
+    {
+        return $this->reports->has($key);
+    }
+
+    public function getReport($key, $default = null)
+    {
+        return $this->reports->get($key, $default);
+    }
+
+    public function incReport($key, $step = 1): void
+    {
+        $value = $this->reports->get($key, 0) + $step;
+        $this->reports = $this->reports->set($key, $value);
+        $this->touch();
+    }
+
+    public function decReport($key, $step = 1): void
+    {
+        $value = $this->reports->get($key, 0) - $step;
+        $this->reports = $this->reports->set($key, $value);
         $this->touch();
     }
 
