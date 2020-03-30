@@ -55,9 +55,10 @@ class KillProcessCommand extends Command
         $processes = $this->listProcesses->execute();
 
         if ($id === 'current' || $input->getOption('current')) {
-            $current = array_pop($processes);
-            if ($current) {
-                $id = $current->id();
+            $processes = array_reverse($processes);
+            foreach ($processes as $process) {
+                $id = $process->id();
+                break;
             }
         }
 
