@@ -2,27 +2,13 @@
 
 namespace JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Common;
 
-use JobBoy\Process\Domain\Entity\Id\ProcessId;
-use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
-use JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Base\AbstractHandledProcessHandler;
+use JobBoy\Process\Domain\Jobs\Common\ProcessHandlers\FreeHandled as BaseFreeHandled;
 
 /**
- * It is a generic ProcessHandler who support all handled processes and change the status to failing.
+ * @deprecated
+ * @see \JobBoy\Process\Domain\Jobs\Common\ProcessHandlers\FreeHandled
  */
-class FreeHandled extends AbstractHandledProcessHandler
+class FreeHandled extends BaseFreeHandled
 {
-
-    protected function doSupports(ProcessId $id): bool
-    {
-        return true;
-    }
-
-
-    public function handle(ProcessId $id): IterationResponse
-    {
-        $this->process($id)->changeStatusToFailing();
-
-        return new IterationResponse();
-    }
 
 }
