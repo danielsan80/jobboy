@@ -1,9 +1,10 @@
 <?php
 
-namespace JobBoy\Process\Domain\Jobs\Dummy;
+namespace JobBoy\Process\Domain\Jobs\Dummy\ProcessHandlers;
 
 use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
+use JobBoy\Process\Domain\Jobs\Dummy\Job;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
 use JobBoy\Process\Domain\ProcessHandler\ProcessHandlers\Base\AbstractUnhandledProcessHandler;
 
