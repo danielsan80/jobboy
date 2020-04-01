@@ -10,6 +10,10 @@ use JobBoy\Step\Domain\StepManager\HasStepDataInterface;
 use JobBoy\Step\Domain\StepManager\StepData;
 use JobBoy\Step\Domain\StepManager\StepManager;
 
+/**
+ * This new version of the AbstractStepProcessHandler allows to inject job and step instead to use inheritance.
+ * Use this one
+ */
 abstract class AbstractStepProcessHandler2 implements ProcessHandlerInterface, HasStepDataInterface
 {
 

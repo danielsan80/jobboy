@@ -2,8 +2,8 @@
 
 namespace JobBoy\Process\Console\Command;
 
-use JobBoy\Process\Application\Service\Exception\WorkRunningYetException;
 use JobBoy\Process\Application\Service\Work;
+use JobBoy\Process\Application\Service\Work\Exception\WorkRunningYetException;
 use JobBoy\Process\Console\Command\Event\OutputEventListener;
 use JobBoy\Process\Domain\Event\EventBusInterface;
 use JobBoy\Process\Domain\IterationMaker\Events\IterationMakerLocked;
