@@ -3,6 +3,7 @@
 namespace JobBoy\Process\Domain\Jobs\Dummy\ProcessHandlers;
 
 use Assert\Assertion;
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Entity\Id\ProcessId;
 use JobBoy\Process\Domain\Jobs\Dummy\Job;
 use JobBoy\Process\Domain\ProcessHandler\IterationResponse;
@@ -31,8 +32,9 @@ class Initialize extends AbstractUnhandledProcessHandler
             "A process could run for days but a dummy process is limited to 1 hour"
         );
 
+        $now = Clock::createDateTimeImmutable();
 
-        $this->process($id)->set('last_until', $this->process($id)->createdAt()->getTimestamp() + $processDuration);
+        $this->process($id)->set('last_until', $now->getTimestamp() + $processDuration);
 
         $this->process($id)->set('iteration.duration', $iterationDuration);
         $this->process($id)->set('process.duration', $processDuration);
