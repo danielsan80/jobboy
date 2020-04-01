@@ -10,6 +10,10 @@ use JobBoy\Step\Domain\StepManager\HasStepDataInterface;
 use JobBoy\Step\Domain\StepManager\StepData;
 use JobBoy\Step\Domain\StepManager\StepManager;
 
+/**
+ * @deprecated static abstract methods are not a good idea
+ * @see AbstractUnhandledProcessHandler2
+ */
 abstract class AbstractStepProcessHandler implements ProcessHandlerInterface, HasStepDataInterface
 {
 
