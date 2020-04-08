@@ -191,7 +191,7 @@ class IterationMaker
 
         } catch (\Throwable $e) {
             $process = $this->processRepository->byId($id);
-            $process->set('reason', 'exception: ' . $e->getMessage());
+            $process->setReport('reason', 'exception: ' . $e->getMessage());
             $process->changeStatusToFailing();
             throw $e;
         }
