@@ -4,7 +4,7 @@ namespace JobBoy\Process\Domain\Lock;
 
 class LockSpace
 {
-    const DEFUALT = 'default';
+    const DEFAULT = 'default';
 
     /** @var string */
     protected $space;
@@ -16,7 +16,7 @@ class LockSpace
     public function __construct(?string $space = null)
     {
         if (!$space) {
-            $space = self::DEFUALT;
+            $space = self::DEFAULT;
         }
         $this->space = $space;
     }
