@@ -4,6 +4,8 @@ namespace JobBoy\Process\Domain\Lock;
 
 class LockSpace
 {
+    const DEFUALT = 'default';
+
     /** @var string */
     protected $space;
 
@@ -14,7 +16,7 @@ class LockSpace
     public function __construct(?string $space = null)
     {
         if (!$space) {
-            $space = __DIR__;
+            $space = self::DEFUALT;
         }
         $this->space = $space;
     }
