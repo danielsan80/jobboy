@@ -11,7 +11,7 @@ class LockSpace
     protected $hash;
 
 
-    public function __construct(string $space = null)
+    public function __construct(?string $space = null)
     {
         if (!$space) {
             $space = __DIR__;
