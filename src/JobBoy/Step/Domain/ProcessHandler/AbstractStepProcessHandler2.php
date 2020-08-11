@@ -16,10 +16,7 @@ use JobBoy\Step\Domain\StepManager\StepManager;
  */
 abstract class AbstractStepProcessHandler2 implements ProcessHandlerInterface, HasStepDataInterface
 {
-
-    /** @var ProcessRepositoryInterface */
     protected $processRepository;
-    /** @var StepManager */
     protected $stepManager;
 
     abstract protected function job(): string;
