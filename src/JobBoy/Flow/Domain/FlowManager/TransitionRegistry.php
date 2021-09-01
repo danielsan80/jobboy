@@ -48,14 +48,14 @@ class TransitionRegistry
     public function getEntry(string $job): Transition
     {
         $this->freeze();
-        $this->assertJobAsAnEntry($job);
+        $this->assertJobHasAnEntry($job);
         return $this->entries[$job];
     }
 
     public function get(Node $from, string $on): Transition
     {
         $this->freeze();
-        $this->assertJobAsAnEntry($from->job());
+        $this->assertJobHasAnEntry($from->job());
         if (!isset(
             $this->transitions[$from->job()][$from->code()][$on]
         )) {
@@ -69,7 +69,7 @@ class TransitionRegistry
         $this->frozen = true;
     }
 
-    private function assertJobAsAnEntry(string $job): void
+    private function assertJobHasAnEntry(string $job): void
     {
         if (!isset( $this->entries[$job])) {
             throw new \LogicException(sprintf('Is not set an entry transition for the job "%s"', $job));
