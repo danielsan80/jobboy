@@ -2,16 +2,15 @@
 
 namespace Tests\JobBoy\Flow\Domain\FlowManager\TransitionLoader;
 
+use JobBoy\Flow\Domain\FlowManager\DefaultTransitionRegistry;
 use JobBoy\Flow\Domain\FlowManager\Node;
 use JobBoy\Flow\Domain\FlowManager\Transition as RealTransition;
-use JobBoy\Flow\Domain\FlowManager\TransitionLoader\Job;
+use JobBoy\Flow\Domain\FlowManager\TransitionLoader\DefaultTransitionLoader;
 use JobBoy\Flow\Domain\FlowManager\TransitionLoader\Transition;
-use JobBoy\Flow\Domain\FlowManager\TransitionLoader\TransitionLoader;
 use JobBoy\Flow\Domain\FlowManager\TransitionLoader\TransitionSet;
-use JobBoy\Flow\Domain\FlowManager\TransitionRegistry;
 use PHPUnit\Framework\TestCase;
 
-class TransitionLoaderTest extends TestCase
+class DefaultTransitionLoaderTest extends TestCase
 {
 
     /**
@@ -19,7 +18,7 @@ class TransitionLoaderTest extends TestCase
      */
     public function it_works(): void
     {
-        $expectedTransitionRegistry = new TransitionRegistry();
+        $expectedTransitionRegistry = new DefaultTransitionRegistry();
 
         $expectedTransitionRegistry->add(RealTransition::createEntry(Node::create('cake', 'check_ingredients')));
         $expectedTransitionRegistry->add(RealTransition::createNodeChange(
@@ -53,9 +52,9 @@ class TransitionLoaderTest extends TestCase
             'done'
         ));
 
-        $transitionRegistry = new TransitionRegistry();
+        $transitionRegistry = new DefaultTransitionRegistry();
 
-        $transitionLoader = new TransitionLoader($transitionRegistry);
+        $transitionLoader = new DefaultTransitionLoader($transitionRegistry);
 
         $transitionLoader->load(new TransitionSet(
                 'cake', [

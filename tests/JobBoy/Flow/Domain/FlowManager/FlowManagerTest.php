@@ -3,6 +3,7 @@
 namespace Tests\JobBoy\Flow\Domain\FlowManager;
 
 use Dan\FixtureHandler\FixtureHandler;
+use JobBoy\Flow\Domain\FlowManager\DefaultTransitionRegistry;
 use JobBoy\Flow\Domain\FlowManager\FlowManager;
 use JobBoy\Flow\Domain\FlowManager\Node;
 use JobBoy\Flow\Domain\FlowManager\Transition;
@@ -21,7 +22,7 @@ class FlowManagerTest extends TestCase
         $processRepository = new ProcessRepository();
         $processFactory = new ProcessFactory(Process::class);
 
-        $transitionRegistry = new TransitionRegistry();
+        $transitionRegistry = new DefaultTransitionRegistry();
         $flowManager = new FlowManager($processRepository, $transitionRegistry);
 
         $process = $processFactory->create(new ProcessData([
@@ -207,7 +208,7 @@ class FlowManagerTest extends TestCase
         ]));
         $processRepository->add($process);
 
-        $transitionRegistry = new TransitionRegistry();
+        $transitionRegistry = new DefaultTransitionRegistry();
         $flowManager = new FlowManager($processRepository, $transitionRegistry);
 
         $transitionRegistry->add(Transition::createNodeChange(
@@ -235,7 +236,7 @@ class FlowManagerTest extends TestCase
         ]));
         $processRepository->add($process);
 
-        $transitionRegistry = new TransitionRegistry();
+        $transitionRegistry = new DefaultTransitionRegistry();
 
         $transitionRegistry->add(Transition::createNodeChange(
             Node::create('my_job', 'do_A'),
@@ -264,7 +265,7 @@ class FlowManagerTest extends TestCase
         ]));
         $processRepository->add($process);
 
-        $transitionRegistry = new TransitionRegistry();
+        $transitionRegistry = new DefaultTransitionRegistry();
 
         $transitionRegistry->add(Transition::createNodeChange(
             Node::create('my_job','do_A'),
