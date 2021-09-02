@@ -58,21 +58,21 @@ class TransitionLoaderTest extends TestCase
         $transitionLoader = new TransitionLoader($transitionRegistry);
 
         $transitionLoader->load(new TransitionSet(
-                new Job('cake'), [
-                Transition::createEntry('check_ingredients'),
-                Transition::createNodeChange('check_ingredients', 'prepare', 'done'),
-                Transition::createNodeChange('prepare', 'eat', 'done'),
-                Transition::createExit('eat', 'done'),
+                'cake', [
+                Transition::entry('check_ingredients'),
+                Transition::nodeChange('check_ingredients', 'prepare', 'done'),
+                Transition::nodeChange('prepare', 'eat', 'done'),
+                Transition::exit('eat', 'done'),
 
             ])
         );
 
         $transitionLoader->load(new TransitionSet(
-                new Job('day'), [
-                Transition::createEntry('wakeup'),
-                Transition::createNodeChange('wakeup', 'work', 'done'),
-                Transition::createNodeChange('work', 'sleep', 'done'),
-                Transition::createExit('sleep', 'done'),
+                'day', [
+                Transition::entry('wakeup'),
+                Transition::nodeChange('wakeup', 'work', 'done'),
+                Transition::nodeChange('work', 'sleep', 'done'),
+                Transition::exit('sleep', 'done'),
             ])
         );
 
