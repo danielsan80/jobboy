@@ -20,7 +20,7 @@ class Transition
         ]);
     }
 
-    public static function create(array $data): self
+    public static function fromArray(array $data): self
     {
         $defaults = [
             'from' => null,
@@ -31,9 +31,9 @@ class Transition
         return new self($data['from'], $data['to'], $data['on']);
     }
 
-    public static function createNodeChange(string $from, string $to, string $on): self
+    public static function nodeChange(string $from, string $to, string $on): self
     {
-        return self::create([
+        return self::fromArray([
             'from' => $from,
             'to' => $to,
             'on' => $on,
@@ -41,26 +41,26 @@ class Transition
     }
 
 
-    public static function createEntry(string $node): self
+    public static function entry(string $node): self
     {
-        return self::create([
+        return self::fromArray([
             'to' => $node,
         ]);
     }
 
-    public static function createExit(string $node, string $on): self
+    public static function exit(string $node, string $on): self
     {
-        return self::create([
+        return self::fromArray([
             'from' => $node,
             'on' => $on,
         ]);
     }
 
-    public function toTransaction(Job $job): RealTransition
+    public function toTransaction(string $job): RealTransition
     {
         return RealTransition::create([
-            'from' => $this->realTransition->from()?Node::create($job->code(), $this->realTransition->from()->code()):null,
-            'to' => $this->realTransition->to()?Node::create($job->code(), $this->realTransition->to()->code()):null,
+            'from' => $this->realTransition->from()?Node::create($job, $this->realTransition->from()->code()):null,
+            'to' => $this->realTransition->to()?Node::create($job, $this->realTransition->to()->code()):null,
             'on' => $this->realTransition->on(),
         ]);
     }

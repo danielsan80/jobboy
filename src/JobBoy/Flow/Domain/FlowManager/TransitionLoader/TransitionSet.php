@@ -7,19 +7,20 @@ use Assert\Assertion;
 
 class TransitionSet
 {
-    /** @var Job */
+    /** @var string */
     private $job;
     /** @var Transition[] */
     private $transitions;
 
-    public function __construct(Job $job, array $transitions)
+    public function __construct(string $job, array $transitions)
     {
+        Assertion::notBlank($job);
         Assertion::allIsInstanceOf($transitions, Transition::class);
         $this->job = $job;
         $this->transitions = $transitions;
     }
 
-    public function job(): Job
+    public function job(): string
     {
         return $this->job;
     }
