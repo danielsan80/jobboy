@@ -25,7 +25,7 @@ class ListRegisteredProcessHandlersCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('jobboy:process-handlers:list')
+            ->setName('jobboy:process-handler:list')
             ->setDescription('List the registered process handlers');
     }
 
@@ -98,6 +98,14 @@ class ListRegisteredProcessHandlersCommand extends Command
 
     private function formatHandler(ProcessHandlerInterface $handler): string
     {
-        return get_class($handler);
+        $class = get_class($handler);
+
+        $interfaces = implode(',', class_implements($handler));
+
+        if (strpos($interfaces, 'ProxyManager\Proxy') === false) {
+            return $class;
+        }
+
+        return get_parent_class($class);
     }
 }
