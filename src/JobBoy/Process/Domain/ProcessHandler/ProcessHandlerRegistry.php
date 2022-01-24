@@ -48,6 +48,18 @@ class ProcessHandlerRegistry
             $id, $channel));
     }
 
+    /**
+     * @return ProcessHandlerInterface[][][]
+     */
+    public function all(): array
+    {
+        foreach ($this->handlers as $channel => $data) {
+            $this->ensureHandlersAreSorted($channel);
+        }
+
+        return $this->handlers;
+    }
+
     private function ensureHandlersAreSorted(string $channel): void
     {
         if (isset($this->frozen[$channel])) {
