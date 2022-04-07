@@ -2,7 +2,7 @@
 
 namespace Tests\JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue;
 
-use JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory;
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\LockFactory;
 use JobBoy\Process\Domain\NoteQueue\Infrastructure\File\FileNoteQueueControl;
 use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\IsPaused;
 use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\PauseRequest;
@@ -10,7 +10,6 @@ use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\Notes\UnpauseReq
 use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\ResolveRequestsResolver;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
-use Tests\JobBoy\Test\UuidUtil;
 
 class PauseResolverTest extends TestCase
 {

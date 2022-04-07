@@ -2,11 +2,10 @@
 
 namespace Tests\JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue;
 
-use JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory;
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\LockFactory;
 use JobBoy\Process\Domain\NoteQueue\Infrastructure\File\FileNoteQueueControl;
-use PHPUnit\Framework\TestCase;
-
 use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\PauseControl;
+use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
 class PauseControlTest extends TestCase

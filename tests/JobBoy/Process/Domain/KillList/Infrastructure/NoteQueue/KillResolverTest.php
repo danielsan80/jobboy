@@ -5,10 +5,9 @@ namespace Tests\JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue;
 use JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue\KillResolver;
 use JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue\Notes\KillProcess;
 use JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue\Notes\KillProcessDone;
-use JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory;
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\LockFactory;
 use JobBoy\Process\Domain\NoteQueue\Infrastructure\File\FileNoteQueueControl;
 use PHPUnit\Framework\TestCase;
-
 use Ramsey\Uuid\Uuid;
 use Tests\JobBoy\Test\UuidUtil;
 

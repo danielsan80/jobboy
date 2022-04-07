@@ -2,11 +2,10 @@
 
 namespace Tests\JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue;
 
-use JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory;
+use JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue\KillList;
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\LockFactory;
 use JobBoy\Process\Domain\NoteQueue\Infrastructure\File\FileNoteQueueControl;
 use PHPUnit\Framework\TestCase;
-
-use JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue\KillList;
 use Ramsey\Uuid\Uuid;
 use Tests\JobBoy\Test\UuidUtil;
 
