@@ -1,70 +1,35 @@
 <?php
+declare(strict_types=1);
 
 namespace JobBoy\Process\Domain\Lock\Infrastructure\Symfony;
 
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\Lock;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\Lock\LockSpace;
-use Symfony\Component\Lock\Factory;
-use Symfony\Component\Lock\Store\FlockStore;
+use Symfony\Component\Lock\LockFactory as SymfonyLockFactory;
 
 class LockFactory implements LockFactoryInterface
 {
-    const LOCKS = '/locks';
-
-    /** @var string|null */
-    protected $locksDir;
-    /** @var boolean */
-    protected $locksDirExists = false;
-
+    /** @var SymfonyLockFactory */
+    private $symfonyLockFactory;
     /** @var LockSpace */
-    protected $space;
+    private $space;
 
-    /** @var Factory|null */
-    protected $factory;
 
-    public function __construct($locksDir = null, ?LockSpace $space = null)
+    public function __construct(SymfonyLockFactory $symfonyLockFactory, ?LockSpace $space = null)
     {
-        if (!$locksDir) {
-            $locksDir = sys_get_temp_dir().self::LOCKS;
-        }
-
         if (!$space) {
             $space = new LockSpace();
         }
 
-        $this->locksDir = $locksDir;
+        $this->symfonyLockFactory = $symfonyLockFactory;
         $this->space = $space;
-    }
-
-    protected function ensureLocksDirExists(): void
-    {
-        if ($this->locksDirExists){
-            return;
-        }
-        if (!file_exists($this->locksDir)) {
-            mkdir($this->locksDir,0777, true);
-        }
-        $this->locksDirExists = true;
-    }
-
-    protected function factory(): Factory
-    {
-        if (!$this->factory) {
-            $this->ensureLocksDirExists();
-            $store = new FlockStore($this->locksDir);
-
-            $factory = new Factory($store);
-            $this->factory = $factory;
-        }
-
-        return $this->factory;
     }
 
     public function create(string $name): LockInterface
     {
-
-        $lock = $this->factory()->createLock($this->space.'.'.$name);
+        $lock = $this->symfonyLockFactory->createLock($this->space . '.' . $name);
 
         return new Lock($lock);
     }

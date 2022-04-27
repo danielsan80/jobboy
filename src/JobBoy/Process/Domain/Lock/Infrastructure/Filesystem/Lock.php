@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Process\Domain\Lock\Infrastructure\Symfony;
+namespace JobBoy\Process\Domain\Lock\Infrastructure\Filesystem;
 
 use JobBoy\Process\Domain\Lock\LockInterface;
 use Symfony\Component\Lock\LockInterface as SymfonyLock;

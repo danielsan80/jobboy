@@ -2,7 +2,7 @@
 
 namespace Tests\JobBoy\Process\Domain\WorkControl\Infrastructure\File;
 
-use JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory;
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\LockFactory;
 use JobBoy\Process\Domain\NoteQueue\Infrastructure\File\FileNoteQueueControl;
 use PHPUnit\Framework\TestCase;
 

@@ -2,11 +2,10 @@
 
 namespace Tests\JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue;
 
-use JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory;
+use JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue\KillList;
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\LockFactory;
 use JobBoy\Process\Domain\NoteQueue\Infrastructure\File\FileNoteQueueControl;
 use PHPUnit\Framework\TestCase;
-
-use JobBoy\Process\Domain\KillList\Infrastructure\NoteQueue\KillList;
 use Ramsey\Uuid\Uuid;
 use Tests\JobBoy\Test\UuidUtil;
 
@@ -22,7 +21,7 @@ class KillListTest extends TestCase
 
         $lockFactory = new LockFactory();
 
-        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir().'/kill-list-test/'.Uuid::uuid4());
+        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir() . '/kill-list-test/' . Uuid::uuid4());
         $killList = new KillList($queueControl);
 
         $this->assertEquals([], $killList->all());
@@ -37,8 +36,7 @@ class KillListTest extends TestCase
         $killList->add(UuidUtil::uuid(3));
         $killList->remove(UuidUtil::uuid(3));
 
-        $this->assertEquals([UuidUtil::uuid(2)],$killList->all());
-
+        $this->assertEquals([UuidUtil::uuid(2)], $killList->all());
 
 
     }
