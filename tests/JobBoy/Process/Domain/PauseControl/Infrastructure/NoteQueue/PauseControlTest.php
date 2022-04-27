@@ -19,7 +19,7 @@ class PauseControlTest extends TestCase
 
         $lockFactory = new LockFactory();
 
-        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir().'/pause-control-test/'.Uuid::uuid4());
+        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir() . '/pause-control-test/' . Uuid::uuid4());
         $pauseControl = new PauseControl($queueControl);
 
         $pauseControl->resolveRequests();
@@ -36,8 +36,6 @@ class PauseControlTest extends TestCase
 
         $pauseControl->resolveRequests();
         $this->assertFalse($pauseControl->isPaused());
-
-
 
 
     }

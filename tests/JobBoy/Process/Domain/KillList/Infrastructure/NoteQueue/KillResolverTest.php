@@ -15,7 +15,6 @@ class KillResolverTest extends TestCase
 {
 
 
-
     /**
      * @test
      */
@@ -24,11 +23,11 @@ class KillResolverTest extends TestCase
 
         $lockFactory = new LockFactory();
 
-        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir().'/kill-resolver-test/'.Uuid::uuid4());
+        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir() . '/kill-resolver-test/' . Uuid::uuid4());
 
         $killResolver = new KillResolver();
         $queueControl->resolve($killResolver);
-        $this->assertEquals([],$killResolver->list());
+        $this->assertEquals([], $killResolver->list());
 
         $queueControl->push(new KillProcess(UuidUtil::uuid(1)));
         $queueControl->push(new KillProcess(UuidUtil::uuid(1)));
@@ -36,7 +35,7 @@ class KillResolverTest extends TestCase
 
         $killResolver = new KillResolver();
         $queueControl->resolve($killResolver);
-        $this->assertEquals([UuidUtil::uuid(1), UuidUtil::uuid(2)],$killResolver->list());
+        $this->assertEquals([UuidUtil::uuid(1), UuidUtil::uuid(2)], $killResolver->list());
 
         $queueControl->push(new KillProcessDone(UuidUtil::uuid(1)));
         $queueControl->push(new KillProcess(UuidUtil::uuid(3)));
@@ -44,8 +43,7 @@ class KillResolverTest extends TestCase
 
         $killResolver = new KillResolver();
         $queueControl->resolve($killResolver);
-        $this->assertEquals([UuidUtil::uuid(2)],$killResolver->list());
-
+        $this->assertEquals([UuidUtil::uuid(2)], $killResolver->list());
 
 
     }

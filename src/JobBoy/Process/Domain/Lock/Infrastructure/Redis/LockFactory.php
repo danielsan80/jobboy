@@ -8,7 +8,6 @@ use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\Lock\LockSpace;
 use Symfony\Component\Lock\LockFactory as SymfonyLockFactory;
-use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\Lock\Store\RedisStore;
 
 class LockFactory implements LockFactoryInterface
@@ -43,7 +42,7 @@ class LockFactory implements LockFactoryInterface
     public function create(string $name): LockInterface
     {
 
-        $lock = $this->factory()->createLock($this->space.'.'.$name);
+        $lock = $this->factory()->createLock($this->space . '.' . $name);
 
         return new Lock($lock);
     }
