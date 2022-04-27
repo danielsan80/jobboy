@@ -2,11 +2,10 @@
 
 namespace Tests\JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue;
 
-use JobBoy\Process\Domain\Lock\Infrastructure\Symfony\LockFactory;
+use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\LockFactory;
 use JobBoy\Process\Domain\NoteQueue\Infrastructure\File\FileNoteQueueControl;
-use PHPUnit\Framework\TestCase;
-
 use JobBoy\Process\Domain\PauseControl\Infrastructure\NoteQueue\PauseControl;
+use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
 class PauseControlTest extends TestCase
@@ -20,7 +19,7 @@ class PauseControlTest extends TestCase
 
         $lockFactory = new LockFactory();
 
-        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir().'/pause-control-test/'.Uuid::uuid4());
+        $queueControl = new FileNoteQueueControl($lockFactory, sys_get_temp_dir() . '/pause-control-test/' . Uuid::uuid4());
         $pauseControl = new PauseControl($queueControl);
 
         $pauseControl->resolveRequests();
@@ -37,8 +36,6 @@ class PauseControlTest extends TestCase
 
         $pauseControl->resolveRequests();
         $this->assertFalse($pauseControl->isPaused());
-
-
 
 
     }
