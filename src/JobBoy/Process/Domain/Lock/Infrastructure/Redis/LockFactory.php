@@ -7,7 +7,7 @@ use JobBoy\Process\Domain\Lock\Infrastructure\Filesystem\Lock;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\Lock\LockSpace;
-use Symfony\Component\Lock\LockFactory as SymfonyLockFactory;
+use Symfony\Component\Lock\Factory as SymfonyLockFactory;
 use Symfony\Component\Lock\Store\RedisStore;
 
 class LockFactory implements LockFactoryInterface
