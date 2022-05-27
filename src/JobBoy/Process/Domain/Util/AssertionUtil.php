@@ -15,7 +15,7 @@ class AssertionUtil
                 return;
             }
 
-            Assertion::scalar($item);
+            Assertion::nullOrScalar($item);
         });
     }
 
