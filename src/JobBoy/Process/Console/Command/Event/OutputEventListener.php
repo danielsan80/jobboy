@@ -2,6 +2,7 @@
 
 namespace JobBoy\Process\Console\Command\Event;
 
+use JobBoy\Clock\Domain\Clock;
 use JobBoy\Process\Domain\Event\EventListenerInterface;
 use JobBoy\Process\Domain\Event\Message\HasMessageInterface;
 use JobBoy\Process\Domain\Event\Message\Message;
@@ -35,15 +36,15 @@ class OutputEventListener implements EventListenerInterface
 
             $parameters = '';
             if ($message->parameters()) {
-                $parameters = ' '.self::resolveValue($message->parameters());
+                $parameters = ' ' . self::resolveValue($message->parameters());
             }
 
-            $this->output->writeln($message->text().$parameters);
+            $this->output->writeln($message->text() . $parameters);
         } else {
             try {
                 $this->output->writeln((string)$event);
             } catch (\Throwable $e) {
-                
+
             }
         }
     }
@@ -51,6 +52,8 @@ class OutputEventListener implements EventListenerInterface
 
     protected function transformMessage(Message $message): Message
     {
+
+        $now = Clock::createDateTimeImmutable();
 
 
         $missingParameters = [];
@@ -63,7 +66,7 @@ class OutputEventListener implements EventListenerInterface
             }
         }
 
-        $renderedMessage = strtr($message->text(), $placeholders);
+        $renderedMessage = $now->format('[Y-m-d H:i:s] ') . strtr($message->text(), $placeholders);
 
         return new Message($renderedMessage, $missingParameters);
     }
@@ -75,8 +78,8 @@ class OutputEventListener implements EventListenerInterface
         }
 
         if (is_array($value)) {
-            
-            array_walk_recursive($value, function(&$item) {
+
+            array_walk_recursive($value, function (&$item) {
                 $item = self::resolveValue($item);
             });
 
