@@ -14,7 +14,8 @@
         "ext-json": "*",
         "beberlei/assert": "^3.0",
         "ramsey/uuid": "^3.8",
-        "symfony/lock": "^3.4||^4.3"
+        "symfony/lock": "^3.4||^4.3",
+        "jawira/plantuml-encoding": "^1.1"
     },
     "require-dev": {
         "dansan/jobboy-test-pack":"*",

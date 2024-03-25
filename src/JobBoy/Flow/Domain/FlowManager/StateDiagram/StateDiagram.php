@@ -7,7 +7,11 @@ use Assert\Assertion;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Job\Job;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\State;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
+use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCollection;
+use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\EntryStateCollection;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\Transition;
+use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\TransitionCollection;
+use JobBoy\Flow\Domain\FlowManager\StateDiagram\Transformer\PlantUml\PlantUmlTransformer;
 
 /**
  * @psalm-type StateKey = string
@@ -16,25 +20,25 @@ use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\Transition;
  */
 class StateDiagram
 {
-    const ROOT = '[root]';
-
     /** @var Job */
     private $job;
 
-    /** @var array<StateKey, State> */
-    private $states = [];
+    /** @var StateCollection */
+    private $states;
 
-    /** @var array<TransitionKey, Transition> */
-    private $transitions = [];
+    /** @var TransitionCollection */
+    private $transitions;
 
-
-    /** @var array<RootKey|StateKey, StateCode> */
-    private $entryStateCodes = [];
+    /** @var EntryStateCollection */
+    private $entryStates;
 
 
     private function __construct(Job $job)
     {
         $this->job = $job;
+        $this->states = StateCollection::create();
+        $this->transitions = TransitionCollection::create();
+        $this->entryStates = EntryStateCollection::create();
     }
 
     public static function create(Job $job): self
@@ -50,79 +54,75 @@ class StateDiagram
 
     public function addState(State $state): self
     {
-        Assertion::notKeyExists($this->states, (string)$state, sprintf('State "%s" already added', (string)$state));
-
-        if ($state->parent()) {
-            Assertion::keyExists($this->states, (string)$state->parent(), sprintf('Parent state "%s" not added yet', (string)$state->parent()));
-        }
-
         $clone = clone $this;
-        $clone->states[$this->key($state)] = $state;
+        $clone->states = $clone->states->set($state);
 
         return $clone;
     }
 
     public function state(StateCode $code): ?State
     {
-        if (isset($this->states[$this->key($code)])) {
-            return $this->states[$this->key($code)];
-        }
-        return null;
-    }
-
-    public function entryState(?StateCode $code): ?State
-    {
-        $key = $this->key($code);
-
-        if (!isset($this->entryStateCodes[$key])) {
-            return null;
-        }
-
-        return $this->state($this->entryStateCodes[$key]);
+        return $this->states->get($code);
     }
 
     public function addTransition(Transition $transition): self
     {
-        $this->assertTransitionDoesNotExist($transition);
+        $this->transitions->assertTransitionIsNotSetYet($transition);
 
         if ($transition->type()->isEntry()) {
 
-            $this->assertStateExists($transition->to());
+            $this->states->assertStateIsSet($transition->to());
 
-            $toParentCode = $this->state($transition->to())->parent();
-            $this->assertEntryStateDoesNotSetYet($toParentCode);
+            $parent = $this->states->getParent($transition->to());
+
+            $this->entryStates->assertEntryStateIsNotSetYet($parent?$parent->code():null);
 
             $clone = clone $this;
 
-            $clone->entryStateCodes[$this->key($toParentCode)] = $transition->to();
-            $clone->transitions[(string)$transition] = $transition;
+            $clone->entryStates = $clone->entryStates->set($parent?$parent->code():null, $transition->to());
 
+            $clone->transitions = $clone->transitions->set($transition);
 
+            return $clone;
+        }
+
+        if ($transition->type()->isExit()) {
+            $this->states->assertStateIsSet($transition->from());
+
+            $clone = clone $this;
+            $clone->transitions->set($transition);
+
+            return $clone;
+        }
+
+        if ($transition->type()->isChange()) {
+            $this->states->assertStateIsSet($transition->from());
+            $this->states->assertStateIsSet($transition->to());
+
+            $this->states->assertStatesHaveSameParent($transition->from(), $transition->to());
+
+            $clone = clone $this;
+            $clone->transitions->set($transition);
+
+            return $clone;
         }
     }
 
-    private function key($state): string
+    public function transitions(): TransitionCollection
     {
-        if ($state instanceof State) {
-            $state = $state->code();
-        }
-
-        return $state ? (string)$state : self::ROOT;
+        return $this->transitions;
     }
 
-    private function assertTransitionDoesNotExist(Transition $transition): void
+    public function states(): StateCollection
     {
-        Assertion::notKeyExists($this->transitions, (string)$transition, sprintf('Transition "%s" already added', (string)$transition));
+        return $this->states;
     }
 
-    private function assertStateExists(StateCode $code): void
+    public function toPlantUml(): string
     {
-        Assertion::notNull($this->state($code), sprintf('State "%s" does not exist', (string)$code));
+        $transformer = new PlantUmlTransformer();
+
+        return $transformer->transform($this);
     }
 
-    private function assertEntryStateDoesNotSetYet(?StateCode $code): void
-    {
-        $entryState = $this->entryState($code);
-        Assertion::null($entryState, sprintf('Entry state for "%s" already set to "%s"', $code?(string)$code:self::ROOT, (string)$entryState));
-    }
 }
