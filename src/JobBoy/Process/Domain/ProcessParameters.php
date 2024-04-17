@@ -107,7 +107,7 @@ class ProcessParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * @return \ArrayIterator An \ArrayIterator instance
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->data);
     }
@@ -182,7 +182,7 @@ class ProcessParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * {@inheritDoc}
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->has($offset);
     }
@@ -192,7 +192,7 @@ class ProcessParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * {@inheritDoc}
      */
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->get($offset);
     }
@@ -204,7 +204,7 @@ class ProcessParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * {@inheritDoc}
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new \LogicException('Method not supported. This is immutable');
     }
@@ -214,7 +214,7 @@ class ProcessParameters implements \IteratorAggregate, \Countable, \ArrayAccess
      *
      * {@inheritDoc}
      */
-    public function offsetUnset($offset)
+    public function offsetUnset(mixed $offset): void
     {
         throw new \LogicException('Method not supported. This is immutable');
     }

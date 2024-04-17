@@ -2,9 +2,8 @@
 
 namespace Tests\JobBoy\Process\Domain;
 
-use PHPUnit\Framework\TestCase;
-
 use JobBoy\Process\Domain\ProcessStatus;
+use PHPUnit\Framework\TestCase;
 
 class ProcessStatusTest extends TestCase
 {
@@ -26,7 +25,7 @@ class ProcessStatusTest extends TestCase
     }
 
 
-    public function can_be_created_provider()
+    public static function can_be_created_provider()
     {
         return [
             [ProcessStatus::STARTING, 'starting', 'isStarting'],
@@ -51,13 +50,13 @@ class ProcessStatusTest extends TestCase
         $this->assertEquals($value, $processStatus->toScalar());
         $this->assertEquals($value, $processStatus->value());
         $this->assertEquals($value, (string)$processStatus);
-        $this->assertTrue($processStatus->equals(call_user_func(ProcessStatus::class .'::'.$creator)));
+        $this->assertTrue($processStatus->equals(call_user_func(ProcessStatus::class . '::' . $creator)));
         $this->assertTrue($processStatus->$iser());
 
     }
 
 
-    public function can_be_active_and_evolving_provider()
+    public static function can_be_active_and_evolving_provider()
     {
         return [
             [ProcessStatus::STARTING, true, false],
@@ -81,7 +80,7 @@ class ProcessStatusTest extends TestCase
         $this->assertEquals($isEvolving, $processStatus->isEvolving());
     }
 
-    public function can_manage_transitions_provider()
+    public static function can_manage_transitions_provider()
     {
         return [
             [ProcessStatus::STARTING, ProcessStatus::STARTING, true],

@@ -8,7 +8,8 @@ require __DIR__.'/../vendor/autoload.php';
     if (!class_exists(Dotenv::class)) {
         throw new \RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
     }
-    $dotenv = new Dotenv(true);
+    $dotenv = new Dotenv();
+    $dotenv->usePutenv();
     $dotenv->load(__DIR__.'/../.env');
 
     if (file_exists(__DIR__.'/../.env.test')) {

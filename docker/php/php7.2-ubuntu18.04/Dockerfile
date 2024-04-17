@@ -14,7 +14,6 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # installiamo quello che serve
 RUN apt-get update && apt-get install -y \
     software-properties-common \
-#    php-pear \
     php7.2-fpm \
     php7.2-cli \
     php7.2-common \
@@ -39,9 +38,6 @@ RUN apt-get update && apt-get install -y \
     php7.2-xml \
     php7.2-dom \
     php7.2-redis \
-#    php7.2-apcu \
-#    php7.2-mcrypt \
-#    php7.2-xdebug \
     php-xdebug \
     vim \
     git \
@@ -57,7 +53,7 @@ RUN apt-get update && apt-get install -y \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # creiamo la directory in cui fpm mette il suo pid (?)
-RUN mkdir /run/php && \
+RUN mkdir -p /run/php && \
 # Sostituiamo www-data:www-data con user:user per fpm (?)
     sed -i "s/user = www-data/user = user/" /etc/php/7.2/fpm/pool.d/www.conf && \
     sed -i "s/group = www-data/group = user/" /etc/php/7.2/fpm/pool.d/www.conf && \
@@ -88,11 +84,6 @@ RUN sed -i "s/xdebug\.remote_host=.*/xdebug\.remote_host="$(ip route|awk '/defau
 ENV PHP_IDE_CONFIG="serverName=application"
 
 RUN phpenmod xdebug
-
-#RUN pecl install -o -f redis && \
-#    rm -rf /tmp/pear
-#    && \
-#    phpenmod redis
 
 # Installiamo composer
 RUN curl -sS https://getcomposer.org/installer | php \
