@@ -39,6 +39,7 @@ class TransitionCollection
         return array_values($this->transitions);
     }
 
+    /** @return Transition[] */
     public function byStateCode(StateCode $stateCode): array
     {
         return array_filter($this->all(), function (Transition $transition) use ($stateCode) {

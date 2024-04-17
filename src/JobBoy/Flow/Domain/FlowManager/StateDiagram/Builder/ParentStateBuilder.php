@@ -13,6 +13,8 @@ interface ParentStateBuilder
 
     public function _setState(State $state): self;
 
+    public function _tagState(StateCode $stateCode, string $tag): self;
+
     public function _setTransition(Transition $transition): self;
 
 }

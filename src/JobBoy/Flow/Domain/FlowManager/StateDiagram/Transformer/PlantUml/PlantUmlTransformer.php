@@ -13,7 +13,7 @@ class PlantUmlTransformer
     {
         $lines = [];
 
-        $rootStates = $stateDiagram->states()->byParentCode(null);
+        $rootStates = $stateDiagram->states()->getChildren(null);
 
         while ($rootStates) {
             $state = array_shift($rootStates);
@@ -43,7 +43,7 @@ class PlantUmlTransformer
     {
         $state = $stateDiagram->state($code);
 
-        $children = $stateDiagram->states()->byParentCode($code);
+        $children = $stateDiagram->states()->getChildren($code);
         if (!$children) {
             return ['state ' . $state->name()];
         }
@@ -75,7 +75,7 @@ class PlantUmlTransformer
             }
             if ($transition->type()->isExit()) {
                 $state = $stateDiagram->state($transition->from());
-                $lines[] = $state->name() . ' --> [*] : ' . $transition->event()->name();
+                $lines[] = $state->name() . ' --> [*] : ' . $transition->on()->name();
             }
             if ($transition->type()->isChange()) {
                 $from = $stateDiagram->state($transition->from());

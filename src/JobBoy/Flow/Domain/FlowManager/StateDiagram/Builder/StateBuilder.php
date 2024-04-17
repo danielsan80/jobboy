@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Builder;
 
-use Assert\Assertion;
+use JobBoy\Flow\Domain\FlowManager\StateDiagram\Event\Event;
+use JobBoy\Flow\Domain\FlowManager\StateDiagram\Event\EventCode;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\State;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCollection;
@@ -13,6 +14,8 @@ use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\TransitionColle
 
 class StateBuilder implements ParentStateBuilder
 {
+    const ACTIVE = 'active';
+
     /** @var ParentStateBuilder */
     private $parentStateBuilder;
 
@@ -69,25 +72,37 @@ class StateBuilder implements ParentStateBuilder
 
         $clone = clone $this;
 
-        $clone->states = $clone->states->set($child);
+        $clone->states = $clone->states->set($child, self::ACTIVE);
 
         return $clone;
     }
 
-    public function createEntryChild(string $code, ?string $name = null): self
+    public function asEntry(): self
     {
-
-
-        $child = State::create(new StateCode($code), $name ?? $code)
-            ->setParent($this->state->code());
-
         $clone = clone $this;
 
-        $clone->states = $clone->states->set($child);
+        $clone->states->assertTagIsSet(self::ACTIVE);
+        $activeState = $clone->states->getTagged(self::ACTIVE);
 
-        $clone->entryStates = $clone->entryStates->set($this->state->code(), $child->code());
+        $clone->entryStates = $clone->entryStates->set($activeState->parent(), $activeState->code());
 
-        $transition = Transition::entry($child->code());
+        $transition = Transition::entry($activeState->code());
+        $clone->transitions = $clone->transitions->set($transition);
+
+        return $clone;
+    }
+
+    public function asExit(string $on, ?string $name=null): self
+    {
+        $clone = clone $this;
+
+        $activeState = $clone->states->getTagged(self::ACTIVE);
+
+        $transition = Transition::exit(
+            $activeState->code(),
+            Event::create(new EventCode($on), $name??$on)
+        );
+
         $clone->transitions = $clone->transitions->set($transition);
 
         return $clone;
@@ -112,6 +127,8 @@ class StateBuilder implements ParentStateBuilder
             $clone = $clone->_setState($state);
         }
 
+        $clone = $clone->_tagState($this->state->code(), self::ACTIVE);
+
         foreach ($this->transitions->all() as $transition) {
             $clone = $clone->_setTransition($transition);
         }
@@ -129,6 +146,14 @@ class StateBuilder implements ParentStateBuilder
 
         $clone = clone $this;
         $clone->states = $clone->states->set($state);
+
+        return $clone;
+    }
+
+    public function _tagState(StateCode $stateCode, string $tag): ParentStateBuilder
+    {
+        $clone = clone $this;
+        $clone->states = $clone->states->tag($stateCode, $tag);
 
         return $clone;
     }

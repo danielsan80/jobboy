@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace JobBoy\Flow\Domain\FlowManager\StateDiagram;
 
-use Assert\Assertion;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Job\Job;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\State;
 use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
@@ -75,11 +74,11 @@ class StateDiagram
 
             $parent = $this->states->getParent($transition->to());
 
-            $this->entryStates->assertEntryStateIsNotSetYet($parent?$parent->code():null);
+            $this->entryStates->assertEntryStateIsNotSetYet($parent ? $parent->code() : null);
 
             $clone = clone $this;
 
-            $clone->entryStates = $clone->entryStates->set($parent?$parent->code():null, $transition->to());
+            $clone->entryStates = $clone->entryStates->set($parent ? $parent->code() : null, $transition->to());
 
             $clone->transitions = $clone->transitions->set($transition);
 
@@ -90,7 +89,7 @@ class StateDiagram
             $this->states->assertStateIsSet($transition->from());
 
             $clone = clone $this;
-            $clone->transitions->set($transition);
+            $clone->transitions = $clone->transitions->set($transition);
 
             return $clone;
         }
@@ -102,7 +101,7 @@ class StateDiagram
             $this->states->assertStatesHaveSameParent($transition->from(), $transition->to());
 
             $clone = clone $this;
-            $clone->transitions->set($transition);
+            $clone->transitions = $clone->transitions->set($transition);
 
             return $clone;
         }

@@ -15,6 +15,9 @@ class StateCollection
     /** @var array<string,State> */
     private $states = [];
 
+    /** @var array<string,StateCode> */
+    private $tags = [];
+
     private function __construct(string $type = self::COMPLETE)
     {
         $this->type = $type;
@@ -30,13 +33,16 @@ class StateCollection
         return new self(self::PARTIAL);
     }
 
-    public function set(State $state): self
+    public function set(State $state, ?string $tag=null): self
     {
         $this->assertStateIsNotSetYet($state);
         $this->assertParentStateIsSetYet($state);
 
         $clone = clone $this;
         $clone->states[(string)$state] = $state;
+        if ($tag) {
+            $clone->tags[$tag] = $state->code();
+        }
         return $clone;
     }
 
@@ -59,6 +65,31 @@ class StateCollection
         return array_values($this->states);
     }
 
+    public function tag(StateCode $code, string $tag): self
+    {
+        $this->assertStateIsSet($code);
+
+        $clone = clone $this;
+        $clone->tags[$tag] = $code;
+        return $clone;
+    }
+
+    public function untag(string $tag): self
+    {
+        $clone = clone $this;
+        unset($clone->tags[$tag]);
+        return $clone;
+    }
+
+    public function getTagged(string $tag): ?State
+    {
+        if (!isset($this->tags[$tag])) {
+            return null;
+        }
+
+        return $this->get($this->tags[$tag]);
+    }
+
     public function getParent(StateCode $code): ?State
     {
         $this->assertStateIsSet($code);
@@ -70,6 +101,25 @@ class StateCollection
         }
 
         return $this->get($state->parent());
+    }
+
+    public function getChildren(?StateCode $code): array
+    {
+        if ($code) {
+            $this->assertStateIsSet($code);
+        }
+
+        return array_filter($this->all(), function (State $state) use ($code) {
+            if (!$code) {
+                return !$state->parent();
+            }
+            return (string)$state->parent() === (string)$code;
+        });
+    }
+
+    public function hasChildren(StateCode $code): bool
+    {
+        return count($this->getChildren($code)) > 0;
     }
 
     public function assertStateIsSet(StateCode $code): void
@@ -88,15 +138,9 @@ class StateCollection
         Assertion::eq((string)$parent1, (string)$parent2, sprintf('States "%s" and "%s" have different parents', (string)$state1, (string)$state2));
     }
 
-
-    public function byParentCode(?StateCode $parentCode ): array
+    public function assertTagIsSet(string $tag): void
     {
-        return array_filter($this->all(), function (State $state) use ($parentCode) {
-            if (!$parentCode) {
-                return !$state->parent();
-            }
-            return (string)$state->parent() === (string)$parentCode;
-        });
+        Assertion::keyExists($this->tags, $tag, sprintf('Tag "%s" is not set yet', $tag));
     }
 
 
