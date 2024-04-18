@@ -97,12 +97,10 @@ RUN mkdir /home/user && \
     chown user /home/user
 
 COPY --chown=user:user git/.gitconfig /home/user/
-COPY --chown=user:user var/.ssh/* /home/user/.ssh/
 COPY --chown=user:user composer /home/user/.composer
 
 ENV HISTFILE=/home/user/history/.bash_history
-RUN touch /home/user/.ssh/id_rsa && chmod 600 /home/user/.ssh/id_rsa && \
-    mkdir /home/user/history && touch /home/user/history/.bash_history
+RUN mkdir /home/user/history && touch /home/user/history/.bash_history
 
 COPY --chown=user:user bash/.bash_aliases /home/user/.bash_aliases
 RUN echo '. ~/.bash_aliases' >> /home/user/.bashrc
