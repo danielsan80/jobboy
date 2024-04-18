@@ -44,7 +44,8 @@
         "branch-alias": {
             "dev-0.2": "0.2.x-dev",
             "dev-0.3": "0.3.x-dev",
-            "dev-master": "0.4.x-dev"
+            "dev-0.4": "0.4.x-dev",
+            "dev-master": "1.0.x-dev"
         }
     },
 
