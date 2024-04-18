@@ -5,7 +5,7 @@ namespace JobBoy\Process\Domain\Lock\Infrastructure\Filesystem;
 use JobBoy\Process\Domain\Lock\LockFactoryInterface;
 use JobBoy\Process\Domain\Lock\LockInterface;
 use JobBoy\Process\Domain\Lock\LockSpace;
-use Symfony\Component\Lock\Factory as SymfonyLockFactory;
+use Symfony\Component\Lock\LockFactory as SymfonyLockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
 
 class LockFactory implements LockFactoryInterface
@@ -26,7 +26,7 @@ class LockFactory implements LockFactoryInterface
     public function __construct($locksDir = null, ?LockSpace $space = null)
     {
         if (!$locksDir) {
-            $locksDir = sys_get_temp_dir().self::LOCKS;
+            $locksDir = sys_get_temp_dir() . self::LOCKS;
         }
 
         if (!$space) {
@@ -39,11 +39,11 @@ class LockFactory implements LockFactoryInterface
 
     protected function ensureLocksDirExists(): void
     {
-        if ($this->locksDirExists){
+        if ($this->locksDirExists) {
             return;
         }
         if (!file_exists($this->locksDir)) {
-            mkdir($this->locksDir,0777, true);
+            mkdir($this->locksDir, 0777, true);
         }
         $this->locksDirExists = true;
     }
@@ -64,7 +64,7 @@ class LockFactory implements LockFactoryInterface
     public function create(string $name): LockInterface
     {
 
-        $lock = $this->factory()->createLock($this->space.'.'.$name);
+        $lock = $this->factory()->createLock($this->space . '.' . $name);
 
         return new Lock($lock);
     }

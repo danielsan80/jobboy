@@ -20,7 +20,6 @@ class FileWorkControlTest extends TestCase
 
         $workControl = new FileNoteQueueControl($lockFactory);
 
-
 //        $workControl->resolve(function(CommandQueue $queue) {
 //            foreach($queue->all() as $command) {
 //                if ($command instanceof KillProcess) {

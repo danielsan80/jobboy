@@ -1,0 +1,6 @@
+alias ll="ls -alFh"
+alias test="./vendor/bin/simple-phpunit --exclude-group ignored"
+alias test-ignored="./vendor/bin/simple-phpunit --group ignored"
+alias test-all="./vendor/bin/simple-phpunit"
+alias sf="bin/console"
+alias sfcc="rm -Rf var/cache/*"
