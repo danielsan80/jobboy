@@ -14,14 +14,14 @@
         "ext-json": "*",
         "beberlei/assert": "^3.0",
         "ramsey/uuid": "^3.8",
-        "symfony/lock": "^3.4||^4.3||^5.0"
+        "symfony/lock": "^3.4||^4.3||^5.0|^6.0||^7.0"
     },
     "require-dev": {
         "dansan/jobboy-test-pack":"*",
         "dansan/fixture-handler": "*",
-        "symfony/console": "^3.4||^4.3||^5.0",
-        "symfony/framework-bundle": "^3.4||^4.3||^5.0",
-        "symfony/var-dumper": "^3.4||^4.3||^5.0"
+        "symfony/console": "^3.4||^4.3||^5.0|^6.0||^7.0",
+        "symfony/framework-bundle": "^3.4||^4.3||^5.0||^6.0||^7.0",
+        "symfony/var-dumper": "^3.4||^4.3||^5.0||^6.0||^7.0"
     },
     "config": {
         "preferred-install": {
