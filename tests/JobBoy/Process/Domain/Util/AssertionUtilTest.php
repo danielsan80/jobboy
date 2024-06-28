@@ -9,7 +9,7 @@ use JobBoy\Process\Domain\Util\AssertionUtil;
 class AssertionUtilTest extends TestCase
 {
 
-    public function scalarOrArrayOfScalarsProvider()
+    public static function scalarOrArrayOfScalarsProvider()
     {
         return [
             ['scalar_value', false],

@@ -7,7 +7,6 @@ use JobBoy\Flow\Domain\FlowManager\DefaultTransitionRegistry;
 use JobBoy\Flow\Domain\FlowManager\FlowManager;
 use JobBoy\Flow\Domain\FlowManager\Node;
 use JobBoy\Flow\Domain\FlowManager\Transition;
-use JobBoy\Flow\Domain\FlowManager\TransitionRegistry;
 use JobBoy\Process\Domain\Entity\Data\ProcessData;
 use JobBoy\Process\Domain\Entity\Factory\ProcessFactory;
 use JobBoy\Process\Domain\Entity\Process;
@@ -244,11 +243,11 @@ class FlowManagerTest extends TestCase
             'done'
         ));
 
-        $transitionRegistry->add(Transition::createEntry(Node::create('my_job','do_A')));
+        $transitionRegistry->add(Transition::createEntry(Node::create('my_job', 'do_A')));
 
         $this->expectExceptionMessage('The transition "my_job:⚫-->do_B" is an entry but an entry is set yet for job "my_job": "my_job:⚫-->do_A"');
 
-        $transitionRegistry->add(Transition::createEntry(Node::create('my_job','do_B')));
+        $transitionRegistry->add(Transition::createEntry(Node::create('my_job', 'do_B')));
 
     }
 
@@ -268,8 +267,8 @@ class FlowManagerTest extends TestCase
         $transitionRegistry = new DefaultTransitionRegistry();
 
         $transitionRegistry->add(Transition::createNodeChange(
-            Node::create('my_job','do_A'),
-            Node::create('my_job','do_B'),
+            Node::create('my_job', 'do_A'),
+            Node::create('my_job', 'do_B'),
             'done'
         ));
 
@@ -277,7 +276,7 @@ class FlowManagerTest extends TestCase
 
         $this->expectExceptionMessage('The transition "my_job:⚫-->do_A" is registered yet');
 
-        $transitionRegistry->add(Transition::createEntry(Node::create('my_job','do_A')));
+        $transitionRegistry->add(Transition::createEntry(Node::create('my_job', 'do_A')));
 
     }
 

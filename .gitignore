@@ -4,6 +4,7 @@
 /.tmp
 /.build
 /.phpunit.result.cache
+/.phpunit.cache
 
 
 /var/data/**

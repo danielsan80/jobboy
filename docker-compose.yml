@@ -9,7 +9,8 @@ volumes:
 services:
 
   php:
-    build: docker/php
+    build: docker/php/php7.2-ubuntu18.04
+#    build: docker/php/php8.3-ubuntu22.04
     tty: true # -t option in docker
     stdin_open: true # -i option in docker
     hostname: ${HOSTNAME}
