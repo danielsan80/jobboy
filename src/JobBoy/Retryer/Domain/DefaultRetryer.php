@@ -14,6 +14,10 @@ class DefaultRetryer implements Retryer
         $this->maxAttempts = $maxAttempts;
     }
 
+    /**
+     * @param callable(): mixed $f
+     * @param callable(\Throwable $e, int $currentAttempt): bool|null $shouldRetry
+     */
     public function try(callable $f, ?callable $shouldRetry = null)
     {
         if ($shouldRetry === null) {
