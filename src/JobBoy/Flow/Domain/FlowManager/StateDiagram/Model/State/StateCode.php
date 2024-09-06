@@ -10,10 +10,19 @@ class StateCode
     /** @var string */
     private $value;
 
-    public function __construct(string $value)
+    private function __construct()
+    {
+    }
+
+    public static function create(string $value): self
     {
         Assertion::notBlank($value, 'StateCode cannot be blank');
-        $this->value = $value;
+
+        $code = new self();
+        $code->value = $value;
+
+        return $code;
+
     }
 
     public function __toString(): string

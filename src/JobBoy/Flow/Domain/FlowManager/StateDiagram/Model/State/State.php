@@ -14,16 +14,27 @@ class State
     /** @var string */
     private $name;
 
-    private function __construct(StateCode $code, string $name)
+    private function __construct()
     {
-        $this->parent = null;
-        $this->code = $code;
-        $this->name = $name;
     }
 
     public static function create(StateCode $code, string $name): self
     {
-        return new self($code, $name);
+        $state = new self();
+
+        $state->parent = null;
+        $state->code = $code;
+        $state->name = $name;
+
+        return $state;
+    }
+
+    public static function fromString(string $code, ?string $name = null): self
+    {
+        $code = StateCode::create($code);
+        $name = $name ?? (string)$code;
+
+        return self::create($code, $name);
     }
 
     public function setParent(StateCode $parent): self

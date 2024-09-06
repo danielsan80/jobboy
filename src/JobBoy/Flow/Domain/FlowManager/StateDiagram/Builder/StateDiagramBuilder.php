@@ -54,7 +54,7 @@ class StateDiagramBuilder implements ParentStateBuilder
 
     public function createState(string $code, ?string $name = null): self
     {
-        $state = State::create(new StateCode($code), $name ?? $code);
+        $state = State::fromString($code, $name);
 
         $clone = clone $this;
 
@@ -77,7 +77,7 @@ class StateDiagramBuilder implements ParentStateBuilder
         return $clone;
     }
 
-    public function asExit(string $on, ?string $name=null): self
+    public function asExit(string $on, ?string $name = null): self
     {
         $clone = clone $this;
 
@@ -85,7 +85,7 @@ class StateDiagramBuilder implements ParentStateBuilder
 
         $transition = Transition::exit(
             $activeState->code(),
-            Event::create(new EventCode($on), $name??$on)
+            Event::create(new EventCode($on), $name ?? $on)
         );
 
         $clone->transitions = $clone->transitions->set($transition);

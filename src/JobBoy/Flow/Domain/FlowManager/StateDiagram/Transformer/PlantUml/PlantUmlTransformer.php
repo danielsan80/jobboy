@@ -62,9 +62,18 @@ class PlantUmlTransformer
         );
     }
 
-    private function getTransitionLines(StateDiagram $stateDiagram, StateCode $parentCode): array
+    private function getTransitionLines(StateDiagram $stateDiagram, StateCode $stateCode): array
     {
-        $transitions = $stateDiagram->transitions()->byStateCode($parentCode);
+        $transitions = $stateDiagram->transitions()->byStateCode($stateCode);
+
+        $transitions = array_filter($transitions, function (Transition $transition) use ($stateCode) {
+            if ($transition->type()->isChange()) {
+                if ((string)$transition->to() === (string)$stateCode) {
+                    return false;
+                }
+            }
+            return true;
+        });
 
         $lines = [];
 
@@ -80,7 +89,7 @@ class PlantUmlTransformer
             if ($transition->type()->isChange()) {
                 $from = $stateDiagram->state($transition->from());
                 $to = $stateDiagram->state($transition->to());
-                $lines[] = $from->name() . ' --> ' . $to->name() . ' : ' . $transition->event()->name();
+                $lines[] = $from->name() . ' --> ' . $to->name() . ' : ' . $transition->on()->name();
             }
         }
 

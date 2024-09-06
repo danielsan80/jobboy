@@ -25,6 +25,14 @@ class Event
         return $event;
     }
 
+    public static function fromString(string $code, ?string $name=null): self
+    {
+        $code = new EventCode($code);
+        $name = $name ?? (string)$code;
+
+        return self::create($code, $name);
+    }
+
     public function code(): EventCode
     {
         return $this->code;

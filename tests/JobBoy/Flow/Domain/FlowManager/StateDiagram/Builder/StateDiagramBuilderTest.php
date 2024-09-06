@@ -21,50 +21,76 @@ class StateDiagramBuilderTest extends TestCase
     /** @test */
     public function it_works1()
     {
+//        $stateDiagram = StateDiagramBuilder::create()
+//            ->createJob('my_job')
+//            ->createState('state1')->asEntry()
+//            ->createStateBuilder('state2')
+//                ->createChildBuilder('state2.1')
+//                    ->createChild('state2.1.1')->asEntry()
+//                    ->createChild('state2.1.2')
+//                    ->createChild('state2.1.3')->asExit('done')
+//                    ->build()->asEntry()
+//                ->createChild('state2.2')
+//                ->createChild('state2.3')->asExit('done')
+//                ->build()
+//            ->createState('state3')->asExit('done')
+//            ->build();
+
         $stateDiagram = StateDiagramBuilder::create()
-            ->createJob('my_job')
+            ->setJob('my_job')
             ->createState('state1')->asEntry()
-            ->createStateBuilder('state2')
-                ->createChildBuilder('state2.1')
-                    ->createChild('state2.1.1')->asEntry()
-                    ->createChild('state2.1.2')
-                    ->createChild('state2.1.3')->asExit('done')
-                    ->build()->asEntry()
-                ->createChild('state2.2')
-                ->createChild('state2.3')->asExit('done')
-                ->build()
-            ->createState('state3')->asExit('done')
+            ->createState('state2')->addChangeFrom('state1', 'done')->open()
+                ->createState('state2.1')->asEntry()->open()
+                    ->createState('state2.1.1')->asEntry()
+                    ->createState('state2.1.2')->addChangeFrom('state2.1.1', 'done')
+                    ->createChild('state2.1.3')->addChangeFrom('stage2.1.2', 'done')->asExit('done')
+                    ->close()
+                ->createState('state2.2')->addChangeFrom('state2.1', 'done')
+                ->createState('state2.3')->addChangeFrom('stage2.2','done')->asExit('done')
+                ->close()
+            ->createState('state3')->addChangeFrom('state2', 'done')->asExit('done')
             ->build();
 
         $expected = StateDiagram::create((Job::create(new JobCode('my_job'), 'my_job')))
-            ->addState(State::create(new StateCode('state1'), 'state1'))
-            ->addState(State::create(new StateCode('state2'), 'state2'))
-            ->addState(State::create(new StateCode('state2.1'), 'state2.1')->setParent(new StateCode('state2')))
-            ->addState(State::create(new StateCode('state2.1.1'), 'state2.1.1')->setParent(new StateCode('state2.1')))
-            ->addState(State::create(new StateCode('state2.1.2'), 'state2.1.2')->setParent(new StateCode('state2.1')))
-            ->addState(State::create(new StateCode('state2.1.3'), 'state2.1.3')->setParent(new StateCode('state2.1')))
-            ->addState(State::create(new StateCode('state2.2'), 'state2.2')->setParent(new StateCode('state2')))
-            ->addState(State::create(new StateCode('state2.3'), 'state2.3')->setParent(new StateCode('state2')))
-            ->addState(State::create(new StateCode('state3'), 'state3'))
-            ->addTransition(Transition::entry(new StateCode('state1')))
-            ->addTransition(Transition::entry(new StateCode('state2.1')))
-            ->addTransition(Transition::entry(new StateCode('state2.1.1')))
-            ->addTransition(Transition::exit(new StateCode('state2.1.3'), Event::create(new EventCode('done'), 'done')))
-            ->addTransition(Transition::exit(new StateCode('state2.3'), Event::create(new EventCode('done'), 'done')))
-            ->addTransition(Transition::exit(new StateCode('state3'), Event::create(new EventCode('done'), 'done')));
+            ->addState(State::fromString('state1'))
+            ->addState(State::fromString('state2'))
+            ->addState(State::fromString('state2.1')->setParent(StateCode::create('state2')))
+            ->addState(State::fromString('state2.1.1')->setParent(StateCode::create('state2.1')))
+            ->addState(State::fromString('state2.1.2')->setParent(StateCode::create('state2.1')))
+            ->addState(State::fromString('state2.1.3')->setParent(StateCode::create('state2.1')))
+            ->addState(State::fromString('state2.2')->setParent(StateCode::create('state2')))
+            ->addState(State::fromString('state2.3')->setParent(StateCode::create('state2')))
+            ->addState(State::fromString('state3'))
 
-        $this->assertEquals($expected, $stateDiagram);
+            ->addTransition(Transition::entry(StateCode::create('state1')))
+            ->addTransition(Transition::entry(StateCode::create('state2.1')))
+            ->addTransition(Transition::entry(StateCode::create('state2.1.1')))
+
+            ->addTransition(Transition::exit(StateCode::create('state2.1.3'), Event::fromString('done')))
+            ->addTransition(Transition::exit(StateCode::create('state2.3'), Event::fromString('done')))
+            ->addTransition(Transition::exit(StateCode::create('state3'), Event::fromString('done')))
+
+            ->addTransition(Transition::change(StateCode::create('state1'), StateCode::create('state2'), Event::fromString('done')))
+            ->addTransition(Transition::change(StateCode::create('state2'), StateCode::create('state3'), Event::fromString('done')))
+
+            ->addTransition(Transition::change(StateCode::create('state2.1'), StateCode::create('state2.2'), Event::fromString('done')))
+            ->addTransition(Transition::change(StateCode::create('state2.2'), StateCode::create('state2.3'), Event::fromString('done')))
+
+            ->addTransition(Transition::change(StateCode::create('state2.1.1'), StateCode::create('state2.1.2'), Event::fromString('done')))
+            ->addTransition(Transition::change(StateCode::create('state2.1.2'), StateCode::create('state2.1.3'), Event::fromString('done')))
+        ;
 
 
-        echo $stateDiagram->toPlantUml();
+        echo $expected->toPlantUml();
 
         var_dump(strtr(
             'http://www.plantuml.com/plantuml/png/{{ schema }}',
             [
-                '{{ schema }}' => encodep($stateDiagram->toPlantUml()),
+                '{{ schema }}' => encodep($expected->toPlantUml()),
             ]
         ));
 
+        $this->assertEquals($expected, $stateDiagram);
     }
 
 

@@ -39,7 +39,7 @@ class StateBuilder implements ParentStateBuilder
     )
     {
 
-        $state = State::create(new StateCode($code), $name);
+        $state = State::fromString($code, $name);
         if ($parentStateBuilder->_code()) {
             $state = $state->setParent($parentStateBuilder->_code());
         }
@@ -67,7 +67,7 @@ class StateBuilder implements ParentStateBuilder
 
     public function createChild(string $code, ?string $name = null): self
     {
-        $child = State::create(new StateCode($code), $name ?? $code)
+        $child = State::fromString($code, $name)
             ->setParent($this->state->code());
 
         $clone = clone $this;
