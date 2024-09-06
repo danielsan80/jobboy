@@ -17,6 +17,8 @@ class LockFactory implements LockFactoryInterface
     /** @var LockSpace */
     protected $space;
 
+    private $factory = null;
+
     public function __construct(\Redis $redis, ?LockSpace $space = null)
     {
         if (!$space) {
