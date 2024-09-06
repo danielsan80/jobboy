@@ -25,6 +25,14 @@ class Job
         return $job;
     }
 
+    public static function fromString(string $code, ?string $name = null): self
+    {
+        $code = JobCode::create($code);
+        $name = $name ?? (string)$code;
+
+        return self::create($code, $name);
+    }
+
     public function code(): JobCode
     {
         return $this->code;
