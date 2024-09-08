@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Event;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Job;
 
-class Event
+class Job
 {
-    /** @var EventCode */
+    /** @var JobCode */
     private $code;
 
     /** @var string */
@@ -15,25 +15,25 @@ class Event
     {
     }
 
-    public static function create(EventCode $code, string $name): self
+    public static function create(JobCode $code, string $name): self
     {
-        $event = new self();
+        $job = new self();
 
-        $event->code = $code;
-        $event->name = $name;
+        $job->code = $code;
+        $job->name = $name;
 
-        return $event;
+        return $job;
     }
 
-    public static function fromString(string $code, ?string $name=null): self
+    public static function fromString(string $code, ?string $name = null): self
     {
-        $code = new EventCode($code);
+        $code = JobCode::create($code);
         $name = $name ?? (string)$code;
 
         return self::create($code, $name);
     }
 
-    public function code(): EventCode
+    public function code(): JobCode
     {
         return $this->code;
     }

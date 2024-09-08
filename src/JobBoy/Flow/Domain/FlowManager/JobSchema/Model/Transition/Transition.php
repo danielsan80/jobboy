@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition;
 
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Event\Event;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Event\Event;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCode;
 
 class Transition
 {

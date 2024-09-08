@@ -1,48 +1,32 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State;
 
 use Assert\Assertion;
 
 class StateCollection
 {
-    const COMPLETE = 'complete';
-    const PARTIAL = 'partial';
-
-    private $type;
-
     /** @var array<string,State> */
     private $states = [];
 
-    /** @var array<string,StateCode> */
-    private $tags = [];
 
-    private function __construct(string $type = self::COMPLETE)
+    private function __construct()
     {
-        $this->type = $type;
     }
 
     public static function create(): self
     {
-        return new self(self::COMPLETE);
+        return new self();
     }
 
-    public static function createPartial(): self
-    {
-        return new self(self::PARTIAL);
-    }
-
-    public function set(State $state, ?string $tag=null): self
+    public function set(State $state): self
     {
         $this->assertStateIsNotSetYet($state);
         $this->assertParentStateIsSetYet($state);
 
         $clone = clone $this;
         $clone->states[(string)$state] = $state;
-        if ($tag) {
-            $clone->tags[$tag] = $state->code();
-        }
         return $clone;
     }
 
@@ -63,31 +47,6 @@ class StateCollection
     public function all(): array
     {
         return array_values($this->states);
-    }
-
-    public function tag(StateCode $code, string $tag): self
-    {
-        $this->assertStateIsSet($code);
-
-        $clone = clone $this;
-        $clone->tags[$tag] = $code;
-        return $clone;
-    }
-
-    public function untag(string $tag): self
-    {
-        $clone = clone $this;
-        unset($clone->tags[$tag]);
-        return $clone;
-    }
-
-    public function getTagged(string $tag): ?State
-    {
-        if (!isset($this->tags[$tag])) {
-            return null;
-        }
-
-        return $this->get($this->tags[$tag]);
     }
 
     public function getParent(StateCode $code): ?State
@@ -138,12 +97,6 @@ class StateCollection
         Assertion::eq((string)$parent1, (string)$parent2, sprintf('States "%s" and "%s" have different parents', (string)$state1, (string)$state2));
     }
 
-    public function assertTagIsSet(string $tag): void
-    {
-        Assertion::keyExists($this->tags, $tag, sprintf('Tag "%s" is not set yet', $tag));
-    }
-
-
     private function assertStateIsNotSetYet(State $state): void
     {
         Assertion::keyNotExists($this->states, (string)$state, sprintf('State "%s" is already set', $state));
@@ -151,10 +104,6 @@ class StateCollection
 
     private function assertParentStateIsSetYet(State $state): void
     {
-        if ($this->type === self::PARTIAL) {
-            return;
-        }
-
         if (!$state->parent()) {
             return;
         }

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition;
 
 use Assert\Assertion;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\State;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\State;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCode;
 
 class EntryStateCollection
 {

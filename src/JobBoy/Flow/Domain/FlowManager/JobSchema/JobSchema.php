@@ -1,23 +1,23 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema;
 
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Job\Job;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\State;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCollection;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\EntryStateCollection;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\Transition;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\TransitionCollection;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Transformer\PlantUml\PlantUmlTransformer;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Job\Job;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\State;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCode;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCollection;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\EntryStateCollection;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\Transition;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\TransitionCollection;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Transformer\PlantUml\PlantUmlTransformer;
 
 /**
  * @psalm-type StateKey = string
  * @psalm-type TransitionKey = string
  * @psalm-type RootKey = self::ROOT
  */
-class StateDiagram
+class JobSchema
 {
     /** @var Job */
     private $job;

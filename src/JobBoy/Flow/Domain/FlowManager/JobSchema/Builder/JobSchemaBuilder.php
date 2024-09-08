@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Builder;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema\Builder;
 
 use Assert\Assertion;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Event\Event;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Job\Job;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\State;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCollection;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateStack;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\EntryStateCollection;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\Transition;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\TransitionCollection;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\StateDiagram;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Event\Event;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Job\Job;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\State;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCode;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCollection;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateStack;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\EntryStateCollection;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\Transition;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\TransitionCollection;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\JobSchema;
 
-class StateDiagramBuilder implements ParentStateBuilder
+class JobSchemaBuilder
 {
 
     /** @var Job|null */
@@ -171,51 +171,22 @@ class StateDiagramBuilder implements ParentStateBuilder
         return $clone;
     }
 
-    public function build(): StateDiagram
+    public function build(): JobSchema
     {
-        Assertion::notNull($this->job, 'A Job must be created to build a StateDiagram');
+        Assertion::notNull($this->job, 'A Job must be created to build a JobSchema');
 
-        $stateDiagram = StateDiagram::create($this->job);
+        $jobSchema = JobSchema::create($this->job);
 
         foreach ($this->states->all() as $state) {
-            $stateDiagram = $stateDiagram->addState($state);
+            $jobSchema = $jobSchema->addState($state);
         }
 
         foreach ($this->transitions->all() as $transition) {
-            $stateDiagram = $stateDiagram->addTransition($transition);
+            $jobSchema = $jobSchema->addTransition($transition);
         }
 
-        return $stateDiagram;
+        return $jobSchema;
     }
 
-    public function _code(): ?StateCode
-    {
-        return null;
-    }
 
-    public function _setState(State $state): ParentStateBuilder
-    {
-        $clone = clone $this;
-
-        $clone->states = $clone->states->set($state);
-
-        return $clone;
-    }
-
-    public function _setTransition(Transition $transition): ParentStateBuilder
-    {
-        $clone = clone $this;
-
-        $clone->transitions = $clone->transitions->set($transition);
-
-        return $clone;
-    }
-
-    public function _tagState(StateCode $stateCode, string $tag): ParentStateBuilder
-    {
-        $clone = clone $this;
-        $clone->states = $clone->states->tag($stateCode, $tag);
-
-        return $clone;
-    }
 }

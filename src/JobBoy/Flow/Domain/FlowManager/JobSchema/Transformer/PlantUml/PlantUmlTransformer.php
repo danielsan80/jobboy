@@ -1,24 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Transformer\PlantUml;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema\Transformer\PlantUml;
 
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\State\StateCode;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\Model\Transition\Transition;
-use JobBoy\Flow\Domain\FlowManager\StateDiagram\StateDiagram;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCode;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\Transition;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\JobSchema;
 
 class PlantUmlTransformer
 {
-    public function transform(StateDiagram $stateDiagram): string
+    public function transform(JobSchema $jobSchema): string
     {
         $lines = [];
 
-        $rootStates = $stateDiagram->states()->getChildren(null);
+        $rootStates = $jobSchema->states()->getChildren(null);
 
         while ($rootStates) {
             $state = array_shift($rootStates);
-            $lines = array_merge($lines, $this->getStateLines($stateDiagram, $state->code()));
-            $lines = array_merge($lines, $this->getTransitionLines($stateDiagram, $state->code()));
+            $lines = array_merge($lines, $this->getStateLines($jobSchema, $state->code()));
+            $lines = array_merge($lines, $this->getTransitionLines($jobSchema, $state->code()));
         }
 
 
@@ -39,11 +39,11 @@ class PlantUmlTransformer
         return implode(PHP_EOL, $lines);
     }
 
-    private function getStateLines(StateDiagram $stateDiagram, StateCode $code): array
+    private function getStateLines(JobSchema $jobSchema, StateCode $code): array
     {
-        $state = $stateDiagram->state($code);
+        $state = $jobSchema->state($code);
 
-        $children = $stateDiagram->states()->getChildren($code);
+        $children = $jobSchema->states()->getChildren($code);
         if (!$children) {
             return ['state ' . $state->name()];
         }
@@ -51,8 +51,8 @@ class PlantUmlTransformer
         $lines = [];
 
         foreach ($children as $child) {
-            $lines = array_merge($lines, $this->getStateLines($stateDiagram, $child->code()));
-            $lines = array_merge($lines, $this->getTransitionLines($stateDiagram, $child->code()));
+            $lines = array_merge($lines, $this->getStateLines($jobSchema, $child->code()));
+            $lines = array_merge($lines, $this->getTransitionLines($jobSchema, $child->code()));
         }
 
         return array_merge(
@@ -62,9 +62,9 @@ class PlantUmlTransformer
         );
     }
 
-    private function getTransitionLines(StateDiagram $stateDiagram, StateCode $stateCode): array
+    private function getTransitionLines(JobSchema $jobSchema, StateCode $stateCode): array
     {
-        $transitions = $stateDiagram->transitions()->byStateCode($stateCode);
+        $transitions = $jobSchema->transitions()->byStateCode($stateCode);
 
         $transitions = array_filter($transitions, function (Transition $transition) use ($stateCode) {
             if ($transition->type()->isChange()) {
@@ -79,16 +79,16 @@ class PlantUmlTransformer
 
         foreach ($transitions as $transition) {
             if ($transition->type()->isEntry()) {
-                $state = $stateDiagram->state($transition->to());
+                $state = $jobSchema->state($transition->to());
                 $lines[] = '[*] --> ' . $state->name();
             }
             if ($transition->type()->isExit()) {
-                $state = $stateDiagram->state($transition->from());
+                $state = $jobSchema->state($transition->from());
                 $lines[] = $state->name() . ' --> [*] : ' . $transition->on()->name();
             }
             if ($transition->type()->isChange()) {
-                $from = $stateDiagram->state($transition->from());
-                $to = $stateDiagram->state($transition->to());
+                $from = $jobSchema->state($transition->from());
+                $to = $jobSchema->state($transition->to());
                 $lines[] = $from->name() . ' --> ' . $to->name() . ' : ' . $transition->on()->name();
             }
         }

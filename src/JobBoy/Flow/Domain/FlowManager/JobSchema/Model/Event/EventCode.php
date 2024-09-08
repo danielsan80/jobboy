@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace JobBoy\Flow\Domain\FlowManager\StateDiagram\Event;
+namespace JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Event;
 
 use Assert\Assertion;
 
