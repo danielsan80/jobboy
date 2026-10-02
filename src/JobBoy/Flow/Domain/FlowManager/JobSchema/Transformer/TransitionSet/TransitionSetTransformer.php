@@ -8,51 +8,91 @@ use JobBoy\Flow\Domain\FlowManager\JobSchema\JobSchema;
 use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\State;
 use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\State\StateCode;
 use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\Transition;
+use JobBoy\Flow\Domain\FlowManager\JobSchema\Model\Transition\TransitionCollection;
+use JobBoy\Flow\Domain\FlowManager\TransitionLoader\Transition as GenericTransition;
 use JobBoy\Flow\Domain\FlowManager\TransitionLoader\TransitionSet;
 
 class TransitionSetTransformer
 {
     public function transform(JobSchema $jobSchema): TransitionSet
     {
-        $transitions = [];
+        $transitions = TransitionCollection::create();
 
         $rootStates = $jobSchema->states()->getChildren(null);
 
         while ($rootStates) {
             $state = array_shift($rootStates);
-            $transitions = array_merge($transitions, $this->getTransitions($jobSchema, $state->code()));
+            $transitions = $transitions->union($this->getTransitions($jobSchema, $state->code()));
         }
 
-        return new TransitionSet((string)$jobSchema->job()->code(), $transitions);
+        return new TransitionSet((string)$jobSchema->job()->code(), $this->toGenericTransitions($transitions));
     }
 
 
-    private function getTransitions(JobSchema $jobSchema, StateCode $stateCode): array
+    private function getTransitions(JobSchema $jobSchema, StateCode $stateCode): TransitionCollection
     {
-        $transitions = $jobSchema->transitions()->byStateCode($stateCode);
-
         $state = $jobSchema->state($stateCode);
 
-        $transitions = array_filter($transitions, function (Transition $transition) use ($jobSchema, $state) {
-            if ($this->isAChangeToThisState($transition, $state)) {
-                return false;
+        $relatingToState = $jobSchema->transitions()->relatingToState($stateCode);
+
+        $transitions = $relatingToState;
+
+        $transitions = $transitions->difference($transitions->changesToState($stateCode));
+        $transitions = $transitions->difference($transitions->entriesToState($jobSchema->entryChild($stateCode)));
+
+        $childrenExits = TransitionCollection::create();
+        foreach ($jobSchema->states()->getChildren($stateCode) as $child) {
+            $childrenExits = $childrenExits->union($transitions->exitsFromState($child));
+        }
+        $transitions = $transitions->difference($childrenExits);
+
+        $changesFromState = $transitions->changesFromState($stateCode);
+
+
+        if (!$childrenExits->isEmpty()) {
+            $transitions = $transitions->difference($changesFromState);
+            $newChangesFromState = TransitionCollection::create();
+            foreach ($childrenExits as $childExit) {
+                foreach ($changesFromState as $changeFromState) {
+                    $newTransition = Transition::change(
+                        $childExit,
+                        $changeFromState->to(),
+                        $changeFromState->on()
+                    );
+                    $transitions = $transitions->set($newTransition);
+                    $newChangesFromState = $newChangesFromState->set($newTransition);
+                }
             }
+            $changesFromState = $newChangesFromState;
+        }
 
-            if ($this->isAnEntryToThisStateAndHasAParent($transition, $state)) {
-                return false;
+        $changesFromStateToAParentState = $changesFromState->filter(
+            function(Transition $transition) use ($jobSchema, $state) {
+                return $jobSchema->states()->isParent($transition->to());
             }
+        );
 
-            if ($this->isAChangeToASuperState($transition, $state, $jobSchema)) {
-                return false;
-            }
+        foreach ($changesFromStateToAParentState as $changeFromState) {
 
-            return true;
-        });
+            $entryChild = $jobSchema->entryChild($changeFromState->to());
 
-        //aggiungere le Transiotions mancanti
+            $newTransition = Transition::change(
+                $changesFromState->from()->code(),
+                $entryChild->code(),
+                $changeFromState->on()
+            );
+
+            $transitions = $transitions->remove($changeFromState);
+            $transitions = $transitions->set($newTransition);
+        }
+
+        foreach ($jobSchema->states()->getChildren($stateCode) as $child) {
+            $transitions = $transitions->union($this->getTransitions($jobSchema, $child->code()));
+        }
 
         return $transitions;
     }
+
     private function isAChangeToThisState(Transition $transition, State $state): bool
     {
         if (!$transition->type()->isChange()) {
@@ -107,5 +147,22 @@ class TransitionSetTransformer
 //        }
 
         return true;
+    }
+
+    /**
+     * @param TransitionCollection $transitions
+     * @return GenericTransition[]
+     */
+    private function toGenericTransitions(TransitionCollection $transitions): array
+    {
+        $genericTransitions = [];
+        foreach ($transitions as $transition) {
+            $genericTransitions[] = GenericTransition::fromArray([
+                'from' => (string)$transition->from(),
+                'to' => (string)$transition->to(),
+                'on' => (string)$transition->on()
+            ]);
+        }
+        return $genericTransitions;
     }
 }

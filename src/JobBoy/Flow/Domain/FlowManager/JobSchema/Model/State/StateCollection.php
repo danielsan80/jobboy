@@ -76,6 +76,11 @@ class StateCollection
         });
     }
 
+    public function isParent(StateCode $code): bool
+    {
+        return $this->hasChildren($code);
+    }
+
     public function hasChildren(StateCode $code): bool
     {
         return count($this->getChildren($code)) > 0;

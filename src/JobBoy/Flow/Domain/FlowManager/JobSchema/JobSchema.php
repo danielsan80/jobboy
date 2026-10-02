@@ -98,7 +98,7 @@ class JobSchema
             $this->states->assertStateIsSet($transition->from());
             $this->states->assertStateIsSet($transition->to());
 
-            $this->states->assertStatesHaveSameParent($transition->from(), $transition->to());
+            $this->s1tates->assertStatesHaveSameParent($transition->from(), $transition->to());
 
             $clone = clone $this;
             $clone->transitions = $clone->transitions->set($transition);
@@ -115,6 +115,11 @@ class JobSchema
     public function states(): StateCollection
     {
         return $this->states;
+    }
+
+    public function entryChild(?StateCode $parent): ?State
+    {
+        return $this->entryStates->get($parent);
     }
 
     public function toPlantUml(): string

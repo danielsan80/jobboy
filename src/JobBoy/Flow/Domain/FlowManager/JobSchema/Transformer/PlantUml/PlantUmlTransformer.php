@@ -64,7 +64,7 @@ class PlantUmlTransformer
 
     private function getTransitionLines(JobSchema $jobSchema, StateCode $stateCode): array
     {
-        $transitions = $jobSchema->transitions()->byStateCode($stateCode);
+        $transitions = $jobSchema->transitions()->relatingToState($stateCode);
 
         $transitions = array_filter($transitions, function (Transition $transition) use ($stateCode) {
             if ($transition->type()->isChange()) {
